@@ -8,6 +8,13 @@
   background-color: var(--white-color);
 }
 
+.app__mybg {
+  background: #8E0E00;
+  background: -webkit-linear-gradient(to left, #1F1C18, #8E0E00);
+  background: linear-gradient(to left, #1F1C18, #8E0E00);
+}
+
+
 .app__primarybg {
   background-color: var(--primary-color);
 }

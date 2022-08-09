@@ -40,8 +40,8 @@ const Awards = () => {
             <div className="app__award-content">
               <p className="p-text">{awards[currentIndex].year}</p>
               <div>
-                <h4 className="bold-text">{awards[currentIndex].name}</h4>
-                <h5 className="p-text">{awards[currentIndex].company}</h5>
+                <h4 className="bold-text app__flex">{awards[currentIndex].name}</h4>
+                <h5 className="p-text app__flex">{awards[currentIndex].company}</h5>
               </div>
             </div>
           </div>

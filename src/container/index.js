@@ -5,6 +5,8 @@ import Skills from './Skills/Skills';
 import Awards from './Awards/Awards';
 import Work from './Work/Work';
 
+
+
 export {
   About,
   Footer,
@@ -12,4 +14,5 @@ export {
   Skills,
   Awards,
   Work,
+
 };
