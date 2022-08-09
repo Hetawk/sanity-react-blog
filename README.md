@@ -4,8 +4,8 @@
 
 This React-Sanity portfolio is all about my personal work and experiences.
 
-### All thanks to 
-[Javascript Mastery] (https://www.youtube.com/watch?v=3HNyXCPDQ7Q) who inspire and guide me in completing this portfolio
+### All thanks 
+to [Javascript Mastery] (https://www.youtube.com/watch?v=3HNyXCPDQ7Q) who inspire and guide me in completing this portfolio
 
 ## Screenshot
 
