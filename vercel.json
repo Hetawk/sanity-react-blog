@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "src/**", "use": "@vercel/node" },  // React code is in the src directory
+    { "src": "backend_sanity/**", "use": "@vercel/node" }
+  ],
+  "routes": [
+    {
+      "handle": "filesystem",
+      "src": "/src/(.*)",
+      "destination": "/src/$1"
+    },
+    {
+      "handle": "filesystem",
+      "src": "/backend_sanity/(.*)",
+      "destination": "/backend_sanity/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/src/$1"
+    }
+  ]
+}
