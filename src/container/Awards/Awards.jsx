@@ -16,8 +16,8 @@ const Awards = () => {
   };
 
   useEffect(() => {
-    const query = '*[_type == "awards"]';
-    const brandsQuery = '*[_type == "brands"]';
+    const query = '*[_type == "awards"] | order(year desc)';
+    const brandsQuery = '*[_type == "brands"] | order(year desc)';
 
     client.fetch(query).then((data) => {
       setAwards(data);
