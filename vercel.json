@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "version": 2,
     "builds": [
       { "src": "src/**", "use": "@vercel/node" },
@@ -19,3 +20,25 @@
       }
     ]
   }
+=======
+  "version": 2,
+  "builds": [
+    { "src": "src/**", "use": "@vercel/node" },
+    { "src": "backend_sanity/**", "use": "@vercel/node" }
+  ],
+  "routes": [
+    {
+      "src": "/src/(.*)",
+      "dest": "/src/$1"
+    },
+    {
+      "src": "/backend_sanity/(.*)",
+      "dest": "/backend_sanity/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/src/$1"
+    }
+  ]
+}
+>>>>>>> 5185020c70628cfb105592168ec10127e8fbf8f8
