@@ -9,10 +9,11 @@ import './Skills.scss';
 const Skills = () => {
   const [experiences, setExperiences] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [hoveredWork, setHoveredWork] = useState(null);
 
   useEffect(() => {
-    const query = '*[_type == "experiences"]';
-    const skillsQuery = '*[_type == "skills"]';
+    const query = '*[_type == "experiences"] | order(year desc)';
+    const skillsQuery = '*[_type == "skills"] | order(year desc)';
 
     client.fetch(query).then((data) => {
       setExperiences(data);
@@ -31,16 +32,12 @@ const Skills = () => {
         <motion.div className="app__skills-list">
           {skills.map((skill, index) => (
             <motion.div
-              whileInView={{ opacity: [0, 1] }}
-              transition={{ duration: 0.5 }}
               className="app__skills-item app__flex"
               key={index + skill}
+              onMouseOver={() => setHoveredWork(skill)}
+              onMouseOut={() => setHoveredWork(null)}
             >
-
-              <div
-                className="app__flex"
-                // style={{ backgroundColor: skill.bgColor }}
-              >
+              <div className="app__flex">
                 <img src={urlFor(skill.icon)} alt={skill.name} />
               </div>
               <p className="p-text">{skill.name}</p>
@@ -58,14 +55,14 @@ const Skills = () => {
               </div>
               <motion.div className="app__skills-exp-works">
                 {experience.works.map((work) => (
-                  <>
+                  <React.Fragment key={work.name}>
                     <motion.div
-                      whileInView={{ opacity: [0, 1] }}
-                      transition={{ duration: 0.5 }}
                       className="app__skills-exp-work"
                       data-tip
                       data-for={work.name}
                       key={work.name}
+                      onMouseOver={() => setHoveredWork(work)}
+                      onMouseOut={() => setHoveredWork(null)}
                     >
                       <h4 className="bold-text">{work.name}</h4>
                       <p className="p-text">{work.company}</p>
@@ -75,11 +72,15 @@ const Skills = () => {
                       effect="solid"
                       arrowColor="#fff"
                       className="skills-tooltip"
+                      show={hoveredWork}
+                      onMouseOut={() => setHoveredWork(null)}
                     >
-                      {work.desc}
+                      {hoveredWork === work && work.desc}
                     </ReactTooltip>
-                  </>
+
+                  </React.Fragment>
                 ))}
+
               </motion.div>
             </motion.div>
           ))}

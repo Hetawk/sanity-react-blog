@@ -82,7 +82,7 @@ const Footer = () => {
         </div>
       )}
 
-      <div class="flip-card">
+      <div className="flip-card">
         <div className="flip-card-inner">
           <div className="flip-card-front">
             <img src={images.myprofile} alt="Avatar" style={{ width: "100%", height: "100%" }} />
