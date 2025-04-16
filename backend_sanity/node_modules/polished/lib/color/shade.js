@@ -2,13 +2,9 @@
 
 exports.__esModule = true;
 exports["default"] = void 0;
-
-var _curry = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_curry"));
-
-var _mix = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./mix"));
-
+var _curry = _interopRequireDefault(require("../internalHelpers/_curry"));
+var _mix = _interopRequireDefault(require("./mix"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 /**
  * Shades a color by mixing it with black. `shade` can produce
  * hue shifts, where as `darken` manipulates the luminance channel and therefore
@@ -34,12 +30,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 function shade(percentage, color) {
   if (color === 'transparent') return color;
   return (0, _mix["default"])(parseFloat(percentage), 'rgb(0, 0, 0)', color);
-} // prettier-ignore
+}
 
-
-var curriedShade = /*#__PURE__*/(0, _curry["default"]
-/* ::<number | string, string, string> */
-)(shade);
-var _default = curriedShade;
-exports["default"] = _default;
+// prettier-ignore
+var curriedShade = (0, _curry["default"] /* ::<number | string, string, string> */)(shade);
+var _default = exports["default"] = curriedShade;
 module.exports = exports.default;

@@ -4,8 +4,7 @@ import Header from './Header/Header';
 import Skills from './Skills/Skills';
 import Awards from './Awards/Awards';
 import Work from './Work/Work';
-
-
+import OrcidWorks from './OrcidWorks/OrcidWorks';
 
 export {
   About,
@@ -14,5 +13,5 @@ export {
   Skills,
   Awards,
   Work,
-
+  OrcidWorks,
 };

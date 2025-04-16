@@ -12,6 +12,7 @@ var functionsMap = {
   quint: 'cubic-bezier(0.230,  1.000, 0.320, 1.000)',
   sine: 'cubic-bezier(0.390,  0.575, 0.565, 1.000)'
 };
+
 /**
  * String to represent common easing functions as demonstrated here: (github.com/jaukia/easie).
  *
@@ -32,9 +33,7 @@ var functionsMap = {
  *   'transitionTimingFunction': 'cubic-bezier(0.250,  0.460, 0.450, 0.940)',
  * }
  */
-
 function easeOut(functionName) {
   return functionsMap[functionName.toLowerCase().trim()];
 }
-
 module.exports = exports.default;

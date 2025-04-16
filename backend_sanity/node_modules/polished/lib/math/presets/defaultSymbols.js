@@ -2,45 +2,34 @@
 
 exports.__esModule = true;
 exports["default"] = void 0;
-
 function last() {
   var _ref;
-
   return _ref = arguments.length - 1, _ref < 0 || arguments.length <= _ref ? undefined : arguments[_ref];
 }
-
 function negation(a) {
   return -a;
 }
-
 function addition(a, b) {
   return a + b;
 }
-
 function subtraction(a, b) {
   return a - b;
 }
-
 function multiplication(a, b) {
   return a * b;
 }
-
 function division(a, b) {
   return a / b;
 }
-
 function max() {
   return Math.max.apply(Math, arguments);
 }
-
 function min() {
   return Math.min.apply(Math, arguments);
 }
-
 function comma() {
   return Array.of.apply(Array, arguments);
 }
-
 var defaultSymbols = {
   symbols: {
     '*': {
@@ -169,6 +158,5 @@ var defaultSymbols = {
     }
   }
 };
-var _default = defaultSymbols;
-exports["default"] = _default;
+var _default = exports["default"] = defaultSymbols;
 module.exports = exports.default;

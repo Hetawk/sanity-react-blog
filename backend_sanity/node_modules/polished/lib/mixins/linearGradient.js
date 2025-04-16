@@ -2,17 +2,11 @@
 
 exports.__esModule = true;
 exports["default"] = linearGradient;
-
-var _constructGradientValue = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_constructGradientValue"));
-
-var _errors = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_errors"));
-
+var _constructGradientValue = _interopRequireDefault(require("../internalHelpers/_constructGradientValue"));
+var _errors = _interopRequireDefault(require("../internalHelpers/_errors"));
 var _templateObject;
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 function _taggedTemplateLiteralLoose(strings, raw) { if (!raw) { raw = strings.slice(0); } strings.raw = raw; return strings; }
-
 /**
  * CSS for declaring a linear gradient, including a fallback background-color. The fallback is either the first color-stop or an explicitly passed fallback color.
  *
@@ -44,18 +38,15 @@ function _taggedTemplateLiteralLoose(strings, raw) { if (!raw) { raw = strings.s
  */
 function linearGradient(_ref) {
   var colorStops = _ref.colorStops,
-      fallback = _ref.fallback,
-      _ref$toDirection = _ref.toDirection,
-      toDirection = _ref$toDirection === void 0 ? '' : _ref$toDirection;
-
+    fallback = _ref.fallback,
+    _ref$toDirection = _ref.toDirection,
+    toDirection = _ref$toDirection === void 0 ? '' : _ref$toDirection;
   if (!colorStops || colorStops.length < 2) {
     throw new _errors["default"](56);
   }
-
   return {
     backgroundColor: fallback || colorStops[0].replace(/,\s+/g, ',').split(' ')[0].replace(/,(?=\S)/g, ', '),
     backgroundImage: (0, _constructGradientValue["default"])(_templateObject || (_templateObject = _taggedTemplateLiteralLoose(["linear-gradient(", "", ")"])), toDirection, colorStops.join(', ').replace(/,(?=\S)/g, ', '))
   };
 }
-
 module.exports = exports.default;

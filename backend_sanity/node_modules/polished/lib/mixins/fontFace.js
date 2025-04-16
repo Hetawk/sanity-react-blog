@@ -2,11 +2,8 @@
 
 exports.__esModule = true;
 exports["default"] = fontFace;
-
-var _errors = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_errors"));
-
+var _errors = _interopRequireDefault(require("../internalHelpers/_errors"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 var dataURIRegex = /^\s*data:([a-z]+\/[a-z-]+(;[a-z-]+=[a-z-]+)?)?(;charset=[a-z0-9-]+)?(;base64)?,[a-z0-9!$&',()*+,;=\-._~:@/?%\s]*\s*$/i;
 var formatHintMap = {
   woff: 'woff',
@@ -17,44 +14,37 @@ var formatHintMap = {
   svg: 'svg',
   svgz: 'svg'
 };
-
 function generateFormatHint(format, formatHint) {
   if (!formatHint) return '';
   return " format(\"" + formatHintMap[format] + "\")";
 }
-
 function isDataURI(fontFilePath) {
   return !!fontFilePath.replace(/\s+/g, ' ').match(dataURIRegex);
 }
-
 function generateFileReferences(fontFilePath, fileFormats, formatHint) {
   if (isDataURI(fontFilePath)) {
     return "url(\"" + fontFilePath + "\")" + generateFormatHint(fileFormats[0], formatHint);
   }
-
   var fileFontReferences = fileFormats.map(function (format) {
     return "url(\"" + fontFilePath + "." + format + "\")" + generateFormatHint(format, formatHint);
   });
   return fileFontReferences.join(', ');
 }
-
 function generateLocalReferences(localFonts) {
   var localFontReferences = localFonts.map(function (font) {
     return "local(\"" + font + "\")";
   });
   return localFontReferences.join(', ');
 }
-
 function generateSources(fontFilePath, localFonts, fileFormats, formatHint) {
   var fontReferences = [];
   if (localFonts) fontReferences.push(generateLocalReferences(localFonts));
-
   if (fontFilePath) {
     fontReferences.push(generateFileReferences(fontFilePath, fileFormats, formatHint));
   }
-
   return fontReferences.join(', ');
 }
+
 /**
  * CSS for a @font-face declaration. Defaults to check for local copies of the font on the user's machine. You can disable this by passing `null` to localFonts.
  *
@@ -83,39 +73,34 @@ function generateSources(fontFilePath, localFonts, fileFormats, formatHint) {
  * }
  */
 
-
 function fontFace(_ref) {
   var fontFamily = _ref.fontFamily,
-      fontFilePath = _ref.fontFilePath,
-      fontStretch = _ref.fontStretch,
-      fontStyle = _ref.fontStyle,
-      fontVariant = _ref.fontVariant,
-      fontWeight = _ref.fontWeight,
-      _ref$fileFormats = _ref.fileFormats,
-      fileFormats = _ref$fileFormats === void 0 ? ['eot', 'woff2', 'woff', 'ttf', 'svg'] : _ref$fileFormats,
-      _ref$formatHint = _ref.formatHint,
-      formatHint = _ref$formatHint === void 0 ? false : _ref$formatHint,
-      _ref$localFonts = _ref.localFonts,
-      localFonts = _ref$localFonts === void 0 ? [fontFamily] : _ref$localFonts,
-      unicodeRange = _ref.unicodeRange,
-      fontDisplay = _ref.fontDisplay,
-      fontVariationSettings = _ref.fontVariationSettings,
-      fontFeatureSettings = _ref.fontFeatureSettings;
+    fontFilePath = _ref.fontFilePath,
+    fontStretch = _ref.fontStretch,
+    fontStyle = _ref.fontStyle,
+    fontVariant = _ref.fontVariant,
+    fontWeight = _ref.fontWeight,
+    _ref$fileFormats = _ref.fileFormats,
+    fileFormats = _ref$fileFormats === void 0 ? ['eot', 'woff2', 'woff', 'ttf', 'svg'] : _ref$fileFormats,
+    _ref$formatHint = _ref.formatHint,
+    formatHint = _ref$formatHint === void 0 ? false : _ref$formatHint,
+    _ref$localFonts = _ref.localFonts,
+    localFonts = _ref$localFonts === void 0 ? [fontFamily] : _ref$localFonts,
+    unicodeRange = _ref.unicodeRange,
+    fontDisplay = _ref.fontDisplay,
+    fontVariationSettings = _ref.fontVariationSettings,
+    fontFeatureSettings = _ref.fontFeatureSettings;
   // Error Handling
   if (!fontFamily) throw new _errors["default"](55);
-
   if (!fontFilePath && !localFonts) {
     throw new _errors["default"](52);
   }
-
   if (localFonts && !Array.isArray(localFonts)) {
     throw new _errors["default"](53);
   }
-
   if (!Array.isArray(fileFormats)) {
     throw new _errors["default"](54);
   }
-
   var fontFaceDeclaration = {
     '@font-face': {
       fontFamily: fontFamily,
@@ -129,9 +114,9 @@ function fontFace(_ref) {
       fontVariationSettings: fontVariationSettings,
       fontFeatureSettings: fontFeatureSettings
     }
-  }; // Removes undefined fields for cleaner css object.
+  };
 
+  // Removes undefined fields for cleaner css object.
   return JSON.parse(JSON.stringify(fontFaceDeclaration));
 }
-
 module.exports = exports.default;

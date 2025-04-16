@@ -3,14 +3,10 @@
 exports.__esModule = true;
 exports["default"] = modularScale;
 exports.ratioNames = void 0;
-
-var _getValueAndUnit = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./getValueAndUnit"));
-
-var _errors = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_errors"));
-
+var _getValueAndUnit = _interopRequireDefault(require("./getValueAndUnit"));
+var _errors = _interopRequireDefault(require("../internalHelpers/_errors"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-var ratioNames = {
+var ratioNames = exports.ratioNames = {
   minorSecond: 1.067,
   majorSecond: 1.125,
   minorThird: 1.2,
@@ -29,11 +25,10 @@ var ratioNames = {
   majorTwelfth: 3,
   doubleOctave: 4
 };
-exports.ratioNames = ratioNames;
-
 function getRatio(ratioName) {
   return ratioNames[ratioName];
 }
+
 /**
  * Establish consistent measurements and spacial relationships throughout your projects by incrementing an em or rem value up or down a defined scale. We provide a list of commonly used scales as pre-defined variables.
  * @example
@@ -55,34 +50,25 @@ function getRatio(ratioName) {
  *   'fontSize': '1.77689em'
  * }
  */
-
-
 function modularScale(steps, base, ratio) {
   if (base === void 0) {
     base = '1em';
   }
-
   if (ratio === void 0) {
     ratio = 1.333;
   }
-
   if (typeof steps !== 'number') {
     throw new _errors["default"](42);
   }
-
   if (typeof ratio === 'string' && !ratioNames[ratio]) {
     throw new _errors["default"](43);
   }
-
   var _ref = typeof base === 'string' ? (0, _getValueAndUnit["default"])(base) : [base, ''],
-      realBase = _ref[0],
-      unit = _ref[1];
-
+    realBase = _ref[0],
+    unit = _ref[1];
   var realRatio = typeof ratio === 'string' ? getRatio(ratio) : ratio;
-
   if (typeof realBase === 'string') {
     throw new _errors["default"](44, base);
   }
-
   return "" + realBase * Math.pow(realRatio, steps) + (unit || '');
 }

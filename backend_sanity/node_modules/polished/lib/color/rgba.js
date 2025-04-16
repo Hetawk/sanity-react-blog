@@ -2,15 +2,10 @@
 
 exports.__esModule = true;
 exports["default"] = rgba;
-
-var _parseToRgb = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./parseToRgb"));
-
-var _rgb = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./rgb"));
-
-var _errors = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_errors"));
-
+var _parseToRgb = _interopRequireDefault(require("./parseToRgb"));
+var _rgb = _interopRequireDefault(require("./rgb"));
+var _errors = _interopRequireDefault(require("../internalHelpers/_errors"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 /**
  * Returns a string value for the color. The returned result is the smallest possible rgba or hex notation.
  *
@@ -54,8 +49,6 @@ function rgba(firstValue, secondValue, thirdValue, fourthValue) {
   } else if (typeof firstValue === 'object' && secondValue === undefined && thirdValue === undefined && fourthValue === undefined) {
     return firstValue.alpha >= 1 ? (0, _rgb["default"])(firstValue.red, firstValue.green, firstValue.blue) : "rgba(" + firstValue.red + "," + firstValue.green + "," + firstValue.blue + "," + firstValue.alpha + ")";
   }
-
   throw new _errors["default"](7);
 }
-
 module.exports = exports.default;

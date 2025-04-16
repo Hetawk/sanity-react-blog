@@ -2,7 +2,6 @@
 
 exports.__esModule = true;
 exports["default"] = clearFix;
-
 /**
  * CSS to contain a float (credit to CSSMojo).
  *
@@ -27,11 +26,9 @@ exports["default"] = clearFix;
  */
 function clearFix(parent) {
   var _ref;
-
   if (parent === void 0) {
     parent = '&';
   }
-
   var pseudoSelector = parent + "::after";
   return _ref = {}, _ref[pseudoSelector] = {
     clear: 'both',
@@ -39,5 +36,4 @@ function clearFix(parent) {
     display: 'table'
   }, _ref;
 }
-
 module.exports = exports.default;

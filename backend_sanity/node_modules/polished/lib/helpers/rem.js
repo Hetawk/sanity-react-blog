@@ -2,11 +2,8 @@
 
 exports.__esModule = true;
 exports["default"] = void 0;
-
-var _pxto = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_pxto"));
-
+var _pxto = _interopRequireDefault(require("../internalHelpers/_pxto"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 /**
  * Convert pixel value to rems. The default base value is 16px, but can be changed by passing a
  * second argument to the function.
@@ -30,7 +27,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
  *   'height': '1rem'
  * }
  */
-var rem = /*#__PURE__*/(0, _pxto["default"])('rem');
-var _default = rem;
-exports["default"] = _default;
+var rem = (0, _pxto["default"])('rem');
+var _default = exports["default"] = rem;
 module.exports = exports.default;

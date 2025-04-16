@@ -2,15 +2,10 @@
 
 exports.__esModule = true;
 exports["default"] = rgbToColorString;
-
-var _rgb = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./rgb"));
-
-var _rgba = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./rgba"));
-
-var _errors = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_errors"));
-
+var _rgb = _interopRequireDefault(require("./rgb"));
+var _rgba = _interopRequireDefault(require("./rgba"));
+var _errors = _interopRequireDefault(require("../internalHelpers/_errors"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 /**
  * Converts a RgbColor or RgbaColor object to a color string.
  * This util is useful in case you only know on runtime which color object is
@@ -45,15 +40,12 @@ function rgbToColorString(color) {
         alpha: color.alpha
       });
     }
-
     return (0, _rgb["default"])({
       red: color.red,
       green: color.green,
       blue: color.blue
     });
   }
-
   throw new _errors["default"](46);
 }
-
 module.exports = exports.default;

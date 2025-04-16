@@ -2,7 +2,6 @@
 
 exports.__esModule = true;
 exports["default"] = normalize;
-
 /**
  * CSS to normalize abnormalities across browsers (normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css)
  *
@@ -24,7 +23,6 @@ exports["default"] = normalize;
  */
 function normalize() {
   var _ref;
-
   return [(_ref = {
     html: {
       lineHeight: '1.15',
@@ -130,5 +128,4 @@ function normalize() {
     }
   }];
 }
-
 module.exports = exports.default;

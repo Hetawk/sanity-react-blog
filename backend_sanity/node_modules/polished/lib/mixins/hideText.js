@@ -2,7 +2,6 @@
 
 exports.__esModule = true;
 exports["default"] = hideText;
-
 /**
  * CSS to hide text to show a background image in a SEO-friendly way.
  *
@@ -35,5 +34,4 @@ function hideText() {
     whiteSpace: 'nowrap'
   };
 }
-
 module.exports = exports.default;

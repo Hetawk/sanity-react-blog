@@ -2,15 +2,10 @@
 
 exports.__esModule = true;
 exports["default"] = rgb;
-
-var _reduceHexValue = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_reduceHexValue"));
-
-var _numberToHex = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_numberToHex"));
-
-var _errors = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_errors"));
-
+var _reduceHexValue = _interopRequireDefault(require("../internalHelpers/_reduceHexValue"));
+var _numberToHex = _interopRequireDefault(require("../internalHelpers/_numberToHex"));
+var _errors = _interopRequireDefault(require("../internalHelpers/_errors"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 /**
  * Returns a string value for the color. The returned result is the smallest possible hex notation.
  *
@@ -40,8 +35,6 @@ function rgb(value, green, blue) {
   } else if (typeof value === 'object' && green === undefined && blue === undefined) {
     return (0, _reduceHexValue["default"])("#" + (0, _numberToHex["default"])(value.red) + (0, _numberToHex["default"])(value.green) + (0, _numberToHex["default"])(value.blue));
   }
-
   throw new _errors["default"](6);
 }
-
 module.exports = exports.default;

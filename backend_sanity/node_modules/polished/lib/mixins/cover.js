@@ -2,7 +2,6 @@
 
 exports.__esModule = true;
 exports["default"] = cover;
-
 /**
  * CSS to fully cover an area. Can optionally be passed an offset to act as a "padding".
  *
@@ -31,7 +30,6 @@ function cover(offset) {
   if (offset === void 0) {
     offset = 0;
   }
-
   return {
     position: 'absolute',
     top: offset,
@@ -40,5 +38,4 @@ function cover(offset) {
     left: offset
   };
 }
-
 module.exports = exports.default;

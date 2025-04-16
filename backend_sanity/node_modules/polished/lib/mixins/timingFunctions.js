@@ -2,7 +2,6 @@
 
 exports.__esModule = true;
 exports["default"] = timingFunctions;
-
 /* eslint-disable key-spacing */
 var functionsMap = {
   easeInBack: 'cubic-bezier(0.600, -0.280, 0.735, 0.045)',
@@ -35,6 +34,7 @@ var functionsMap = {
 function getTimingFunction(functionName) {
   return functionsMap[functionName];
 }
+
 /**
  * String to represent common easing functions as demonstrated here: (github.com/jaukia/easie).
  *
@@ -58,9 +58,7 @@ function getTimingFunction(functionName) {
  * }
  */
 
-
 function timingFunctions(timingFunction) {
   return getTimingFunction(timingFunction);
 }
-
 module.exports = exports.default;

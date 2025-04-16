@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 
 import { AppWrap, MotionWrap } from '../../wrapper';
 import { urlFor, client } from '../../client';
@@ -9,6 +9,7 @@ import './Skills.scss';
 const Skills = () => {
   const [experiences, setExperiences] = useState([]);
   const [skills, setSkills] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [hoveredWork, setHoveredWork] = useState(null);
 
   useEffect(() => {
@@ -58,8 +59,8 @@ const Skills = () => {
                   <React.Fragment key={work.name}>
                     <motion.div
                       className="app__skills-exp-work"
-                      data-tip
-                      data-for={work.name}
+                      data-tooltip-id="skills-tooltip"
+                      data-tooltip-content={work.desc}
                       key={work.name}
                       onMouseOver={() => setHoveredWork(work)}
                       onMouseOut={() => setHoveredWork(null)}
@@ -68,16 +69,14 @@ const Skills = () => {
                       <p className="p-text">{work.company}</p>
                     </motion.div>
                     <ReactTooltip
-                      id={work.name}
+                      id="skills-tooltip"
                       effect="solid"
                       arrowColor="#fff"
                       className="skills-tooltip"
-                      show={hoveredWork}
-                      onMouseOut={() => setHoveredWork(null)}
+                      place="top"
                     >
-                      {hoveredWork === work && work.desc}
+                      {/* tooltip content */}
                     </ReactTooltip>
-
                   </React.Fragment>
                 ))}
 

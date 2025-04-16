@@ -1,0 +1,824 @@
+.dashboard-container {
+    padding-top: 80px;
+    min-height: 100vh;
+    background-color: var(--primary-color);
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 2rem 0;
+
+        h1 {
+            color: var(--secondary-color);
+            margin-bottom: 0;
+        }
+
+        .logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: var(--font-base);
+            font-weight: 500;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: darken(#f44336, 10%);
+            }
+        }
+    }
+
+    .dashboard-content {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+
+        h1 {
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+        }
+    }
+
+    .dashboard-tabs {
+        display: flex;
+        overflow-x: auto;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--lightGray-color);
+
+        button {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-family: var(--font-base);
+            cursor: pointer;
+            color: var(--gray-color);
+            transition: all 0.3s ease;
+
+            &.active {
+                color: var(--secondary-color);
+                border-bottom: 2px solid var(--secondary-color);
+            }
+
+            &:hover {
+                color: var(--secondary-color);
+            }
+        }
+    }
+
+    .dashboard-tab-content {
+        background-color: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+}
+
+// Loading state
+.dashboard-loading {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+}
+
+// Login form styles
+.dashboard-login {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color);
+
+    h1 {
+        color: var(--secondary-color);
+        margin-bottom: 2rem;
+    }
+
+    form {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        max-width: 400px;
+
+        .form-group {
+            margin-bottom: 1.5rem;
+
+            label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+                color: var(--gray-color);
+            }
+
+            input {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid var(--lightGray-color);
+                border-radius: 5px;
+                font-family: var(--font-base);
+
+                &:focus {
+                    outline: none;
+                    border-color: var(--secondary-color);
+                }
+            }
+        }
+
+        .error {
+            color: #e53935;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: var(--font-base);
+            font-weight: 500;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: darken(#FF4C29, 10%);
+            }
+        }
+
+        .login-options {
+            margin-top: 1rem;
+            text-align: center;
+
+            .toggle-reset {
+                background: none;
+                border: none;
+                color: var(--secondary-color);
+                text-decoration: underline;
+                cursor: pointer;
+                font-size: 0.9rem;
+
+                &:hover {
+                    color: darken(#FF4C29, 10%);
+                }
+            }
+        }
+
+        .reset-info {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            font-size: 0.9rem;
+
+            p {
+                margin-bottom: 0.5rem;
+                color: var(--gray-color);
+            }
+
+            code {
+                display: block;
+                padding: 0.5rem;
+                background-color: #f1f1f1;
+                border-radius: 3px;
+                margin: 0.5rem 0;
+                font-family: monospace;
+                color: #e83e8c;
+            }
+
+            ul {
+                margin-top: 0.5rem;
+                padding-left: 1.5rem;
+
+                li {
+                    margin-bottom: 0.3rem;
+                    color: var(--gray-color);
+                }
+            }
+        }
+
+        .login-help {
+            margin-top: 1.5rem;
+            text-align: center;
+
+            .help-btn {
+                background: none;
+                border: none;
+                color: var(--secondary-color);
+                font-size: 0.9rem;
+                cursor: pointer;
+                text-decoration: underline;
+
+                &:hover {
+                    color: darken(#FF4C29, 10%);
+                }
+            }
+
+            .help-content {
+                margin-top: 1rem;
+                padding: 1rem;
+                background-color: #f8f8f8;
+                border-radius: 5px;
+                text-align: left;
+
+                p {
+                    margin-bottom: 0.5rem;
+                    color: var(--gray-color);
+                    font-size: 0.9rem;
+                }
+
+                ul {
+                    padding-left: 1.5rem;
+                    margin-bottom: 0.5rem;
+
+                    li {
+                        color: var(--gray-color);
+                        font-size: 0.9rem;
+                        margin-bottom: 0.3rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Common styles for content managers
+.content-manager {
+    .items-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .item-card {
+        background-color: #f8f8f8;
+        border-radius: 8px;
+        padding: 1.5rem;
+        position: relative;
+        transition: all 0.3s ease;
+
+        &:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            margin: 0 0 0.5rem;
+            color: var(--black-color);
+        }
+
+        p {
+            color: var(--gray-color);
+            margin: 0 0 0.75rem;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+
+            button {
+                padding: 0.5rem;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+
+                &.edit-btn {
+                    background-color: #4caf50;
+                    color: white;
+
+                    &:hover {
+                        background-color: darken(#4caf50, 10%);
+                    }
+                }
+
+                &.delete-btn {
+                    background-color: #f44336;
+                    color: white;
+
+                    &:hover {
+                        background-color: darken(#f44336, 10%);
+                    }
+                }
+            }
+        }
+    }
+
+    .form-container {
+        margin-top: 2rem;
+
+        h2 {
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+
+            label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+            }
+
+            input,
+            textarea {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid var(--lightGray-color);
+                border-radius: 5px;
+                font-family: var(--font-base);
+
+                &:focus {
+                    outline: none;
+                    border-color: var(--secondary-color);
+                }
+            }
+
+            textarea {
+                min-height: 120px;
+                resize: vertical;
+            }
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+
+            button {
+                padding: 0.75rem 1.5rem;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-family: var(--font-base);
+                font-weight: 500;
+
+                &.save-btn {
+                    background-color: var(--secondary-color);
+                    color: white;
+
+                    &:hover {
+                        background-color: darken(#FF4C29, 10%);
+                    }
+                }
+
+                &.cancel-btn {
+                    background-color: #ccc;
+                    color: #333;
+
+                    &:hover {
+                        background-color: darken(#ccc, 10%);
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Fix for Experiences tab styling
+.experiences-manager {
+    .experience-card {
+        background-color: #f8f8f8;
+        border-radius: 8px;
+        padding: 1.5rem;
+        position: relative;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+
+        &:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h3 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .works-list {
+            margin-bottom: 1rem;
+
+            .work-item {
+                padding: 0.75rem;
+                background-color: white;
+                border-radius: 5px;
+                margin-bottom: 0.75rem;
+
+                h4 {
+                    font-weight: 600;
+                    margin-bottom: 0.3rem;
+                }
+
+                h5 {
+                    color: var(--gray-color);
+                    font-size: 0.9rem;
+                    margin-bottom: 0.5rem;
+                }
+
+                p {
+                    font-size: 0.85rem;
+                    color: var(--gray-color);
+                }
+            }
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+
+            button {
+                padding: 0.5rem;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+
+                &.edit-btn {
+                    background-color: #4caf50;
+                    color: white;
+
+                    &:hover {
+                        background-color: darken(#4caf50, 10%);
+                    }
+                }
+
+                &.delete-btn {
+                    background-color: #f44336;
+                    color: white;
+
+                    &:hover {
+                        background-color: darken(#f44336, 10%);
+                    }
+                }
+            }
+        }
+    }
+
+    .work-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+
+        button {
+            padding: 0.3rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #eee;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background-color: #ddd;
+            }
+        }
+    }
+
+    .experiences-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .add-work-btn {
+        background-color: #2196F3;
+        color: white;
+        border: none;
+        padding: 0.6rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: darken(#2196F3, 10%);
+        }
+    }
+
+    .works-section {
+        background-color: #f2f2f2;
+        padding: 1rem;
+        border-radius: 5px;
+        margin: 1.5rem 0;
+
+        h4 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .work-form {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 5px;
+        }
+    }
+}
+
+// Resume manager styles
+.resume-manager {
+    .upload-section {
+        background-color: #f8f8f8;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+
+        h2 {
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+
+            label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+                color: var(--gray-color);
+            }
+
+            input[type="text"] {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid var(--lightGray-color);
+                border-radius: 5px;
+                font-family: var(--font-base);
+                background-color: white;
+
+                &:focus {
+                    outline: none;
+                    border-color: var(--secondary-color);
+                }
+
+                &::placeholder {
+                    color: #aaa;
+                    font-style: italic;
+                    font-size: 0.9rem;
+                }
+            }
+        }
+
+        .file-upload {
+            margin-bottom: 1.5rem;
+
+            .file-input-container {
+                position: relative;
+
+                .file-input {
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    opacity: 0;
+                    width: 0.1px;
+                    height: 0.1px;
+                }
+
+                .file-input-label {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.75rem 1.25rem;
+                    background-color: white;
+                    border: 1px solid var(--lightGray-color);
+                    border-radius: 5px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+
+                    &:hover {
+                        background-color: #f9f9f9;
+                        border-color: #ccc;
+                    }
+
+                    svg {
+                        color: var(--secondary-color);
+                        font-size: 1.2rem;
+                    }
+                }
+            }
+        }
+
+        .upload-progress {
+            margin: 1rem 0;
+
+            .progress-bar {
+                height: 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                overflow: hidden;
+                margin-bottom: 0.5rem;
+
+                .progress-bar-fill {
+                    height: 100%;
+                    background-color: var(--secondary-color);
+                    border-radius: 5px;
+                    transition: width 0.3s ease-in-out;
+                }
+            }
+
+            .progress-text {
+                font-size: 0.85rem;
+                color: var(--gray-color);
+                text-align: right;
+            }
+        }
+
+        .error-message {
+            color: #f44336;
+            background-color: rgba(244, 67, 54, 0.1);
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            border-left: 3px solid #f44336;
+        }
+
+        .upload-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: var(--font-base);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 250px;
+            margin-top: 0.5rem;
+
+            &:hover:not(:disabled) {
+                background-color: darken(#FF4C29, 10%);
+            }
+
+            &:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    .resume-list {
+        h2 {
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .no-resumes {
+            text-align: center;
+            color: var(--gray-color);
+            padding: 2rem;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+        }
+
+        .resume-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .resume-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f8f8;
+            padding: 1.25rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+
+            &.active {
+                border-left: 3px solid var(--secondary-color);
+            }
+
+            &:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            .resume-content {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+
+                .resume-icon {
+                    font-size: 2rem;
+                    color: #666;
+
+                    svg {
+                        display: block;
+                    }
+                }
+
+                .resume-details {
+                    h3 {
+                        margin: 0 0 0.5rem;
+                        color: var(--black-color);
+                    }
+
+                    p {
+                        color: var(--gray-color);
+                        margin: 0 0 0.25rem;
+                    }
+
+                    .upload-date {
+                        font-size: 0.8rem;
+                        color: #999;
+                    }
+                }
+            }
+
+            .resume-actions {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+
+                .active-badge {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.3rem;
+                    background-color: #4caf50;
+                    color: white;
+                    padding: 0.4rem 0.75rem;
+                    border-radius: 20px;
+                    font-size: 0.8rem;
+                }
+
+                .set-active-btn {
+                    background-color: #2196F3;
+                    color: white;
+                    border: none;
+                    padding: 0.5rem 0.75rem;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    font-size: 0.85rem;
+                    transition: all 0.2s ease;
+
+                    &:hover {
+                        background-color: darken(#2196F3, 10%);
+                    }
+                }
+
+                .view-btn {
+                    background-color: #9c27b0;
+                    color: white;
+                    text-decoration: none;
+                    padding: 0.5rem 0.75rem;
+                    border-radius: 5px;
+                    font-size: 0.85rem;
+                    transition: all 0.2s ease;
+
+                    &:hover {
+                        background-color: darken(#9c27b0, 10%);
+                    }
+                }
+
+                .delete-btn {
+                    background-color: #f44336;
+                    color: white;
+                    border: none;
+                    padding: 0.5rem;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s ease;
+
+                    &:hover {
+                        background-color: darken(#f44336, 10%);
+                    }
+                }
+            }
+        }
+    }
+}

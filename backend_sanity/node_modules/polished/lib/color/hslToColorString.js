@@ -2,15 +2,10 @@
 
 exports.__esModule = true;
 exports["default"] = hslToColorString;
-
-var _hsl = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./hsl"));
-
-var _hsla = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./hsla"));
-
-var _errors = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_errors"));
-
+var _hsl = _interopRequireDefault(require("./hsl"));
+var _hsla = _interopRequireDefault(require("./hsla"));
+var _errors = _interopRequireDefault(require("../internalHelpers/_errors"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 /**
  * Converts a HslColor or HslaColor object to a color string.
  * This util is useful in case you only know on runtime which color object is
@@ -45,15 +40,12 @@ function hslToColorString(color) {
         alpha: color.alpha
       });
     }
-
     return (0, _hsl["default"])({
       hue: color.hue,
       saturation: color.saturation,
       lightness: color.lightness
     });
   }
-
   throw new _errors["default"](45);
 }
-
 module.exports = exports.default;

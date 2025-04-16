@@ -2,7 +2,6 @@
 
 exports.__esModule = true;
 exports["default"] = hiDPI;
-
 /**
  * Generates a media query to target HiDPI devices.
  *
@@ -35,8 +34,6 @@ function hiDPI(ratio) {
   if (ratio === void 0) {
     ratio = 1.3;
   }
-
   return "\n    @media only screen and (-webkit-min-device-pixel-ratio: " + ratio + "),\n    only screen and (min--moz-device-pixel-ratio: " + ratio + "),\n    only screen and (-o-min-device-pixel-ratio: " + ratio + "/1),\n    only screen and (min-resolution: " + Math.round(ratio * 96) + "dpi),\n    only screen and (min-resolution: " + ratio + "dppx)\n  ";
 }
-
 module.exports = exports.default;

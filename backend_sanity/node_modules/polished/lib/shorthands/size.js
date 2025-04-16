@@ -2,7 +2,6 @@
 
 exports.__esModule = true;
 exports["default"] = size;
-
 /**
  * Shorthand to set the height and width properties in a single statement.
  * @example
@@ -27,11 +26,9 @@ function size(height, width) {
   if (width === void 0) {
     width = height;
   }
-
   return {
     height: height,
     width: width
   };
 }
-
 module.exports = exports.default;

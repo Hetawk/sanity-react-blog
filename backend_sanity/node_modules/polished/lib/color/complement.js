@@ -2,15 +2,10 @@
 
 exports.__esModule = true;
 exports["default"] = complement;
-
-var _parseToHsl = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./parseToHsl"));
-
-var _toColorString = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./toColorString"));
-
+var _parseToHsl = _interopRequireDefault(require("./parseToHsl"));
+var _toColorString = _interopRequireDefault(require("./toColorString"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 /**
  * Returns the complement of the provided color. This is identical to adjustHue(180, <color>).
  *
@@ -40,5 +35,4 @@ function complement(color) {
     hue: (hslColor.hue + 180) % 360
   }));
 }
-
 module.exports = exports.default;

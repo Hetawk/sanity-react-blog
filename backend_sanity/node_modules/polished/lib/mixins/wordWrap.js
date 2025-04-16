@@ -2,7 +2,6 @@
 
 exports.__esModule = true;
 exports["default"] = wordWrap;
-
 /**
  * Provides an easy way to change the `wordWrap` property.
  *
@@ -29,7 +28,6 @@ function wordWrap(wrap) {
   if (wrap === void 0) {
     wrap = 'break-word';
   }
-
   var wordBreak = wrap === 'break-word' ? 'break-all' : wrap;
   return {
     overflowWrap: wrap,
@@ -37,5 +35,4 @@ function wordWrap(wrap) {
     wordBreak: wordBreak
   };
 }
-
 module.exports = exports.default;

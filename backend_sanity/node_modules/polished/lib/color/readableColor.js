@@ -2,15 +2,12 @@
 
 exports.__esModule = true;
 exports["default"] = readableColor;
-
-var _getContrast = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./getContrast"));
-
-var _getLuminance = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./getLuminance"));
-
+var _getContrast = _interopRequireDefault(require("./getContrast"));
+var _getLuminance = _interopRequireDefault(require("./getLuminance"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 var defaultReturnIfLightColor = '#000';
 var defaultReturnIfDarkColor = '#fff';
+
 /**
  * Returns black or white (or optional passed colors) for best
  * contrast depending on the luminosity of the given color.
@@ -46,28 +43,21 @@ var defaultReturnIfDarkColor = '#fff';
  *   color: "#000";
  * }
  */
-
 function readableColor(color, returnIfLightColor, returnIfDarkColor, strict) {
   if (returnIfLightColor === void 0) {
     returnIfLightColor = defaultReturnIfLightColor;
   }
-
   if (returnIfDarkColor === void 0) {
     returnIfDarkColor = defaultReturnIfDarkColor;
   }
-
   if (strict === void 0) {
     strict = true;
   }
-
   var isColorLight = (0, _getLuminance["default"])(color) > 0.179;
   var preferredReturnColor = isColorLight ? returnIfLightColor : returnIfDarkColor;
-
   if (!strict || (0, _getContrast["default"])(color, preferredReturnColor) >= 4.5) {
     return preferredReturnColor;
   }
-
   return isColorLight ? defaultReturnIfLightColor : defaultReturnIfDarkColor;
 }
-
 module.exports = exports.default;

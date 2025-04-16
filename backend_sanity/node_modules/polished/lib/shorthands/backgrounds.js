@@ -2,7 +2,6 @@
 
 exports.__esModule = true;
 exports["default"] = backgrounds;
-
 /**
  * Shorthand that accepts any number of background values as parameters for creating a single background statement.
  * @example
@@ -26,10 +25,8 @@ function backgrounds() {
   for (var _len = arguments.length, properties = new Array(_len), _key = 0; _key < _len; _key++) {
     properties[_key] = arguments[_key];
   }
-
   return {
     background: properties.join(', ')
   };
 }
-
 module.exports = exports.default;

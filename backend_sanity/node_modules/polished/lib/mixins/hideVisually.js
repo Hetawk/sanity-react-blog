@@ -2,7 +2,6 @@
 
 exports.__esModule = true;
 exports["default"] = hideVisually;
-
 /**
  * CSS to hide content visually but remain accessible to screen readers.
  * from [HTML5 Boilerplate](https://github.com/h5bp/html5-boilerplate/blob/9a176f57af1cfe8ec70300da4621fb9b07e5fa31/src/css/main.css#L121)
@@ -45,5 +44,4 @@ function hideVisually() {
     width: '1px'
   };
 }
-
 module.exports = exports.default;

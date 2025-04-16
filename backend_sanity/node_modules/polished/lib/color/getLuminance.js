@@ -2,11 +2,8 @@
 
 exports.__esModule = true;
 exports["default"] = getLuminance;
-
-var _parseToRgb = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./parseToRgb"));
-
+var _parseToRgb = _interopRequireDefault(require("./parseToRgb"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 /**
  * Returns a number (float) representing the luminance of a color.
  *
@@ -36,16 +33,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 function getLuminance(color) {
   if (color === 'transparent') return 0;
   var rgbColor = (0, _parseToRgb["default"])(color);
-
   var _Object$keys$map = Object.keys(rgbColor).map(function (key) {
-    var channel = rgbColor[key] / 255;
-    return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
-  }),
-      r = _Object$keys$map[0],
-      g = _Object$keys$map[1],
-      b = _Object$keys$map[2];
-
+      var channel = rgbColor[key] / 255;
+      return channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
+    }),
+    r = _Object$keys$map[0],
+    g = _Object$keys$map[1],
+    b = _Object$keys$map[2];
   return parseFloat((0.2126 * r + 0.7152 * g + 0.0722 * b).toFixed(3));
 }
-
 module.exports = exports.default;

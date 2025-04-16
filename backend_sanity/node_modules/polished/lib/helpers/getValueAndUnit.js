@@ -3,6 +3,7 @@
 exports.__esModule = true;
 exports["default"] = getValueAndUnit;
 var cssRegex = /^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/;
+
 /**
  * Returns a given CSS value and its unit as elements of an array.
  *
@@ -26,12 +27,10 @@ var cssRegex = /^([+-]?(?:\d+|\d*\.\d+))([a-z]*|%)$/;
  *   '--unit': 'px',
  * }
  */
-
 function getValueAndUnit(value) {
   if (typeof value !== 'string') return [value, ''];
   var matchedValue = value.match(cssRegex);
   if (matchedValue) return [parseFloat(value), matchedValue[2]];
   return [value, undefined];
 }
-
 module.exports = exports.default;

@@ -2,11 +2,8 @@
 
 exports.__esModule = true;
 exports["default"] = transitions;
-
-var _errors = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_errors"));
-
+var _errors = _interopRequireDefault(require("../internalHelpers/_errors"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 /**
  * Accepts any number of transition values as parameters for creating a single transition statement. You may also pass an array of properties as the first parameter that you would like to apply the same transition values to (second parameter).
  * @example
@@ -33,14 +30,11 @@ function transitions() {
   for (var _len = arguments.length, properties = new Array(_len), _key = 0; _key < _len; _key++) {
     properties[_key] = arguments[_key];
   }
-
   if (Array.isArray(properties[0]) && properties.length === 2) {
     var value = properties[1];
-
     if (typeof value !== 'string') {
       throw new _errors["default"](61);
     }
-
     var transitionsString = properties[0].map(function (property) {
       return property + " " + value;
     }).join(', ');
@@ -53,5 +47,4 @@ function transitions() {
     };
   }
 }
-
 module.exports = exports.default;

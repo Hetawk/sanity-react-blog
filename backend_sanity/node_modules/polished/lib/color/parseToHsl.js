@@ -2,13 +2,9 @@
 
 exports.__esModule = true;
 exports["default"] = parseToHsl;
-
-var _parseToRgb = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./parseToRgb"));
-
-var _rgbToHsl = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_rgbToHsl"));
-
+var _parseToRgb = _interopRequireDefault(require("./parseToRgb"));
+var _rgbToHsl = _interopRequireDefault(require("../internalHelpers/_rgbToHsl"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 /**
  * Returns an HslColor or HslaColor object. This utility function is only useful
  * if want to extract a color component. With the color util `toColorString` you
@@ -25,5 +21,4 @@ function parseToHsl(color) {
   // color would be parsed converted to rgb values and converted back to hsl.
   return (0, _rgbToHsl["default"])((0, _parseToRgb["default"])(color));
 }
-
 module.exports = exports.default;

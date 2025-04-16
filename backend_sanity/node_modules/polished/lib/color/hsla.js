@@ -2,15 +2,10 @@
 
 exports.__esModule = true;
 exports["default"] = hsla;
-
-var _hslToHex = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_hslToHex"));
-
-var _hslToRgb = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_hslToRgb"));
-
-var _errors = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_errors"));
-
+var _hslToHex = _interopRequireDefault(require("../internalHelpers/_hslToHex"));
+var _hslToRgb = _interopRequireDefault(require("../internalHelpers/_hslToRgb"));
+var _errors = _interopRequireDefault(require("../internalHelpers/_errors"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 /**
  * Returns a string value for the color. The returned result is the smallest possible rgba or hex notation.
  *
@@ -43,8 +38,6 @@ function hsla(value, saturation, lightness, alpha) {
   } else if (typeof value === 'object' && saturation === undefined && lightness === undefined && alpha === undefined) {
     return value.alpha >= 1 ? (0, _hslToHex["default"])(value.hue, value.saturation, value.lightness) : "rgba(" + (0, _hslToRgb["default"])(value.hue, value.saturation, value.lightness) + "," + value.alpha + ")";
   }
-
   throw new _errors["default"](2);
 }
-
 module.exports = exports.default;

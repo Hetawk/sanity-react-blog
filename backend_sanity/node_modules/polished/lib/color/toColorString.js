@@ -2,34 +2,25 @@
 
 exports.__esModule = true;
 exports["default"] = toColorString;
-
-var _hsl = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./hsl"));
-
-var _hsla = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./hsla"));
-
-var _rgb = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./rgb"));
-
-var _rgba = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./rgba"));
-
-var _errors = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("../internalHelpers/_errors"));
-
+var _hsl = _interopRequireDefault(require("./hsl"));
+var _hsla = _interopRequireDefault(require("./hsla"));
+var _rgb = _interopRequireDefault(require("./rgb"));
+var _rgba = _interopRequireDefault(require("./rgba"));
+var _errors = _interopRequireDefault(require("../internalHelpers/_errors"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 var isRgb = function isRgb(color) {
   return typeof color.red === 'number' && typeof color.green === 'number' && typeof color.blue === 'number' && (typeof color.alpha !== 'number' || typeof color.alpha === 'undefined');
 };
-
 var isRgba = function isRgba(color) {
   return typeof color.red === 'number' && typeof color.green === 'number' && typeof color.blue === 'number' && typeof color.alpha === 'number';
 };
-
 var isHsl = function isHsl(color) {
   return typeof color.hue === 'number' && typeof color.saturation === 'number' && typeof color.lightness === 'number' && (typeof color.alpha !== 'number' || typeof color.alpha === 'undefined');
 };
-
 var isHsla = function isHsla(color) {
   return typeof color.hue === 'number' && typeof color.saturation === 'number' && typeof color.lightness === 'number' && typeof color.alpha === 'number';
 };
+
 /**
  * Converts a RgbColor, RgbaColor, HslColor or HslaColor object to a color string.
  * This util is useful in case you only know on runtime which color object is
@@ -61,7 +52,6 @@ var isHsla = function isHsla(color) {
  * }
  */
 
-
 function toColorString(color) {
   if (typeof color !== 'object') throw new _errors["default"](8);
   if (isRgba(color)) return (0, _rgba["default"])(color);
@@ -70,5 +60,4 @@ function toColorString(color) {
   if (isHsl(color)) return (0, _hsl["default"])(color);
   throw new _errors["default"](8);
 }
-
 module.exports = exports.default;

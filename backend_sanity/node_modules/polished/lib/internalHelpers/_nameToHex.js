@@ -152,17 +152,15 @@ var namedColorMap = {
   yellow: 'ff0',
   yellowgreen: '9acd32'
 };
+
 /**
  * Checks if a string is a CSS named color and returns its equivalent hex value, otherwise returns the original color.
  * @private
  */
-
 function nameToHex(color) {
   if (typeof color !== 'string') return color;
   var normalizedColorName = color.toLowerCase();
   return namedColorMap[normalizedColorName] ? "#" + namedColorMap[normalizedColorName] : color;
 }
-
-var _default = nameToHex;
-exports["default"] = _default;
+var _default = exports["default"] = nameToHex;
 module.exports = exports.default;

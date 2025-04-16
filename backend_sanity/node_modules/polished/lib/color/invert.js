@@ -2,15 +2,10 @@
 
 exports.__esModule = true;
 exports["default"] = invert;
-
-var _parseToRgb = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./parseToRgb"));
-
-var _toColorString = /*#__PURE__*/_interopRequireDefault( /*#__PURE__*/require("./toColorString"));
-
+var _parseToRgb = _interopRequireDefault(require("./parseToRgb"));
+var _toColorString = _interopRequireDefault(require("./toColorString"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 /**
  * Inverts the red, green and blue values of a color.
  *
@@ -35,8 +30,8 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
  * }
  */
 function invert(color) {
-  if (color === 'transparent') return color; // parse color string to rgb
-
+  if (color === 'transparent') return color;
+  // parse color string to rgb
   var value = (0, _parseToRgb["default"])(color);
   return (0, _toColorString["default"])(_extends({}, value, {
     red: 255 - value.red,
@@ -44,5 +39,4 @@ function invert(color) {
     blue: 255 - value.blue
   }));
 }
-
 module.exports = exports.default;

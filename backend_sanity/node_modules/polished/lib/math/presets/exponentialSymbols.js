@@ -2,22 +2,18 @@
 
 exports.__esModule = true;
 exports["default"] = void 0;
-
 function factorial(a) {
   if (a % 1 || !(+a >= 0)) return NaN;
   if (a > 170) return Infinity;else if (a === 0) return 1;else {
     return a * factorial(a - 1);
   }
 }
-
 function power(a, b) {
   return Math.pow(a, b);
 }
-
 function sqrt(a) {
   return Math.sqrt(a);
 }
-
 var exponentialSymbols = {
   symbols: {
     '!': {
@@ -58,6 +54,5 @@ var exponentialSymbols = {
     }
   }
 };
-var _default = exponentialSymbols;
-exports["default"] = _default;
+var _default = exports["default"] = exponentialSymbols;
 module.exports = exports.default;
