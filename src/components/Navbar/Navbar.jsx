@@ -1,28 +1,38 @@
 import React, { useState } from 'react';
 import { HiMenuAlt4, HiX } from 'react-icons/hi';
 import { motion } from 'framer-motion';
+import { Link, useLocation } from 'react-router-dom';
 
 import { images } from '../../constants';
 import './Navbar.scss';
 
 const Navbar = () => {
   const [toggle, setToggle] = useState(false);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
+  const navItems = ['home', 'about', 'work', 'skills', 'publications', 'award', 'contact'];
 
   return (
     <nav className="app__navbar">
       <div className="app__navbar-logo">
-        <img src={images.logo} alt="logo" />
+        <Link to="/">
+          <img src={images.logo} alt="logo" />
+        </Link>
       </div>
       <ul className="app__navbar-links">
-        {['home', 'about', 'work', 'skills', 'contact'].map((item) => (
+        {navItems.map((item) => (
           <li className="app__flex p-text" key={`link-${item}`}>
             <div />
-            {/* a link to automatically jump to page sections => for Desktop */}
-            <a href={`#${item}`}>{item}</a>
+            {item === 'contact' ? (
+              <Link to="/contact">{item}</Link>
+            ) : (
+              <a href={isHomePage ? `#${item}` : `/#${item}`}>{item}</a>
+            )}
           </li>
         ))}
       </ul>
-      {/* open nevation bar upon onClick */}
+      {/* open navigation bar upon onClick */}
       <div className="app__navbar-menu">
         <HiMenuAlt4 onClick={() => setToggle(true)} />
 
@@ -31,15 +41,23 @@ const Navbar = () => {
             whileInView={{ x: [300, 0] }}
             transition={{ duration: 0.85, ease: 'easeOut' }}
           >
-            {/* close nevation bar upon onClick */}
-
+            {/* close navigation bar upon onClick */}
             <HiX onClick={() => setToggle(false)} />
             <ul>
-              {['home', 'about', 'work', 'skills', 'contact'].map((item) => (
+              {navItems.map((item) => (
                 <li key={item}>
-                  <a href={`#${item}`} onClick={() => setToggle(false)}>
-                    {item}
-                  </a>
+                  {item === 'contact' ? (
+                    <Link to="/contact" onClick={() => setToggle(false)}>
+                      {item}
+                    </Link>
+                  ) : (
+                    <a
+                      href={isHomePage ? `#${item}` : `/#${item}`}
+                      onClick={() => setToggle(false)}
+                    >
+                      {item}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

@@ -19,7 +19,8 @@ import hand_wave from '../assets/hand_wave.gif'
 import profile from '../assets/profile.png';
 import circle from '../assets/circle.svg';
 import logo from '../assets/logo.png';
-import myprofile from '../assets/ekd_pro.png'
+import myprofile from '../assets/ekd_pro.png';
+import id_profile from '../assets/id_profile.png';
 
 
 
@@ -44,6 +45,7 @@ export default {
   logo,
   myprofile,
   hand_wave,
+  id_profile,
 };
 
 

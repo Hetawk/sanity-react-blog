@@ -1,0 +1,12 @@
+{
+  "extends": ["react-app"],
+  "overrides": [
+    {
+      "files": ["**/node_modules/@react-pdf/**"],
+      "rules": {
+        "import/no-webpack-loader-syntax": "off"
+      }
+    }
+  ],
+  "ignorePatterns": ["node_modules/@react-pdf/renderer/lib/react-pdf.browser.js"]
+}

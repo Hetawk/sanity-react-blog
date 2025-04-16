@@ -106,6 +106,14 @@
     justify-content: flex-start;
     align-items: flex-start;
   }
+
+  .resume-badge {
+    margin-top: 2rem;
+    align-self: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .app__header-circles {
