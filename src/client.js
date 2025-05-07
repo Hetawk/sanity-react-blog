@@ -1,9 +1,9 @@
-import sanityClient from '@sanity/client';
+import { createClient as sanityCreateClient } from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
 
 // Create a client with optional token
 export const createClient = (token = null) => {
-  return sanityClient({
+  return sanityCreateClient({
     projectId: '4kc0qfnh',
     dataset: 'production',
     apiVersion: '2021-08-31',

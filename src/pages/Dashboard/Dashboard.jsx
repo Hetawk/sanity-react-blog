@@ -50,7 +50,14 @@ const Dashboard = () => {
                             placeholder="Enter dashboard password"
                         />
                     </div>
-                    {error && <p className="error">{error}</p>}
+                    {error && (
+                        <p className="error">
+                            {error}
+                            {process.env.NODE_ENV === 'development' && !process.env.REACT_APP_ADMIN_PASSWORD && (
+                                <span> - Environment variables not loaded properly</span>
+                            )}
+                        </p>
+                    )}
                     <button type="submit">Login</button>
 
                     <div className="login-help">
@@ -64,13 +71,17 @@ const Dashboard = () => {
 
                         {showHelp && (
                             <div className="help-content">
-                                <p>Use the admin password defined in your .env file. Make sure:</p>
-                                <ul>
-                                    <li>Your .env file contains the REACT_APP_ADMIN_PASSWORD variable</li>
-                                    <li>You've restarted your development server after updating the .env file</li>
-                                    <li>The SANITY_STUDIO_TOKEN is also present in your .env file</li>
-                                </ul>
-                                <p>If you're still having issues, contact your administrator.</p>
+                                <p><strong>Need Access?</strong></p>
+                                <p>Please contact the administrator:</p>
+                                <p className="admin-contact">
+                                    <strong>Enoch Kwateh Dongbo</strong><br />
+                                    <a href="mailto:ekd@ekddigital.com">ekd@ekddigital.com</a>
+                                </p>
+                                <p><strong>Current status:</strong> Environment variables are
+                                    {process.env.REACT_APP_ADMIN_PASSWORD && process.env.REACT_APP_SANITY_TOKEN
+                                        ? " loaded properly."
+                                        : " missing or incomplete."}
+                                </p>
                             </div>
                         )}
                     </div>

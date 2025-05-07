@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiUpload, FiTrash2, FiCheckCircle, FiFile } from 'react-icons/fi';
+import { FiUpload, FiTrash2, FiCheckCircle, FiFile, FiInfo } from 'react-icons/fi';
 import { client } from '../../../client';
 import { useAuth } from '../../../context/AuthContext';
 
@@ -16,14 +16,25 @@ const ResumeManager = () => {
         file: null,
         fileName: ''
     });
+    const [displayLocation, setDisplayLocation] = useState('contact');
 
-    // Fetch resumes
+    // Fetch resumes with expanded asset URLs
     useEffect(() => {
         const fetchResumes = async () => {
             try {
-                const query = '*[_type == "resume"] | order(uploadedAt desc)';
+                // Use GROQ projection to get the full URL in the query
+                const query = `*[_type == "resume"] | order(uploadedAt desc) {
+                    ...,
+                    "fileUrl": resumeFile.asset->url
+                }`;
                 const data = await client.fetch(query);
                 setResumes(data);
+
+                // Check if we have a display location preference stored
+                const displayPreference = await client.fetch('*[_type == "resumeConfig"][0]');
+                if (displayPreference && displayPreference.displayLocation) {
+                    setDisplayLocation(displayPreference.displayLocation);
+                }
             } catch (error) {
                 console.error('Error fetching resumes:', error);
             } finally {
@@ -145,8 +156,13 @@ const ResumeManager = () => {
             const newResume = await authClient.create(resumeDoc);
             console.log('Resume document created:', newResume);
 
-            // Update the UI
-            setResumes([newResume, ...resumes]);
+            // Fetch the new list of resumes with file URLs
+            const updatedQuery = `*[_type == "resume"] | order(uploadedAt desc) {
+                ...,
+                "fileUrl": resumeFile.asset->url
+            }`;
+            const updatedResumes = await client.fetch(updatedQuery);
+            setResumes(updatedResumes);
 
             // Complete the progress bar
             clearInterval(progressTimer);
@@ -192,40 +208,51 @@ const ResumeManager = () => {
         }
 
         try {
-            // First, set all resumes as inactive
-            const batch = authClient.batch();
+            console.log('Starting resume activation for ID:', resumeId);
 
-            resumes.forEach((resume) => {
+            // First, set all resumes as inactive one by one instead of using batch
+            // This helps avoid potential batch operation issues
+            for (const resume of resumes) {
                 if (resume._id !== resumeId) {
-                    batch.patch(resume._id, {
-                        set: { isActive: false }
-                    });
+                    console.log(`Setting resume ${resume._id} as inactive`);
+                    await authClient.patch(resume._id)
+                        .set({ isActive: false })
+                        .commit();
                 }
-            });
+            }
 
             // Set the selected resume as active
-            batch.patch(resumeId, {
-                set: { isActive: true }
-            });
+            console.log(`Setting resume ${resumeId} as active`);
+            await authClient.patch(resumeId)
+                .set({ isActive: true })
+                .commit();
 
-            await batch.commit();
+            console.log('All updates committed successfully');
 
-            // Update local state
-            const updatedResumes = resumes.map((resume) => ({
-                ...resume,
-                isActive: resume._id === resumeId
-            }));
-
-            setResumes(updatedResumes);
+            // Update local state including file URLs
+            const updatedQuery = `*[_type == "resume"] | order(uploadedAt desc) {
+                ...,
+                "fileUrl": resumeFile.asset->url
+            }`;
+            console.log('Fetching updated resume data...');
+            const updatedData = await client.fetch(updatedQuery);
+            setResumes(updatedData);
+            console.log('Resume data updated successfully');
 
             alert('Resume set as active successfully!');
         } catch (error) {
             console.error('Error setting resume as active:', error);
+
+            // More detailed error logging to help diagnose the issue
+            if (error.details) console.error('Error details:', error.details);
+            if (error.response) console.error('Error response:', error.response);
+
             if (error.statusCode === 403) {
                 setUploadError('Permission denied. Your session may have expired.');
                 setTimeout(() => logout(), 3000);
             } else {
-                alert('Failed to set resume as active. Please try again.');
+                // More descriptive error message to the user
+                alert(`Failed to set resume as active: ${error.message || 'Unknown error'}`);
             }
         }
     };
@@ -252,7 +279,6 @@ const ResumeManager = () => {
                 }
 
                 setResumes(updatedResumes);
-
                 alert('Resume deleted successfully!');
             } catch (error) {
                 console.error('Error deleting resume:', error);
@@ -266,10 +292,107 @@ const ResumeManager = () => {
         }
     };
 
+    // Handle display location change
+    const handleDisplayLocationChange = async (location) => {
+        if (!authClient) {
+            setUploadError('Authentication error. Please log out and log in again.');
+            return;
+        }
+
+        try {
+            setDisplayLocation(location);
+
+            // Check if config document exists
+            const existingConfig = await client.fetch('*[_type == "resumeConfig"][0]');
+
+            if (existingConfig) {
+                // Update existing document
+                await authClient
+                    .patch(existingConfig._id)
+                    .set({ displayLocation: location })
+                    .commit();
+            } else {
+                // Create new config document
+                await authClient.create({
+                    _type: 'resumeConfig',
+                    displayLocation: location
+                });
+            }
+
+            alert('Display location updated successfully!');
+        } catch (error) {
+            console.error('Error updating display location:', error);
+            alert('Failed to update display location. Please try again.');
+        }
+    };
+
+    // Get formatted filename for downloads
+    const getFormattedFilename = (resume) => {
+        // Create a formatted filename based on the resume title
+        const baseName = "Enoch Kwateh Dongbo";
+        const resumeTitle = resume.title ? ` - ${resume.title}` : "";
+        return `${baseName}${resumeTitle} Resume.pdf`;
+    };
+
+    // Handle file download with custom filename
+    const handleDownload = async (fileUrl, fileName) => {
+        try {
+            // Fetch the file
+            const response = await fetch(fileUrl);
+            const blob = await response.blob();
+
+            // Create a temporary link element
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+
+            // Trigger a click on the link
+            document.body.appendChild(link);
+            link.click();
+
+            // Clean up
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        } catch (error) {
+            console.error("Failed to download the file:", error);
+            alert("Failed to download the resume. Please try again.");
+        }
+    };
+
     if (loading) return <div>Loading resumes...</div>;
 
     return (
         <div className="content-manager resume-manager">
+            <div className="display-settings">
+                <h2>Resume Display Settings</h2>
+                <div className="form-group">
+                    <label>Where should the resume download button appear?</label>
+                    <div className="display-location-options">
+                        <button
+                            className={`location-option ${displayLocation === 'home' ? 'active' : ''}`}
+                            onClick={() => handleDisplayLocationChange('home')}
+                        >
+                            Home Page
+                        </button>
+                        <button
+                            className={`location-option ${displayLocation === 'contact' ? 'active' : ''}`}
+                            onClick={() => handleDisplayLocationChange('contact')}
+                        >
+                            Contact Page
+                        </button>
+                        <button
+                            className={`location-option ${displayLocation === 'none' ? 'active' : ''}`}
+                            onClick={() => handleDisplayLocationChange('none')}
+                        >
+                            Don't Show
+                        </button>
+                    </div>
+                    <p className="helper-text">
+                        <FiInfo /> This setting controls where the resume download button will appear on your site.
+                    </p>
+                </div>
+            </div>
+
             <div className="upload-section">
                 <h2>Upload New Resume</h2>
                 <form onSubmit={handleUpload}>
@@ -379,14 +502,22 @@ const ResumeManager = () => {
                                         </button>
                                     )}
 
-                                    <a
-                                        href={resume.resumeFile?.asset?.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="view-btn"
-                                    >
-                                        View
-                                    </a>
+                                    {resume.fileUrl ? (
+                                        <button
+                                            onClick={() => handleDownload(resume.fileUrl, getFormattedFilename(resume))}
+                                            className="view-btn"
+                                        >
+                                            View
+                                        </button>
+                                    ) : (
+                                        <button
+                                            className="view-btn disabled"
+                                            disabled
+                                            title="File URL not available"
+                                        >
+                                            View
+                                        </button>
+                                    )}
 
                                     <button
                                         className="delete-btn"

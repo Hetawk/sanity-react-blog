@@ -4,6 +4,8 @@ import { images } from '../../constants';
 import { AppWrap, MotionWrap } from '../../wrapper';
 import { client } from '../../client';
 import './Footer.scss';
+import ResumeDownload from '../../components/ResumeDownload/ResumeDownload';
+
 
 const Footer = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -39,10 +41,12 @@ const Footer = () => {
     <>
       <h2 className="head-text">Take a coffee & chat with me</h2>
 
+      <ResumeDownload location="contact" />
+
       <div className="app__footer-cards">
         <div className="app__footer-card ">
           <img src={images.email} alt="email" />
-          <a href="mailto:enoch.dongbo@gmail.com" className="p-text">enoch.dongbo@gmail.com</a>
+          <a href="mailto:ekd@ekddigital.com" className="p-text">ekd@ekddigital.com</a>
         </div>
         <div className="app__footer-card">
           <img src={images.mobile} alt="phone" />
@@ -88,14 +92,29 @@ const Footer = () => {
             <img src={images.myprofile} alt="Avatar" style={{ width: "100%", height: "100%" }} />
           </div>
           <div className="flip-card-back">
-            <h1 className='glow'>Enoch Kwateh Dongbo</h1>
-            <br />
-            <p>Nationality: <span><b>Liberian</b></span></p>
-            <p>Mother Language: <span><b>English</b></span></p>
-            <p>DOB: <span><b>June 1, 1997</b></span></p> <br />
+            <h1 className='card-title'>Enoch Kwateh Dongbo</h1>
 
-            <p>I am a: <span><b>Certified Programmer</b></span></p>
+            <div className="card-info">
+              <div className="info-item">
+                <span className="info-label">Nationality:</span>
+                <span className="info-value">Liberian</span>
+              </div>
 
+              <div className="info-item">
+                <span className="info-label">Language:</span>
+                <span className="info-value">English</span>
+              </div>
+
+              <div className="info-item">
+                <span className="info-label">DOB:</span>
+                <span className="info-value">June 1, 1997</span>
+              </div>
+
+              <div className="info-item highlight">
+                <span className="info-label">I am a:</span>
+                <span className="info-value">Certified Programmer</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

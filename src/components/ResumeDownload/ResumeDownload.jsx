@@ -1,243 +1,143 @@
 import React, { useState, useEffect } from 'react';
 import { FaDownload } from 'react-icons/fa';
 import './ResumeDownload.scss';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 import { client } from '../../client';
 
-const ResumeDownload = () => {
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [skills, setSkills] = useState([]);
-    const [experiences, setExperiences] = useState([]);
-    const [awards, setAwards] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+const ResumeDownload = ({ location = 'home' }) => {
+    const [isLoading, setIsLoading] = useState(true);
     const [uploadedResume, setUploadedResume] = useState(null);
+    const [shouldDisplay, setShouldDisplay] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     // Fetch data from Sanity on component mount
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                // Check for uploaded resume first
-                const resumeQuery = '*[_type == "resume" && isActive == true][0]';
-                const resumeData = await client.fetch(resumeQuery);
+                // Check if ANY resumes exist
+                const allResumesQuery = '*[_type == "resume"]';
+                const allResumes = await client.fetch(allResumesQuery);
 
-                if (resumeData && resumeData.resumeFile?.asset?.url) {
-                    setUploadedResume(resumeData);
+                if (allResumes.length === 0) {
+                    setErrorMessage('No resume documents found in the database');
+                    return;
+                }
+
+                // Get display location preference
+                const configQuery = '*[_type == "resumeConfig"][0]';
+                const configData = await client.fetch(configQuery);
+
+                // Check for an active resume
+                const activeResumeQuery = '*[_type == "resume" && isActive == true][0]';
+                const activeResume = await client.fetch(activeResumeQuery);
+
+                // When setting the uploaded resume, get the full document with file URL
+                if (activeResume) {
+                    // Enhance the active resume with the file URL
+                    const resumeWithUrl = await client.fetch(
+                        `*[_type == "resume" && _id == $resumeId][0]{
+                            ...,
+                            "fileUrl": resumeFile.asset->url
+                        }`,
+                        { resumeId: activeResume._id }
+                    );
+
+                    setUploadedResume(resumeWithUrl);
+                } else if (allResumes.length > 0) {
+                    // Same for most recent resume fallback
+                    const resumeWithUrl = await client.fetch(
+                        `*[_type == "resume" && _id == $resumeId][0]{
+                            ...,
+                            "fileUrl": resumeFile.asset->url
+                        }`,
+                        { resumeId: allResumes[0]._id }
+                    );
+
+                    setUploadedResume(resumeWithUrl);
+                }
+
+                if (!activeResume && allResumes.length === 0) {
+                    setErrorMessage('No resumes available');
+                    return;
+                }
+
+                // Determine if we should display based on location
+                if (configData) {
+                    setShouldDisplay(configData.displayLocation === location);
                 } else {
-                    // Fetch skills
-                    const skillsQuery = '*[_type == "skills"]';
-                    const skillsData = await client.fetch(skillsQuery);
-                    setSkills(skillsData);
-
-                    // Fetch experiences
-                    const experiencesQuery = '*[_type == "experiences"] | order(year desc)';
-                    const experiencesData = await client.fetch(experiencesQuery);
-                    setExperiences(experiencesData);
-
-                    // Fetch awards
-                    const awardsQuery = '*[_type == "awards"] | order(year desc)';
-                    const awardsData = await client.fetch(awardsQuery);
-                    setAwards(awardsData);
+                    setShouldDisplay(location === 'home'); // Default
                 }
             } catch (error) {
-                console.error("Error fetching data:", error);
+                setErrorMessage(`Error: ${error.message}`);
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchData();
-    }, []);
+    }, [location]);
 
     const handleDownload = () => {
-        if (uploadedResume) {
-            // Download the uploaded resume directly
-            window.open(uploadedResume.resumeFile.asset.url, '_blank');
-        } else {
-            // Generate resume dynamically
-            generateResume();
-        }
-    };
+        try {
+            // First, try to use the fileUrl that we fetched directly
+            if (uploadedResume && uploadedResume.fileUrl) {
+                window.open(uploadedResume.fileUrl, '_blank');
+                return;
+            }
 
-    const generateResume = () => {
-        setIsGenerating(true);
+            // If that fails, try to construct a URL from Sanity's CDN format
+            if (uploadedResume && uploadedResume.resumeFile?.asset?._ref) {
+                // Get the Sanity project ID and dataset from environment or client config
+                const projectId = client.config().projectId;
+                const dataset = client.config().dataset;
 
-        // Create a new PDF document
-        const doc = new jsPDF();
-
-        // Add title/header
-        doc.setFontSize(24);
-        doc.setTextColor(51, 51, 51);
-        doc.text('Enoch Kwateh Dongbo', 20, 20);
-
-        doc.setFontSize(12);
-        doc.setTextColor(102, 102, 102);
-        doc.text('Web Developer & UI/UX Designer', 20, 30);
-
-        doc.setFontSize(10);
-        doc.text('enoch.dongbo@gmail.com | +86 (185) 0683-2159', 20, 38);
-        doc.text('github.com/Hetawk | linkedin.com/in/hetawk', 20, 44);
-
-        // Add a line
-        doc.setDrawColor(255, 76, 41); // #FF4C29
-        doc.setLineWidth(0.5);
-        doc.line(20, 48, 190, 48);
-
-        // Professional Summary
-        doc.setFontSize(14);
-        doc.setTextColor(255, 76, 41);
-        doc.text('PROFESSIONAL SUMMARY', 20, 58);
-
-        doc.setFontSize(10);
-        doc.setTextColor(68, 68, 68);
-        const summary = 'Passionate and creative web developer with expertise in modern front-end technologies. Experienced in building responsive and user-friendly web applications using React, JavaScript, and various web development tools.';
-        const summaryLines = doc.splitTextToSize(summary, 170);
-        doc.text(summaryLines, 20, 66);
-
-        // Skills Section
-        doc.setFontSize(14);
-        doc.setTextColor(255, 76, 41);
-        doc.text('SKILLS', 20, 85);
-
-        doc.setFontSize(10);
-        doc.setTextColor(68, 68, 68);
-
-        let skillsText = '';
-        if (skills && skills.length > 0) {
-            skillsText = skills.map(skill => skill.name).join(' • ');
-        } else {
-            skillsText = 'React • JavaScript • CSS/SCSS • HTML5 • UI/UX Design • Responsive Design • Git • Node.js';
-        }
-
-        const skillsLines = doc.splitTextToSize(skillsText, 170);
-        doc.text(skillsLines, 20, 93);
-
-        // Work Experience
-        doc.setFontSize(14);
-        doc.setTextColor(255, 76, 41);
-        doc.text('WORK EXPERIENCE', 20, 110);
-
-        let experienceY = 118;
-
-        if (experiences && experiences.length > 0) {
-            experiences.forEach(exp => {
-                if (exp.works && exp.works.length > 0) {
-                    exp.works.forEach(work => {
-                        doc.setFontSize(12);
-                        doc.setTextColor(51, 51, 51);
-                        doc.text(work.name, 20, experienceY);
-
-                        doc.setFontSize(10);
-                        doc.setTextColor(102, 102, 102);
-                        doc.text(work.company, 20, experienceY + 6);
-
-                        doc.setFontSize(10);
-                        doc.setTextColor(119, 119, 119);
-                        doc.text(exp.year, 20, experienceY + 12);
-
-                        doc.setFontSize(9);
-                        doc.setTextColor(68, 68, 68);
-                        const descLines = doc.splitTextToSize(work.desc || '', 170);
-                        doc.text(descLines, 20, experienceY + 18);
-
-                        experienceY += 30 + (descLines.length * 5); // adjust based on description length
-                    });
+                if (!projectId || !dataset) {
+                    throw new Error("Missing Sanity project ID or dataset");
                 }
-            });
-        } else {
-            doc.setFontSize(12);
-            doc.setTextColor(51, 51, 51);
-            doc.text('Web Developer', 20, experienceY);
 
-            doc.setFontSize(10);
-            doc.setTextColor(102, 102, 102);
-            doc.text('Company Name', 20, experienceY + 6);
+                const assetId = uploadedResume.resumeFile.asset._ref;
+                // Extract just the ID part from the reference, removing "file-" prefix and "-pdf" suffix
+                const cleanId = assetId.replace(/^file-/, '').replace(/-pdf$/, '');
 
-            doc.setFontSize(10);
-            doc.setTextColor(119, 119, 119);
-            doc.text('2021 - Present', 20, experienceY + 12);
+                // Construct the URL using Sanity's CDN pattern
+                const url = `https://cdn.sanity.io/files/${projectId}/${dataset}/${cleanId}.pdf`;
+                window.open(url, '_blank');
+                return;
+            }
 
-            doc.setFontSize(9);
-            doc.setTextColor(68, 68, 68);
-            const defaultDesc = 'Developed and maintained various web applications using React, JavaScript, and other modern web technologies.';
-            const descLines = doc.splitTextToSize(defaultDesc, 170);
-            doc.text(descLines, 20, experienceY + 18);
+            throw new Error('Resume file not properly linked');
 
-            experienceY += 30;
+        } catch (error) {
+            console.error('Error downloading resume:', error);
+            alert(`Unable to download resume: ${error.message}. Please try again later.`);
         }
-
-        // Education Section
-        doc.setFontSize(14);
-        doc.setTextColor(255, 76, 41);
-        doc.text('EDUCATION', 20, experienceY + 10);
-
-        doc.setFontSize(11);
-        doc.setTextColor(51, 51, 51);
-        doc.text('Bachelor of Science in Computer Science', 20, experienceY + 20);
-
-        doc.setFontSize(10);
-        doc.setTextColor(85, 85, 85);
-        doc.text('University Name', 20, experienceY + 26);
-
-        doc.setFontSize(10);
-        doc.setTextColor(119, 119, 119);
-        doc.text('2015 - 2019', 20, experienceY + 32);
-
-        // Awards & Certificates (if available)
-        if (awards && awards.length > 0) {
-            doc.setFontSize(14);
-            doc.setTextColor(255, 76, 41);
-            doc.text('AWARDS & CERTIFICATES', 20, experienceY + 45);
-
-            let awardY = experienceY + 55;
-
-            awards.slice(0, 3).forEach(award => {
-                doc.setFontSize(11);
-                doc.setTextColor(51, 51, 51);
-                doc.text(award.name, 20, awardY);
-
-                doc.setFontSize(10);
-                doc.setTextColor(85, 85, 85);
-                doc.text(award.company, 20, awardY + 6);
-
-                doc.setFontSize(10);
-                doc.setTextColor(119, 119, 119);
-                doc.text(award.year, 20, awardY + 12);
-
-                awardY += 20;
-            });
-        }
-
-        // Footer
-        doc.setFontSize(8);
-        doc.setTextColor(153, 153, 153);
-        doc.text(`Generated on ${new Date().toLocaleDateString()} | Enoch Kwateh Dongbo Resume`, 105, 280, { align: 'center' });
-
-        // Save the PDF
-        doc.save('Enoch-Kwateh-Dongbo-Resume.pdf');
-
-        setIsGenerating(false);
     };
+
+    // Only display if we should AND we have a resume OR we're still loading
+    if (!shouldDisplay || (!uploadedResume && !isLoading)) {
+        return null;
+    }
 
     return (
         <div className="resume-download-container">
-            <button
-                className="resume-download-btn"
-                onClick={handleDownload}
-                disabled={isGenerating || isLoading}
-            >
-                {isLoading ? (
-                    <span className="loading">Loading data...</span>
-                ) : isGenerating ? (
-                    <span className="loading">Preparing Resume...</span>
-                ) : (
-                    <span className="download">
-                        <FaDownload className="download-icon" />
-                        Download Resume
-                    </span>
-                )}
-            </button>
+            {errorMessage ? (
+                <div className="resume-error">{errorMessage}</div>
+            ) : (
+                <button
+                    className="resume-download-btn"
+                    onClick={handleDownload}
+                    disabled={isLoading || !uploadedResume}
+                >
+                    {isLoading ? (
+                        <span className="loading">Loading resume...</span>
+                    ) : (
+                        <span className="download">
+                            <FaDownload className="download-icon" />
+                            Download Resume
+                        </span>
+                    )}
+                </button>
+            )}
         </div>
     );
 };

@@ -13,16 +13,13 @@ import python from '../assets/python.png';
 import react from '../assets/react.png';
 import typescript from '../assets/typescript.png';
 
-
-
-import hand_wave from '../assets/hand_wave.gif'
+import hand_wave from '../assets/hand_wave.gif';
 import profile from '../assets/profile.png';
 import circle from '../assets/circle.svg';
 import logo from '../assets/logo.png';
 import myprofile from '../assets/ekd_pro.png';
 import id_profile from '../assets/id_profile.png';
-
-
+import ekddigital from '../assets/ekddigital.png';
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -46,7 +43,5 @@ export default {
   myprofile,
   hand_wave,
   id_profile,
+  ekddigital,
 };
-
-
-// export default allPhotos;
