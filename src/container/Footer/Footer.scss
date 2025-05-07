@@ -135,19 +135,18 @@
   }
 }
 
-
 .flip-card {
   background-color: transparent;
-  width: 300px;
-  height: 200px;
+  width: 320px; // Slightly increased width
+  height: 240px; // Increased height for better proportions
   border: 1px solid #f1f1f1;
   perspective: 1000px;
-  border-radius: 5%;
-
-
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 2rem auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* This container is needed to position the front and back side */
 .flip-card-inner {
   position: relative;
   width: 100%;
@@ -155,72 +154,114 @@
   text-align: center;
   transition: transform 0.8s;
   transform-style: preserve-3d;
-
 }
 
-/* Do an horizontal flip when you move the mouse over the flip box container */
 .flip-card:hover .flip-card-inner {
   transform: rotateY(180deg);
-
 }
 
-/* Position the front and back side */
 .flip-card-front,
 .flip-card-back {
   position: absolute;
   width: 100%;
   height: 100%;
   -webkit-backface-visibility: hidden;
-  /* Safari */
   backface-visibility: hidden;
-  border-radius: 5%;
-
-  h1 {
-    margin-top: 10px;
-    font-size: larger;
-    color: #fff;
-    text-align: center;
-    -webkit-animation: glow 1s ease-in-out infinite alternate;
-    -moz-animation: glow 1s ease-in-out infinite alternate;
-    animation: glow 1s ease-in-out infinite alternate;
-
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
-      }
-
-      to {
-        text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
-      }
-    }
-  }
-
-  p {
-    span {
-      color: #c00692;
-      font-style: italic;
-    }
-  }
-
+  border-radius: 10px;
 }
 
-
-
 .flip-card-front {
-  // background-color: #bbb;
   background: #f12711;
   background: -webkit-linear-gradient(to right, #f12711, #f5af19);
   background: linear-gradient(to right, #f12711, #f5af19);
-  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 95%;
+    height: 95%;
+    object-fit: contain; // Changed from cover to contain
+    border-radius: 10px;
+  }
 }
 
-/* Style the back side */
 .flip-card-back {
-
-  background: #000000;
-  background: -webkit-linear-gradient(to right, #434343, #000000);
-  background: linear-gradient(to right, #434343, #000000);
-
+  background: linear-gradient(135deg, #FF4C29, #FF823A);
   color: white;
   transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.25rem;
+  text-align: left;
+
+  .card-title {
+    margin-bottom: 1rem;
+    font-size: 1.25rem; // Reduced from 1.5rem
+    text-align: center;
+    color: white;
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem; // Reduced gap
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.2rem 0; // Reduced padding
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.85rem; // Smaller text size
+
+    &.highlight {
+      margin-top: 0.5rem;
+      background-color: rgba(255, 255, 255, 0.15);
+      padding: 0.4rem;
+      border-radius: 5px;
+      border-bottom: none;
+    }
+  }
+
+  .info-label {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .info-value {
+    font-weight: 700;
+    color: white;
+  }
+}
+
+.powered-by {
+  margin-top: 1.5rem;
+  text-align: center;
+
+  p {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
+  }
+
+  .company-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    img {
+      height: 25px;
+      width: auto;
+    }
+
+    span {
+      color: coral;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+  }
 }

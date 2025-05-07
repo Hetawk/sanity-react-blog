@@ -14,8 +14,7 @@ const Contact = () => {
                     transition={{ duration: 0.5 }}
                     className="app__contact-header"
                 >
-                    <h2 className="head-text">Take a coffee & chat with me</h2>
-                    <p className="p-text">Looking for a developer? I'd love to hear from you!</p>
+
                 </motion.div>
                 <Footer />
             </div>

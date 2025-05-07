@@ -18,25 +18,25 @@
   transition: all 0.3s ease;
   gap: 0.5rem;
   box-shadow: 0 4px 10px rgba(255, 76, 41, 0.2);
-  
+
   &:hover {
     background-color: darken(#FF4C29, 10%);
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(255, 76, 41, 0.3);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
-  
+
   .download-icon {
     font-size: 1rem;
   }
-  
+
   .loading {
     display: flex;
     align-items: center;
-    
+
     &:before {
       content: '';
       width: 14px;
@@ -48,11 +48,27 @@
       animation: spin 1s linear infinite;
     }
   }
-  
+
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
   }
+}
+
+.resume-error {
+  color: #f44336;
+  background-color: rgba(244, 67, 54, 0.1);
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  border-left: 3px solid #f44336;
+  margin: 1rem 0;
+  font-family: var(--font-base);
 }
 
 @media screen and (max-width: 450px) {

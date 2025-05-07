@@ -12,6 +12,7 @@ import skills from './skills'
 import workExperience from './workExperience'
 import contact from './contact'
 import resume from './resume'
+import resumeConfig from './resumeConfig'
 
 // Then we give our schema to the builder and provide the result to Sanity
 export default createSchema({
@@ -19,7 +20,9 @@ export default createSchema({
   name: 'default',
   // Then proceed to concatenate our document type
   // to the ones provided by any plugins that are installed
-  types: schemaTypes.concat([works, awards, brands, abouts, skills, workExperience, experiences, contact, resume,
+  types: schemaTypes.concat([works, awards, brands, abouts, skills, workExperience, experiences, contact, resume, resumeConfig,
     /* Your types here! */
   ]),
-})
+}
+
+)
