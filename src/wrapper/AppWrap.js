@@ -15,10 +15,17 @@ const AppWrap = (Component, idName, classNames) => function HOC() {
 
           <div className="powered-by">
             <p className="p-text" style={{ color: 'coral', textAlign: 'right' }}>Powered by</p>
-            <div className="company-logo">
-              <img src={images.ekddigital} alt="EKD Digital Logo" />
-              <span>EKD Digital</span>
-            </div>
+            <a
+              href="https://www.ekddigital.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none' }}
+            >
+              <div className="company-logo">
+                <img src={images.ekddigital} alt="EKD Digital Logo" />
+                <span>EKD Digital</span>
+              </div>
+            </a>
           </div>
         </div>
 
