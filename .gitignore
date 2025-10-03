@@ -10,6 +10,7 @@
 
 # production
 /build
+backend_sanity/
 /backend_sanity/dist
 /backend_sanity/production-export-*
 
