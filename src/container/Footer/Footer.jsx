@@ -1,42 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { images } from '../../constants';
 import { AppWrap, MotionWrap } from '../../wrapper';
-import { client } from '../../client';
 import './Footer.scss';
 import ResumeDownload from '../../components/ResumeDownload/ResumeDownload';
 
 
 const Footer = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const { username, email, message } = formData;
-
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = () => {
-    setLoading(true);
-
-    const contact = {
-      _type: 'contact',
-      name: formData.username,
-      email: formData.email,
-      message: formData.message,
-    };
-
-    client.create(contact)
-      .then(() => {
-        setLoading(false);
-        setIsFormSubmitted(true);
-      })
-      .catch((err) => console.log(err));
-  };
-
   return (
     <>
       <h2 className="head-text">Take a coffee & chat with me</h2>
@@ -53,38 +23,27 @@ const Footer = () => {
           <a href="tel:+86 (185) 0683-2159" className="p-text">+86 (185) 0683-2159</a>
         </div>
       </div>
-      {!isFormSubmitted ? (
-        <>
-          <div className="app__footer-form app__flex">
-            <div className="app__flex">
-              <input className="p-text" type="text" placeholder="Your Name" name="username" value={username} onChange={handleChangeInput} />
-            </div>
-            <div className="app__flex">
-              <input className="p-text" type="email" placeholder="Your Email" name="email" value={email} onChange={handleChangeInput} />
-            </div>
-            <div>
-              <textarea
-                className="p-text"
-                placeholder="Your Message"
-                value={message}
-                name="message"
-                onChange={handleChangeInput}
-              />
-            </div>
-            <button type="button" className="p-text" onClick={handleSubmit}>{!loading ? 'Send Message' : 'Sending...'}</button>
 
-
-          </div>
-
-        </>
-
-      ) : (
-        <div>
-          <h3 className="head-text">
-            Thank you for getting in touch!
-          </h3>
+      <div className="app__footer-contact-redirect">
+        <div className="contact-message">
+          <p className="p-text">
+            For inquiries and collaboration opportunities, please visit our official contact page
+          </p>
         </div>
-      )}
+        <a
+          href="https://www.ekddigital.com/contact"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="contact-redirect-btn"
+        >
+          <span className="btn-icon">🌐</span>
+          <span className="btn-text">Visit EKD Digital Contact Page</span>
+          <span className="btn-arrow">→</span>
+        </a>
+        <p className="contact-alternative p-text">
+          Or reach out directly via email or phone above
+        </p>
+      </div>
 
       <div className="flip-card">
         <div className="flip-card-inner">

@@ -1,54 +1,393 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { AppWrap, MotionWrap } from '../../wrapper';
+import React,
+{
+  useState,
+  useEffect
+}
+
+  from 'react';
+
+import {
+  motion
+}
+
+  from 'framer-motion';
+
+import {
+  AppWrap,
+  MotionWrap
+}
+
+  from '../../wrapper';
 import './About.scss';
-import { urlFor, client } from '../../client';
+import api from '../../api/client';
 
 const About = () => {
-  const [abouts, setAbouts] = useState([]);
-  
-
- 
+  const [abouts,
+    setAbouts] = useState([]);
+  const [loading,
+    setLoading] = useState(true);
+  const [error,
+    setError] = useState(null);
 
   useEffect(() => {
-    const query = '*[_type == "abouts"]';
+    const fetchAbouts = async () => {
+      try {
+        setLoading(true);
+        const response = await api.abouts.getAll();
+        setAbouts(response.data);
+      }
 
-    client.fetch(query).then((data) => {
-      setAbouts(data);
-    });
+      catch (err) {
+        console.error('Error fetching abouts:', err);
+        setError(err.message);
+      }
 
-    
+      finally {
+        setLoading(false);
+      }
+    }
 
-  }, []);
+      ;
 
-  return (
-    <>
-      <h2 className="head-text">I Know that <span>Good Dev</span> <br />means  <span>Good Business</span></h2>
+    fetchAbouts();
+  }
 
-      <div className="app__profiles">
-        {abouts.map((about, index) => (
-          <motion.div
-            whileInView={{ opacity: 1 }}
-            whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.5, type: 'tween' }}
-            className="app__profile-item"
-            key={about.title + index}
-          >
-            <img src={urlFor(about.imgUrl)} alt={about.title} />
-            <h2 className="bold-text" style={{ marginTop: 20 }}>{about.title}</h2>
-            <p className="p-text" style={{ marginTop: 10 }}>{about.description}</p>
-          </motion.div>
-        ))}
-      </div>
+    , []);
 
+  if (loading) {
+    return (<div className="app__loading"> <motion.div animate={
+      {
+        rotate: 360
+      }
+    }
 
-      
-    </>
-  );
-};
+      transition={
+        {
+          duration: 1, repeat: Infinity, ease: "linear"
+        }
+      }
 
-export default AppWrap(
-  MotionWrap(About, 'app__about'),
+      className="app__loading-spinner"
+    > ⚡ </motion.div> <p>Loading...</p> </div>);
+  }
+
+  if (error) {
+    return (<div className="app__error"> <p>⚠️ Error loading content: {
+      error
+    }
+
+    </p> </div>);
+  }
+
+  return (<> <motion.div initial={
+    {
+      opacity: 0, y: -20
+    }
+  }
+
+    animate={
+      {
+        opacity: 1, y: 0
+      }
+    }
+
+    transition={
+      {
+        duration: 0.6, ease: "easeOut"
+      }
+    }
+
+    className="app__about-header"
+  > <h2 className="head-text"> <span>Technology Leader</span> & <span>Innovation Driver</span> </h2> <motion.p className="p-text about-subtitle"
+
+    initial={
+      {
+        opacity: 0
+      }
+    }
+
+    animate={
+      {
+        opacity: 1
+      }
+    }
+
+    transition={
+      {
+        delay: 0.3, duration: 0.6
+      }
+    }
+
+  > Combining advanced academic research with comprehensive technical expertise to architect innovative solutions that deliver measurable impact across global markets. </motion.p> </motion.div> <div className="app__profiles"> {
+    abouts.map((about, index) => (<motion.div whileInView={
+      {
+        opacity: 1, y: 0, rotateY: 0
+      }
+    }
+
+      initial={
+        {
+          opacity: 0, y: 80, rotateY: -10
+        }
+      }
+
+      whileHover={
+        {
+          scale: 1.02,
+          y: -15,
+          rotateY: 2,
+          boxShadow: "0 25px 50px rgba(255, 76, 41, 0.2)"
+        }
+      }
+
+      transition={
+        {
+          duration: 0.7,
+          type: 'spring',
+          stiffness: 80,
+          delay: index * 0.15
+        }
+      }
+
+      viewport={
+        {
+          once: true, amount: 0.25
+        }
+      }
+
+      className="app__profile-item"
+
+      key={
+        about.id
+      }
+
+    > {
+        /* Icon/Number Badge */
+      }
+
+      <motion.div className="profile-badge"
+
+        initial={
+          {
+            scale: 0, rotate: -180
+          }
+        }
+
+        whileInView={
+          {
+            scale: 1, rotate: 0
+          }
+        }
+
+        transition={
+          {
+            delay: 0.2 + index * 0.15,
+            type: 'spring',
+            stiffness: 200
+          }
+        }
+
+        viewport={
+          {
+            once: true
+          }
+        }
+
+      > <span> {
+        index + 1
+      }
+
+        </span> </motion.div> <motion.div className="profile-image-wrapper"
+
+          whileHover={
+            {
+              scale: 1.08, rotate: 2
+            }
+          }
+
+          transition={
+            {
+              duration: 0.4, type: 'spring', stiffness: 300
+            }
+          }
+
+        > {
+          about.imgUrl && (<> <img src={
+            about.imgUrl
+          }
+
+            alt={
+              about.title
+            }
+
+          /> <motion.div className="image-overlay"
+            initial={
+              {
+                opacity: 0
+              }
+            }
+
+            whileHover={
+              {
+                opacity: 1
+              }
+            }
+
+            transition={
+              {
+                duration: 0.3
+              }
+            }
+
+            /> </>)
+        }
+
+      </motion.div> <motion.div className="profile-content"
+
+        initial={
+          {
+            opacity: 0, y: 20
+          }
+        }
+
+        animate={
+          {
+            opacity: 1, y: 0
+          }
+        }
+
+        transition={
+          {
+            delay: 0.3 + index * 0.1
+          }
+        }
+
+      > <h2 className="bold-text"> {
+        about.title
+      }
+
+        </h2> <motion.div className="title-underline"
+
+          initial={
+            {
+              width: 0, opacity: 0
+            }
+          }
+
+          whileInView={
+            {
+              width: "60px", opacity: 1
+            }
+          }
+
+          transition={
+            {
+              delay: 0.4 + index * 0.1, duration: 0.6
+            }
+          }
+
+          viewport={
+            {
+              once: true
+            }
+          }
+
+        /> <motion.p className="p-text"
+          initial={
+            {
+              opacity: 0
+            }
+          }
+
+          animate={
+            {
+              opacity: 1
+            }
+          }
+
+          transition={
+            {
+              delay: 0.5 + index * 0.1
+            }
+          }
+
+        > {
+            about.description
+          }
+
+        </motion.p> {
+          /* Decorative corner accent */
+        }
+
+        <motion.div className="card-accent"
+
+          initial={
+            {
+              scale: 0
+            }
+          }
+
+          whileInView={
+            {
+              scale: 1
+            }
+          }
+
+          transition={
+            {
+              delay: 0.6 + index * 0.1, type: 'spring'
+            }
+          }
+
+          viewport={
+            {
+              once: true
+            }
+          }
+
+        /> </motion.div> </motion.div>))
+  }
+
+    </div> <motion.div className="about-cta"
+
+      initial={
+        {
+          opacity: 0, y: 30
+        }
+      }
+
+      whileInView={
+        {
+          opacity: 1, y: 0
+        }
+      }
+
+      viewport={
+        {
+          once: true
+        }
+      }
+
+      transition={
+        {
+          delay: 0.8, duration: 0.6
+        }
+      }
+
+    > <p className="p-text" style={
+      {
+        fontStyle: 'italic', color: '#6b7280', marginTop: 40
+      }
+    }
+
+    > "I envision EKD Digital as more than a technology company—we are KINGDOM citizens
+        exercising dominion in the digital space."
+      </p> </motion.div> </>);
+}
+
+  ;
+
+export default AppWrap(MotionWrap(About, 'app__about'),
   'about',
   'app__whitebg',
 );

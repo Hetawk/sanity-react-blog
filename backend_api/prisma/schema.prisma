@@ -1,0 +1,115 @@
+// This is your Prisma schema file
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Work {
+  id          String   @id @default(uuid())
+  title       String
+  description String?  @db.Text
+  projectLink String?
+  codeLink    String?
+  imgUrl      String?  @db.Text
+  tags        String?  @db.Text // JSON array as string
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("works")
+}
+
+model About {
+  id          String   @id @default(uuid())
+  title       String
+  description String?  @db.Text
+  imgUrl      String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("abouts")
+}
+
+model Skill {
+  id        String   @id @default(uuid())
+  name      String
+  bgColor   String?
+  icon      String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("skills")
+}
+
+model Experience {
+  id        String   @id @default(uuid())
+  year      String
+  works     String?  @db.Text // JSON array as string
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("experiences")
+}
+
+model WorkExperience {
+  id        String   @id @default(uuid())
+  name      String
+  company   String?
+  desc      String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("workExperiences")
+}
+
+model Brand {
+  id        String   @id @default(uuid())
+  name      String
+  imgUrl    String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("brands")
+}
+
+model Award {
+  id          String   @id @default(uuid())
+  title       String
+  description String?  @db.Text
+  date        String?
+  imgUrl      String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("awards")
+}
+
+model Contact {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@map("contacts")
+}
+
+model Resume {
+  id         String   @id @default(uuid())
+  name       String
+  email      String
+  phone      String?
+  summary    String?  @db.Text
+  experience String?  @db.Text // JSON array as string
+  education  String?  @db.Text // JSON array as string
+  skills     String?  @db.Text // JSON array as string
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("resumes")
+}
