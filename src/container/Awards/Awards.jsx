@@ -112,11 +112,19 @@ const Awards = () => {
             <div className="app__award-grid">
               {awards.slice(0, visibleItems).map((award, index) => (
                 <motion.div
-                  whileInView={{ opacity: [0, 1] }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: index * 0.1,
+                    type: "spring",
+                    stiffness: 100
+                  }}
+                  viewport={{ once: true, amount: 0.3 }}
                   className="app__award-grid-item"
                   key={`award-${index}`}
                 >
+                  <div className="award-icon">🏆</div>
                   <div className="award-image-container">
                     <img src={urlFor(award.imgurl)} alt={award.name} />
                   </div>

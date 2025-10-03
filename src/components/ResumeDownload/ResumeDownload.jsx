@@ -131,10 +131,12 @@ const ResumeDownload = ({ location = 'home' }) => {
                     {isLoading ? (
                         <span className="loading">Loading resume...</span>
                     ) : (
-                        <span className="download">
-                            <FaDownload className="download-icon" />
-                            Download Resume
-                        </span>
+                        <>
+                            <div className="icon-wrapper">
+                                <FaDownload className="download-icon" />
+                            </div>
+                            <span className="btn-text">Download Resume</span>
+                        </>
                     )}
                 </button>
             )}

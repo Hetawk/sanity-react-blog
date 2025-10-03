@@ -10,6 +10,8 @@
 
 # production
 /build
+/backend_sanity/dist
+/backend_sanity/production-export-*
 
 # misc
 .DS_Store
@@ -22,3 +24,16 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# documentation and scripts
+/docs
+/scripts
+
+# screenshots
+*.png
+backend_sanity.png
+contact.png
+header.png
+
+# legacy backend (no longer used)
+/backend_sanity

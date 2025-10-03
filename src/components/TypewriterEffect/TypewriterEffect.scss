@@ -1,0 +1,39 @@
+.typewriter-container {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  justify-content: center;
+}
+
+.typewriter-overflow {
+  overflow: hidden;
+  padding-bottom: 0.5rem;
+}
+
+.typewriter-content {
+  white-space: nowrap;
+}
+
+.typewriter-words-container {
+  display: inline-flex;
+  align-items: center;
+}
+
+.typewriter-word {
+  display: inline-block;
+}
+
+.typewriter-char {
+  color: #FF4C29;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.typewriter-cursor {
+  display: block;
+  width: 4px;
+  height: 1.4em;
+  background: #FF4C29;
+  border-radius: 2px;
+  flex-shrink: 0;
+}

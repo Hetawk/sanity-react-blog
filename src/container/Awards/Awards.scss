@@ -232,80 +232,184 @@
   }
 }
 
-// Grid View Styles - improved alignment
+// Grid View Styles - Modern glassmorphism design
 .app__award-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 2rem;
   width: 90%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .app__award-grid-item {
-  background-color: var(--white-color);
-  border-radius: 15px;
+  position: relative;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(255, 255, 255, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(31, 28, 24, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   height: 100%;
   display: flex;
   flex-direction: column;
 
+  // Decorative gradient orb
+  &::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -15%;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(255, 76, 41, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    transition: all 0.4s ease;
+    z-index: 0;
+  }
+
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 
+      0 20px 60px rgba(255, 76, 41, 0.15),
+      0 8px 16px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border-color: rgba(255, 76, 41, 0.2);
+
+    &::before {
+      top: -20%;
+      right: -5%;
+      background: radial-gradient(circle, rgba(255, 76, 41, 0.1) 0%, transparent 70%);
+    }
+
+    .award-icon {
+      transform: scale(1.15) rotate(12deg);
+    }
+
+    .award-image-container img {
+      transform: scale(1.08);
+    }
+  }
+
+  .award-icon {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, 
+      rgba(255, 76, 41, 0.15) 0%, 
+      rgba(142, 14, 0, 0.1) 100%);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 12px rgba(255, 76, 41, 0.15);
+    transition: all 0.3s ease;
   }
 
   .award-image-container {
     width: 100%;
-    height: 220px;
-    /* Fixed height for consistent appearance */
+    height: 240px;
     overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, 
+      rgba(255, 76, 41, 0.03) 0%, 
+      rgba(142, 14, 0, 0.02) 100%);
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.5s ease;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    &:hover img {
-      transform: scale(1.05);
+    // Image overlay for better text contrast
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, transparent 100%);
+      pointer-events: none;
     }
   }
 
   .award-details {
-    padding: 1.5rem;
+    padding: 1.75rem;
     flex: 1;
     display: flex;
     flex-direction: column;
     text-align: center;
     align-items: center;
+    position: relative;
+    z-index: 1;
 
     .award-year {
-      display: inline-block;
-      background-color: var(--secondary-color);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: linear-gradient(135deg, var(--secondary-color) 0%, #8E0E00 100%);
       color: white;
-      padding: 0.3rem 0.8rem;
-      border-radius: 15px;
-      font-size: 0.9rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
       margin-bottom: 1rem;
-      align-self: center;
+      box-shadow: 0 4px 12px rgba(255, 76, 41, 0.3);
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+
+      &::before {
+        content: '📅';
+        font-size: 0.9rem;
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 76, 41, 0.4);
+      }
     }
 
     h4 {
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 1.15rem;
       color: var(--black-color);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
       text-align: center;
+      line-height: 1.4;
+      position: relative;
     }
 
     h5 {
-      font-weight: 400;
-      color: var(--gray-color);
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: #666;
       margin-top: auto;
       text-align: center;
+      padding: 0.6rem 1rem;
+      background: rgba(255, 76, 41, 0.05);
+      border-radius: 10px;
+      border-left: 3px solid var(--secondary-color);
+      width: 100%;
+      
+      &::before {
+        content: '🏢';
+        margin-right: 0.4rem;
+      }
     }
   }
 }

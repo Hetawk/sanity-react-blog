@@ -1,13 +1,12 @@
 #home {
   position: relative;
-  // background: url("../../assets/bgIMG.png");
   background: #8E0E00;
   background: -webkit-linear-gradient(to right, #1F1C18, #8E0E00);
   background: linear-gradient(to right, #1F1C18, #8E0E00);
-
   background-size: cover;
   background-position: center;
   background-repeat: repeat;
+  overflow: hidden;
 
   // disable the default padding styles
   .app__wrapper {
@@ -19,13 +18,58 @@
   }
 }
 
+// Animated background orbs
+.header-orbs {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+  }
+
+  .orb-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 76, 41, 0.4) 0%, transparent 70%);
+    top: 10%;
+    left: 10%;
+  }
+
+  .orb-2 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(142, 14, 0, 0.3) 0%, transparent 70%);
+    bottom: 15%;
+    right: 15%;
+  }
+
+  .orb-3 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(31, 28, 24, 0.5) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
 .app__header {
   flex: 1;
   width: 100%;
   height: 100%;
   flex-direction: row;
-
   padding: 6rem 2rem 0rem;
+  position: relative;
+  z-index: 1;
 
   @media screen and (min-width: 2000px) {
     padding-top: 8rem;
@@ -47,8 +91,8 @@
   justify-content: flex-start;
   align-items: flex-start;
   height: 100%;
-
   margin: 0 2rem;
+  z-index: 2;
 
   @media screen and (max-width: 1200px) {
     width: 100%;
@@ -63,42 +107,143 @@
   align-items: flex-end;
   flex-direction: column;
 
-  .badge-cmp,
-  .tag-cmp {
-    padding: 1rem 2rem;
-    background: var(--white-color);
-    border-radius: 15px;
-    flex-direction: row;
-    width: auto;
+  // Glassmorphism card styles
+  .glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 2rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    &:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 76, 41, 0.4);
+      box-shadow: 
+        0 12px 48px rgba(255, 76, 41, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 2px 4px rgba(0, 0, 0, 0.15);
+    }
 
-    h1 {
-      font-size: medium;
+    // Animated shine effect
+    .shine-effect {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 70%
+      );
+      animation: shine 3s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes shine {
+      0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      }
+      100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+      }
     }
   }
 
-  .tag-cmp {
-    flex-direction: column;
-    margin-top: 3rem;
+  // Compact hero card
+  .hero-card {
+    width: 100%;
+    max-width: 600px;
 
-    p {
-      width: 100%;
-      text-transform: uppercase;
-      text-align: right;
-    }
-  }
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
 
-  img {
-    width: 30px;
-    height: 30px;
-  }
+      .greeting-text {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.85);
+        margin: 0;
+        font-weight: 500;
+      }
 
-  span {
-    font-size: 2.5rem;
+      .name-gradient {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin: 0;
+        line-height: 1.2;
+        background: linear-gradient(135deg, #ffffff 0%, #FF4C29 50%, #8E0E00 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -1.5px;
 
-    @media screen and (min-width: 2000px) {
-      font-size: 5rem;
+        @media screen and (min-width: 2000px) {
+          font-size: 4.5rem;
+        }
+
+        @media screen and (max-width: 768px) {
+          font-size: 2.2rem;
+        }
+
+        @media screen and (max-width: 450px) {
+          font-size: 1.8rem;
+          letter-spacing: -1px;
+        }
+      }
+
+      .role-subtitle {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.75);
+        margin: 0;
+        font-weight: 400;
+        letter-spacing: 0.3px;
+
+        @media screen and (max-width: 450px) {
+          font-size: 0.95rem;
+        }
+      }
+
+      .role-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-top: 0.5rem;
+
+        .pill {
+          padding: 0.6rem 1.2rem;
+          background: rgba(255, 255, 255, 0.12);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 50px;
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.9);
+          font-weight: 500;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+          white-space: nowrap;
+
+          &:hover {
+            background: rgba(255, 76, 41, 0.2);
+            border-color: rgba(255, 76, 41, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 76, 41, 0.3);
+          }
+
+          @media screen and (max-width: 450px) {
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+          }
+        }
+      }
     }
   }
 
@@ -107,12 +252,15 @@
     align-items: flex-start;
   }
 
-  .resume-badge {
-    margin-top: 2rem;
-    align-self: center;
-    width: 100%;
+  .resume-badge-modern {
+    margin-top: 1.5rem;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    width: 100%;
+
+    @media screen and (max-width: 1200px) {
+      justify-content: center;
+    }
   }
 }
 
@@ -124,53 +272,89 @@
   align-items: flex-start;
   height: 100%;
   margin-left: 1rem;
+  z-index: 2;
 
-  div {
-    width: 100px;
-    height: 100px;
+  .glass-circle {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    border: 2px solid rgba(255, 255, 255, 0.25);
     border-radius: 50%;
-
-    background: var(--white-color);
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 
+      0 10px 30px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
 
     img {
       width: 60%;
       height: 60%;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+      position: relative;
+      z-index: 2;
+    }
+
+    .circle-shimmer {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 100%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover .circle-shimmer {
+      opacity: 1;
+      animation: shimmer-rotate 1.5s infinite;
+    }
+
+    @keyframes shimmer-rotate {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
   }
 
-  // circles with different height & width
-
-  div:nth-child(1) {
+  // Different sizes for circles
+  .glass-circle:nth-child(1) {
     width: 100px;
     height: 100px;
   }
 
-  div:nth-child(2) {
+  .glass-circle:nth-child(2) {
     margin: 1.75rem;
     width: 150px;
     height: 150px;
   }
 
-  div:nth-child(3) {
+  .glass-circle:nth-child(3) {
     width: 70px;
     height: 70px;
   }
 
   @media screen and (min-width: 2000px) {
-    div:nth-child(2) {
+    .glass-circle:nth-child(1) {
+      width: 200px;
+      height: 200px;
+    }
+
+    .glass-circle:nth-child(2) {
       width: 400px;
       height: 400px;
     }
 
-    div:nth-child(3) {
+    .glass-circle:nth-child(3) {
       width: 170px;
       height: 170px;
-    }
-
-    div:nth-child(1) {
-      width: 200px;
-      height: 200px;
     }
   }
 
@@ -179,9 +363,28 @@
     flex-direction: row;
     flex-wrap: wrap;
     margin-left: 0;
+    justify-content: center;
 
-    div {
+    .glass-circle {
       margin: 1rem;
+    }
+  }
+
+  @media screen and (max-width: 450px) {
+    .glass-circle:nth-child(1) {
+      width: 70px;
+      height: 70px;
+    }
+
+    .glass-circle:nth-child(2) {
+      width: 100px;
+      height: 100px;
+      margin: 1rem;
+    }
+
+    .glass-circle:nth-child(3) {
+      width: 50px;
+      height: 50px;
     }
   }
 }
@@ -189,29 +392,80 @@
 .app__header-img {
   flex: 1;
   height: 100%;
-
   display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
+  justify-content: center;
+  align-items: center;
   position: relative;
+  z-index: 2;
 
-  img {
-    width: 100%;
-    object-fit: contain;
-    z-index: 1;
-  }
+  .profile-glass-wrapper {
+    position: relative;
+    width: 450px;
+    height: 450px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  .overlay_circle {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 0;
-    width: 100%;
-    height: 90%;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      position: relative;
+      z-index: 2;
+      border: 5px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(255, 76, 41, 0.1);
+      transition: all 0.4s ease;
+    }
+
+    .profile-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid;
+      pointer-events: none;
+    }
+
+    .ring-1 {
+      width: 110%;
+      height: 110%;
+      border-color: rgba(255, 76, 41, 0.3);
+      border-style: dashed;
+    }
+
+    .ring-2 {
+      width: 120%;
+      height: 120%;
+      border-color: rgba(142, 14, 0, 0.2);
+      border-style: dotted;
+    }
+
+    .profile-glow {
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(255, 76, 41, 0.2) 0%,
+        transparent 70%
+      );
+      filter: blur(30px);
+      z-index: 0;
+    }
+
+    @media screen and (max-width: 1200px) {
+      width: 350px;
+      height: 350px;
+    }
+
+    @media screen and (max-width: 450px) {
+      width: 280px;
+      height: 280px;
+    }
   }
 
   @media screen and (max-width: 1200px) {
-    margin: 2rem 0;
+    margin: 3rem 0;
   }
 }

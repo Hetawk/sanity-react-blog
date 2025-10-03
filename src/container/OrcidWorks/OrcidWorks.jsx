@@ -225,18 +225,6 @@ const OrcidWorks = () => {
         try {
             setLoadingStates(prev => ({ ...prev, reviews: true }));
 
-            const knownPublonsReview = {
-                id: 'vBHKdp8P',
-                title: 'Review for Physica Scripta',
-                type: 'Peer Review',
-                completionDate: '2025',
-                role: 'Verified reviewer',
-                organization: 'Physica Scripta (journal)',
-                verified: 'Verified by journal integration',
-                canonical: 'https://publons.com/wos-op/review/author/vBHKdp8P/',
-                researcherId: 'LTC-7193-2024'
-            };
-
             const response = await fetch(`https://pub.orcid.org/v3.0/${orcidId}/peer-reviews`, {
                 headers: {
                     'Accept': 'application/json',
@@ -245,9 +233,6 @@ const OrcidWorks = () => {
             });
 
             if (!response.ok) {
-                if (response.status === 404) {
-                    return fetchPublonsReviews();
-                }
                 throw new Error(`Failed to fetch peer reviews: ${response.status}`);
             }
 
@@ -256,113 +241,106 @@ const OrcidWorks = () => {
 
             let formattedReviews = [];
 
+            // Map of known ISSNs to journal names
+            const journalNames = {
+                '1402-4896': 'Physica Scripta',
+                '0950-7051': 'Knowledge-Based Systems'
+            };
+
             if (data && data.group) {
                 console.log('Found peer review groups:', data.group.length);
 
                 data.group.forEach(group => {
-                    console.log('Processing group:', group);
+                    // Extract ISSN from group external-ids
+                    let journalISSN = null;
+                    let journalName = null;
 
-                    if (group['peer-review-summary'] && Array.isArray(group['peer-review-summary'])) {
-                        group['peer-review-summary'].forEach(review => {
-                            console.log('Found review:', review);
-                            let reviewTitle = 'Peer Review';
-
-                            if (review['subject-container-name']) {
-                                reviewTitle = review['subject-container-name'];
-                            } else if (review['review-group-id']) {
-                                reviewTitle = review['review-group-id'];
-                            } else if (review['convening-organization'] && review['convening-organization'].name) {
-                                reviewTitle = `Review for ${review['convening-organization'].name}`;
+                    if (group['external-ids'] && group['external-ids']['external-id']) {
+                        const groupExtIds = group['external-ids']['external-id'];
+                        for (const extId of groupExtIds) {
+                            if (extId['external-id-type'] === 'peer-review' && extId['external-id-value']) {
+                                journalISSN = extId['external-id-value'].replace('issn:', '');
+                                journalName = journalNames[journalISSN] || null;
                             }
+                        }
+                    }
 
-                            if (review['external-ids'] && review['external-ids']['external-id']) {
-                                const externalIds = review['external-ids']['external-id'];
-                                for (const extId of externalIds) {
-                                    if (extId['external-id-value'] === 'vBHKdp8P') {
-                                        reviewTitle = 'Review for Physica Scripta';
-                                        console.log('Found matching Publons review ID!');
+                    // Process each peer-review-group
+                    if (group['peer-review-group'] && Array.isArray(group['peer-review-group'])) {
+                        group['peer-review-group'].forEach(reviewGroup => {
+                            if (reviewGroup['peer-review-summary'] && Array.isArray(reviewGroup['peer-review-summary'])) {
+                                reviewGroup['peer-review-summary'].forEach(review => {
+                                    console.log('Processing review:', review);
+
+                                    // Extract review URL from external IDs
+                                    let reviewUrl = review['review-url']?.value || null;
+                                    let externalIdValue = null;
+
+                                    if (review['external-ids'] && review['external-ids']['external-id']) {
+                                        const reviewExtIds = review['external-ids']['external-id'];
+                                        for (const extId of reviewExtIds) {
+                                            if (extId['external-id-url']?.value) {
+                                                reviewUrl = extId['external-id-url'].value;
+                                                externalIdValue = extId['external-id-value'];
+                                            }
+                                        }
                                     }
-                                }
-                            }
 
-                            const reviewData = {
-                                id: review.putCode || `review-${Math.random()}`,
-                                title: reviewTitle,
-                                type: 'Peer Review',
-                                completionDate: review['completion-date']?.year?.value || '2025',
-                                role: review['reviewer-role'] || 'Reviewer',
-                                organization: review?.organization?.name ||
-                                    review?.['convening-organization']?.name ||
-                                    'Physica Scripta'
-                            };
-                            console.log('Formatted review:', reviewData);
-                            formattedReviews.push(reviewData);
+                                    // Determine journal name from review-group-id if not found
+                                    if (!journalName && review['review-group-id']) {
+                                        const reviewGroupISSN = review['review-group-id'].replace('issn:', '');
+                                        journalName = journalNames[reviewGroupISSN] || null;
+                                    }
+
+                                    // Get organization info
+                                    const organizationName = review['convening-organization']?.name || 'Unknown Organization';
+                                    const sourceName = review?.source?.['source-name']?.value;
+
+                                    // Determine verification status
+                                    let verified = null;
+                                    if (sourceName && sourceName.includes('Web of Science')) {
+                                        verified = 'Verified by journal integration';
+                                    } else if (organizationName.includes('Elsevier')) {
+                                        verified = 'Verified by Elsevier Editorial';
+                                    }
+
+                                    // Build title
+                                    let title = journalName ? `Review for ${journalName}` : 'Peer Review';
+
+                                    const reviewData = {
+                                        id: review['put-code'] || externalIdValue || `review-${Math.random()}`,
+                                        title: title,
+                                        type: 'Peer Review',
+                                        completionDate: review['completion-date']?.year?.value || 'N/A',
+                                        role: review['reviewer-role']?.charAt(0).toUpperCase() + review['reviewer-role']?.slice(1) || 'Reviewer',
+                                        organization: journalName ? `${journalName} (journal)` : organizationName,
+                                        verified: verified,
+                                        reviewUrl: reviewUrl,
+                                        issn: journalISSN
+                                    };
+
+                                    console.log('Formatted review:', reviewData);
+                                    formattedReviews.push(reviewData);
+                                });
+                            }
                         });
                     }
                 });
             }
 
-            if (formattedReviews.length === 0) {
-                console.log('No reviews found through standard method, adding known review');
-                formattedReviews.push(knownPublonsReview);
-            } else {
-                const hasPublonsReview = formattedReviews.some(review =>
-                    review.id === 'vBHKdp8P' ||
-                    review.title.includes('Physica Scripta')
-                );
-
-                if (!hasPublonsReview) {
-                    console.log('Adding Publons review to existing reviews');
-                    formattedReviews.push(knownPublonsReview);
-                }
-            }
-
             console.log('Final formatted reviews:', formattedReviews);
             setPeerReviews(formattedReviews);
-            setErrorStates(prev => ({ ...prev, reviews: null }));
+
+            if (formattedReviews.length === 0) {
+                setErrorStates(prev => ({ ...prev, reviews: "No peer review data found in this ORCID profile" }));
+            } else {
+                setErrorStates(prev => ({ ...prev, reviews: null }));
+            }
         } catch (err) {
             console.error('Error fetching peer reviews:', err);
-
-            console.log('Adding known Publons review as fallback');
-            const knownReviews = [{
-                id: 'vBHKdp8P',
-                title: 'Review for Physica Scripta',
-                type: 'Peer Review',
-                completionDate: '2025',
-                role: 'Verified reviewer',
-                organization: 'Physica Scripta (journal)',
-                verified: 'Verified by journal integration',
-                canonical: 'https://publons.com/wos-op/review/author/vBHKdp8P/',
-                researcherId: 'LTC-7193-2024'
-            }];
-
-            setPeerReviews(knownReviews);
-            setErrorStates(prev => ({ ...prev, reviews: null }));
+            setErrorStates(prev => ({ ...prev, reviews: err.message }));
         } finally {
             setLoadingStates(prev => ({ ...prev, reviews: false }));
-        }
-    };
-
-    const fetchPublonsReviews = async () => {
-        console.log('Attempting to fetch Publons reviews directly');
-        try {
-            const knownReviews = [{
-                id: 'vBHKdp8P',
-                title: 'Review for Physica Scripta',
-                type: 'Peer Review',
-                completionDate: '2025',
-                role: 'Verified reviewer',
-                organization: 'Physica Scripta (journal)',
-                verified: 'Verified by journal integration',
-                canonical: 'https://publons.com/wos-op/review/author/vBHKdp8P/',
-                researcherId: 'LTC-7193-2024'
-            }];
-
-            setPeerReviews(knownReviews);
-            setErrorStates(prev => ({ ...prev, reviews: null }));
-        } catch (err) {
-            console.error('Error in Publons fallback:', err);
-            setErrorStates(prev => ({ ...prev, reviews: "Unable to fetch peer review data" }));
         }
     };
 
@@ -681,15 +659,23 @@ const OrcidWorks = () => {
                     {visibleWorks.length === 0 ? (
                         <p className="p-text">No publications found</p>
                     ) : (
-                        visibleWorks.map((work) => (
+                        visibleWorks.map((work, index) => (
                             <motion.div
-                                whileInView={{ opacity: [0, 1] }}
-                                transition={{ duration: 0.5 }}
-                                className="app__orcid-work-item"
+                                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                                transition={{
+                                    duration: 0.5,
+                                    delay: index * 0.1,
+                                    type: "spring",
+                                    stiffness: 100
+                                }}
+                                viewport={{ once: true, amount: 0.3 }}
+                                className="app__orcid-work-item publication-card"
                                 key={work.id}
                             >
+                                <div className="card-icon">📄</div>
                                 <h3 className="bold-text">{work.title}</h3>
-                                {work.journal && <p className="p-text">{work.journal}</p>}
+                                {work.journal && <p className="p-text journal-name">{work.journal}</p>}
                                 <div className="app__orcid-work-info">
                                     {work.type && <span className="work-type">{work.type}</span>}
                                     {work.year && <span className="work-year">{work.year}</span>}
@@ -752,16 +738,28 @@ const OrcidWorks = () => {
                     {visibleEmployment.length === 0 ? (
                         <p className="p-text">No employment information found</p>
                     ) : (
-                        visibleEmployment.map((emp) => (
+                        visibleEmployment.map((emp, index) => (
                             <motion.div
-                                whileInView={{ opacity: [0, 1] }}
-                                transition={{ duration: 0.5 }}
-                                className="app__orcid-work-item"
+                                initial={{ opacity: 0, x: -50, scale: 0.9 }}
+                                whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                                transition={{
+                                    duration: 0.5,
+                                    delay: index * 0.1,
+                                    type: "spring",
+                                    stiffness: 100
+                                }}
+                                viewport={{ once: true, amount: 0.3 }}
+                                className="app__orcid-work-item employment-card"
                                 key={emp.id}
                             >
+                                <div className="card-icon">💼</div>
                                 <h3 className="bold-text">{emp.organization}</h3>
-                                {emp.department && <p className="p-text">{emp.department}</p>}
-                                {emp.role && <p className="p-text"><strong>Role:</strong> {emp.role}</p>}
+                                {emp.department && <p className="p-text department-name">{emp.department}</p>}
+                                {emp.role && (
+                                    <div className="role-info">
+                                        <p className="p-text"><strong>Role:</strong> {emp.role}</p>
+                                    </div>
+                                )}
                                 <div className="app__orcid-work-info">
                                     {emp.location && <span className="work-location">{emp.location}, {emp.country}</span>}
                                     {emp.startYear && (
@@ -810,23 +808,6 @@ const OrcidWorks = () => {
     };
 
     const renderReviewsTab = () => {
-        if (peerReviews.length === 0 || !peerReviews.some(review => review.id === 'vBHKdp8P')) {
-            setPeerReviews([
-                ...peerReviews,
-                {
-                    id: 'vBHKdp8P',
-                    title: 'Review for Physica Scripta',
-                    type: 'Peer Review',
-                    completionDate: '2025',
-                    role: 'Verified reviewer',
-                    organization: 'Physica Scripta (journal)',
-                    verified: 'Verified by journal integration',
-                    canonical: 'https://publons.com/wos-op/review/author/vBHKdp8P/',
-                    researcherId: 'LTC-7193-2024'
-                }
-            ]);
-        }
-
         const visibleReviews = peerReviews.slice(0, visibleItems);
 
         return (
@@ -835,15 +816,28 @@ const OrcidWorks = () => {
                     {visibleReviews.length === 0 ? (
                         <p className="p-text">No peer reviews found</p>
                     ) : (
-                        visibleReviews.map((review) => (
+                        visibleReviews.map((review, index) => (
                             <motion.div
-                                whileInView={{ opacity: [0, 1] }}
-                                transition={{ duration: 0.5 }}
-                                className="app__orcid-work-item"
+                                initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+                                whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                                transition={{
+                                    duration: 0.5,
+                                    delay: index * 0.1,
+                                    type: "spring",
+                                    stiffness: 120
+                                }}
+                                viewport={{ once: true, amount: 0.3 }}
+                                className="app__orcid-work-item review-card"
                                 key={review.id}
                             >
+                                <div className="card-icon">🔍</div>
                                 <h3 className="bold-text">{review.title}</h3>
                                 <p className="p-text">{review.organization}</p>
+                                {review.issn && (
+                                    <p className="review-issn">
+                                        <strong>ISSN:</strong> {review.issn}
+                                    </p>
+                                )}
                                 <div className="app__orcid-work-info">
                                     <span className="work-type">{review.role}</span>
                                     {review.completionDate && (
@@ -851,16 +845,18 @@ const OrcidWorks = () => {
                                     )}
                                 </div>
                                 {review.verified && (
-                                    <p className="p-text"><strong>Status:</strong> {review.verified}</p>
+                                    <div className="review-status">
+                                        <p className="p-text"><strong>Status:</strong> {review.verified}</p>
+                                    </div>
                                 )}
-                                {review.canonical && (
+                                {review.reviewUrl && (
                                     <a
-                                        href={review.canonical}
+                                        href={review.reviewUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="work-link"
                                     >
-                                        View on Publons
+                                        {review.reviewUrl.includes('publons') ? 'View on Publons' : 'View Review'}
                                     </a>
                                 )}
                             </motion.div>
@@ -911,13 +907,21 @@ const OrcidWorks = () => {
                     {visibleFunding.length === 0 ? (
                         <p className="p-text">No funding information found</p>
                     ) : (
-                        visibleFunding.map((fund) => (
+                        visibleFunding.map((fund, index) => (
                             <motion.div
-                                whileInView={{ opacity: [0, 1] }}
-                                transition={{ duration: 0.5 }}
-                                className="app__orcid-work-item"
+                                initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                                transition={{
+                                    duration: 0.5,
+                                    delay: index * 0.1,
+                                    type: "spring",
+                                    stiffness: 100
+                                }}
+                                viewport={{ once: true, amount: 0.3 }}
+                                className="app__orcid-work-item funding-card"
                                 key={fund.id}
                             >
+                                <div className="card-icon">💰</div>
                                 <h3 className="bold-text">{fund.title}</h3>
                                 <p className="p-text">{fund.organization}</p>
                                 <div className="app__orcid-work-info">
@@ -929,9 +933,9 @@ const OrcidWorks = () => {
                                     )}
                                 </div>
                                 {fund.amount && (
-                                    <p className="p-text funding-amount">
-                                        Amount: {fund.amount} {fund.currency}
-                                    </p>
+                                    <div className="funding-amount">
+                                        {fund.amount} {fund.currency}
+                                    </div>
                                 )}
                             </motion.div>
                         ))
@@ -981,16 +985,24 @@ const OrcidWorks = () => {
                     {visibleEducation.length === 0 ? (
                         <p className="p-text">No education information found</p>
                     ) : (
-                        visibleEducation.map((edu) => (
+                        visibleEducation.map((edu, index) => (
                             <motion.div
-                                whileInView={{ opacity: [0, 1] }}
-                                transition={{ duration: 0.5 }}
-                                className="app__orcid-work-item"
+                                initial={{ opacity: 0, x: 50, scale: 0.9 }}
+                                whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                                transition={{
+                                    duration: 0.5,
+                                    delay: index * 0.1,
+                                    type: "spring",
+                                    stiffness: 100
+                                }}
+                                viewport={{ once: true, amount: 0.3 }}
+                                className="app__orcid-work-item education-card"
                                 key={edu.id}
                             >
+                                <div className="card-icon">🎓</div>
                                 <h3 className="bold-text">{edu.institution}</h3>
-                                {edu.department && <p className="p-text">{edu.department}</p>}
-                                {edu.degree && <p className="p-text">{edu.degree}</p>}
+                                {edu.department && <p className="p-text department-name">{edu.department}</p>}
+                                {edu.degree && <div className="degree-badge">{edu.degree}</div>}
                                 <div className="app__orcid-work-info">
                                     <span className="work-type">{edu.role}</span>
                                     {edu.startYear && edu.endYear && (
