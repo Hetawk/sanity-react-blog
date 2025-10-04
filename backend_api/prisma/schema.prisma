@@ -100,16 +100,15 @@ model Contact {
 }
 
 model Resume {
-  id         String   @id @default(uuid())
-  name       String
-  email      String
-  phone      String?
-  summary    String?  @db.Text
-  experience String?  @db.Text // JSON array as string
-  education  String?  @db.Text // JSON array as string
-  skills     String?  @db.Text // JSON array as string
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          String   @id @default(uuid())
+  title       String // Resume title/name
+  description String?  @db.Text
+  fileUrl     String? // URL to the uploaded PDF file
+  fileName    String? // Original filename
+  isActive    Boolean  @default(false) // Mark which resume is currently active
+  uploadedAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("resumes")
 }

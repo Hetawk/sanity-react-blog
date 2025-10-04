@@ -1,4 +1,4 @@
-# 🚀 EKD Digital Portfolio
+# 🚀 Enoch Kwateh Dongbo Portfolio
 
 > A modern, full-stack portfolio application showcasing professional work, research publications, awards, and technical expertise with a beautiful glassmorphism design system.
 
@@ -125,8 +125,8 @@ node server.js
 
 - **Node.js** - Runtime environment
 - **Express.js** - Backend API framework
-- **Sanity CMS** - Content management (legacy)
-- **MySQL** - Database
+- **Sanity CMS** - Resume file storage and dashboard content management
+- **MySQL** - Database for portfolio data
 
 ### APIs & Integrations
 
@@ -230,9 +230,7 @@ Required environment variables:
 # API Configuration
 REACT_APP_API_URL=http://localhost:5000
 
-# Sanity CMS (if using)
-REACT_APP_SANITY_PROJECT_ID=your_project_id
-REACT_APP_SANITY_DATASET=production
+# Sanity CMS (Required for Resume & Dashboard)
 REACT_APP_SANITY_TOKEN=your_sanity_token
 
 # ORCID Configuration
@@ -279,7 +277,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 👨‍💻 Author
 
-**EKD Digital**
+**Enoch Kwateh Dongbo**
 
 - Website: [ekddigital.com](https://www.ekddigital.com)
 - Email: ekd@ekddigital.com
@@ -295,4 +293,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-<p align="center">Made with ❤️ by EKD Digital</p>
+<p align="center">Made with ❤️ by Enoch Kwateh Dongbo</p>
