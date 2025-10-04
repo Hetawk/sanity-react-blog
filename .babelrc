@@ -1,0 +1,11 @@
+{
+  "presets": [
+    "react-app"
+  ],
+  "plugins": [],
+  "env": {
+    "production": {
+      "plugins": []
+    }
+  }
+}

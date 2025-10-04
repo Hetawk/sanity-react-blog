@@ -48,17 +48,23 @@ module.exports = {
     },
     babel: {
         loaderOptions: (babelLoaderOptions, { env }) => {
-            // Disable react-refresh in production
-            if (env === 'production' && babelLoaderOptions.plugins) {
-                babelLoaderOptions.plugins = babelLoaderOptions.plugins.filter(
-                    (plugin) => {
-                        return !(
-                            Array.isArray(plugin) &&
-                            plugin[0] &&
-                            plugin[0].includes('react-refresh')
-                        ) && plugin !== 'react-refresh/babel';
-                    }
-                );
+            // Completely disable react-refresh in production
+            if (env === 'production' || process.env.NODE_ENV === 'production') {
+                // Remove all react-refresh related plugins
+                if (babelLoaderOptions.plugins) {
+                    babelLoaderOptions.plugins = babelLoaderOptions.plugins.filter(
+                        (plugin) => {
+                            if (typeof plugin === 'string' && plugin.includes('react-refresh')) {
+                                return false;
+                            }
+                            if (Array.isArray(plugin) && plugin[0] &&
+                                (plugin[0].includes('react-refresh') || plugin[0].includes('react-dev-utils'))) {
+                                return false;
+                            }
+                            return true;
+                        }
+                    );
+                }
             }
             return babelLoaderOptions;
         },

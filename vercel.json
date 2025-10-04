@@ -1,0 +1,16 @@
+{
+    "buildCommand": "craco build",
+    "devCommand": "craco start",
+    "installCommand": "npm install",
+    "framework": null,
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "build": {
+        "env": {
+            "DISABLE_ESLINT_PLUGIN": "true",
+            "SKIP_PREFLIGHT_CHECK": "true",
+            "FAST_REFRESH": "false",
+            "GENERATE_SOURCEMAP": "false"
+        }
+    }
+}
