@@ -6,6 +6,13 @@ module.exports = {
                 (plugin) => plugin.constructor.name !== 'ESLintWebpackPlugin'
             );
 
+            // Disable React Refresh plugin in production
+            if (process.env.NODE_ENV === 'production') {
+                webpackConfig.plugins = webpackConfig.plugins.filter(
+                    (plugin) => plugin.constructor.name !== 'ReactRefreshPlugin'
+                );
+            }
+
             // Fix for React 19 - resolve React to the installed version
             webpackConfig.resolve = {
                 ...webpackConfig.resolve,
@@ -40,7 +47,19 @@ module.exports = {
         },
     },
     babel: {
-        loaderOptions: (babelLoaderOptions) => {
+        loaderOptions: (babelLoaderOptions, { env }) => {
+            // Disable react-refresh in production
+            if (env === 'production' && babelLoaderOptions.plugins) {
+                babelLoaderOptions.plugins = babelLoaderOptions.plugins.filter(
+                    (plugin) => {
+                        return !(
+                            Array.isArray(plugin) &&
+                            plugin[0] &&
+                            plugin[0].includes('react-refresh')
+                        ) && plugin !== 'react-refresh/babel';
+                    }
+                );
+            }
             return babelLoaderOptions;
         },
     },

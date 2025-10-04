@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
 require('dotenv').config();
 
 const workRoutes = require('./routes/work.routes');
@@ -25,6 +26,9 @@ app.use(cors({
 app.use(morgan('dev')); // Logging
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve uploaded files statically
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

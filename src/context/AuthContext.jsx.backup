@@ -49,15 +49,20 @@ export const AuthProvider = ({
 
             // Store auth state
             localStorage.setItem('dashboardAuth', 'true');
+
+            // Create a new client with the token
+            const client = createClient(envToken);
+            setAuthClient(client);
             setIsAuthenticated(true);
 
             return true;
         }
 
-        // If environment variable is missing, show helpful error
-        if (!envPassword) {
-            console.error("Missing required environment variable:");
-            console.error("- REACT_APP_ADMIN_PASSWORD not found");
+        // If environment variables are missing, show helpful error
+        if (!envPassword || !envToken) {
+            console.error("Missing required environment variables:");
+            if (!envPassword) console.error("- REACT_APP_ADMIN_PASSWORD not found");
+            if (!envToken) console.error("- REACT_APP_SANITY_TOKEN not found");
         } else {
             console.error("Password didn't match");
         }
@@ -68,7 +73,24 @@ export const AuthProvider = ({
     // Logout function
     const logout = () => {
         localStorage.removeItem('dashboardAuth');
+        localStorage.removeItem('sanityToken');
+        setAuthClient(null);
         setIsAuthenticated(false);
+    };
+
+    // Verify authentication is still valid
+    const verifyAuth = async () => {
+        if (!authClient) return false;
+
+        try {
+            // Try to fetch a small piece of data to verify token is still valid
+            await authClient.fetch('*[_type == "skills"][0]');
+            return true;
+        } catch (error) {
+            console.error("Authentication verification failed:", error);
+            logout(); // Logout if verification fails
+            return false;
+        }
     };
 
     return (
@@ -77,6 +99,8 @@ export const AuthProvider = ({
                 isAuthenticated,
                 login,
                 logout,
+                authClient,
+                verifyAuth,
                 loading
             }}
         >
