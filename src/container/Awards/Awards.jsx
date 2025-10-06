@@ -4,7 +4,7 @@ import { BsGrid3X3Gap, BsSliders } from 'react-icons/bs'; // Import icons for vi
 import { motion } from 'framer-motion';
 
 import { AppWrap, MotionWrap } from '../../wrapper';
-import { urlFor, client } from '../../client';
+import api from '../../api/client';
 import './Awards.scss';
 
 const Awards = () => {
@@ -39,16 +39,20 @@ const Awards = () => {
   };
 
   useEffect(() => {
-    const query = '*[_type == "awards"] | order(year desc)';
-    const brandsQuery = '*[_type == "brands"] | order(year desc)';
+    const fetchData = async () => {
+      try {
+        const [awardsResponse, brandsResponse] = await Promise.all([
+          api.awards.getAll(),
+          api.brands.getAll()
+        ]);
+        setAwards(awardsResponse.data || []);
+        setBrands(brandsResponse.data || []);
+      } catch (error) {
+        console.error('Error fetching awards and brands:', error);
+      }
+    };
 
-    client.fetch(query).then((data) => {
-      setAwards(data);
-    });
-
-    client.fetch(brandsQuery).then((data) => {
-      setBrands(data);
-    });
+    fetchData();
   }, []);
 
   return (
@@ -80,7 +84,7 @@ const Awards = () => {
         viewMode === 'carousel' ? (
           <div className="app__award-carousel">
             <div className="app__award-item app__flex">
-              <img src={urlFor(awards[currentIndex].imgurl)} alt={awards[currentIndex].name} />
+              <img src={awards[currentIndex].imgUrl} alt={awards[currentIndex].name} />
               <div className="app__award-content">
                 <span className="award-year">{awards[currentIndex].year}</span>
                 <h4 className="bold-text">{awards[currentIndex].name}</h4>
@@ -126,7 +130,7 @@ const Awards = () => {
                 >
                   <div className="award-icon">🏆</div>
                   <div className="award-image-container">
-                    <img src={urlFor(award.imgurl)} alt={award.name} />
+                    <img src={award.imgUrl} alt={award.name} />
                   </div>
                   <div className="award-details">
                     <span className="award-year">{award.year}</span>
@@ -177,9 +181,9 @@ const Awards = () => {
           <motion.div
             whileInView={{ opacity: [0, 1] }}
             transition={{ duration: 0.5, type: 'tween' }}
-            key={brand._id}
+            key={brand.id}
           >
-            <img src={urlFor(brand.imgUrl)} alt={brand.name} />
+            <img src={brand.imgUrl} alt={brand.name} />
           </motion.div>
         ))}
       </div>

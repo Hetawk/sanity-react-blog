@@ -3,7 +3,7 @@ import { AiFillEye, AiFillGithub } from 'react-icons/ai';
 import { motion } from 'framer-motion';
 
 import { AppWrap, MotionWrap } from '../../wrapper';
-import { urlFor, client } from '../../client';
+import api from '../../api/client';
 import './Work.scss';
 
 const Work = () => {
@@ -13,12 +13,18 @@ const Work = () => {
   const [animateCard, setAnimateCard] = useState({ y: 0, opacity: 1 });
 
   useEffect(() => {
-    const query = '*[_type == "works"]';
+    const fetchWorks = async () => {
+      try {
+        const response = await api.works.getAll();
+        const data = response.data || [];
+        setWorks(data);
+        setFilterWork(data);
+      } catch (error) {
+        console.error('Error fetching works:', error);
+      }
+    };
 
-    client.fetch(query).then((data) => {
-      setWorks(data);
-      setFilterWork(data);
-    });
+    fetchWorks();
   }, []);
 
   const handleWorkFilter = (item) => {
@@ -38,7 +44,7 @@ const Work = () => {
 
   return (
     <>
-    
+
       <h2 className="head-text">My Creative <span>Portfolio</span> Section</h2>
 
       <div className="app__work-filter">
@@ -63,7 +69,7 @@ const Work = () => {
             <div
               className="app__work-img app__flex"
             >
-              <img src={urlFor(work.imgUrl)} alt={work.name} />
+              <img src={work.imgUrl} alt={work.title} />
 
               <motion.div
                 whileHover={{ opacity: [0, 1] }}

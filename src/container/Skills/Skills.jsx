@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 
 import { AppWrap, MotionWrap } from '../../wrapper';
-import { urlFor, client } from '../../client';
+import api from '../../api/client';
 import './Skills.scss';
 
 const Skills = () => {
@@ -13,16 +13,20 @@ const Skills = () => {
   const [hoveredWork, setHoveredWork] = useState(null);
 
   useEffect(() => {
-    const query = '*[_type == "experiences"] | order(year desc)';
-    const skillsQuery = '*[_type == "skills"] | order(year desc)';
+    const fetchData = async () => {
+      try {
+        const [experiencesResponse, skillsResponse] = await Promise.all([
+          api.experiences.getAll(),
+          api.skills.getAll()
+        ]);
+        setExperiences(experiencesResponse.data || []);
+        setSkills(skillsResponse.data || []);
+      } catch (error) {
+        console.error('Error fetching skills and experiences:', error);
+      }
+    };
 
-    client.fetch(query).then((data) => {
-      setExperiences(data);
-    });
-
-    client.fetch(skillsQuery).then((data) => {
-      setSkills(data);
-    });
+    fetchData();
   }, []);
 
   return (
@@ -39,7 +43,7 @@ const Skills = () => {
               onMouseOut={() => setHoveredWork(null)}
             >
               <div className="app__flex">
-                <img src={urlFor(skill.icon)} alt={skill.name} />
+                <img src={skill.icon} alt={skill.name} />
               </div>
               <p className="p-text">{skill.name}</p>
             </motion.div>
