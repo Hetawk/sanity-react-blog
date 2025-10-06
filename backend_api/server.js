@@ -19,10 +19,37 @@ const app = express();
 
 // Middleware
 app.use(helmet()); // Security headers
+
+// CORS configuration - trim whitespace and handle serverless environment
+const allowedOrigins = [
+    'https://www.ekdportfolio.ekddigital.com',
+    'https://ekdportfolio.ekddigital.com',
+    'http://localhost:3000',
+    'http://localhost:3001'
+];
+
+// Add FRONTEND_URL if provided (trim any whitespace/newlines)
+if (process.env.FRONTEND_URL) {
+    const frontendUrl = process.env.FRONTEND_URL.trim();
+    if (frontendUrl && !allowedOrigins.includes(frontendUrl)) {
+        allowedOrigins.push(frontendUrl);
+    }
+}
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, curl, Postman)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
+
 app.use(morgan('dev')); // Logging
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
