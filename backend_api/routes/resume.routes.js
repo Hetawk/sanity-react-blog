@@ -2,30 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs').promises;
+const assetUploader = require('../utils/assetUploader');
 
 const prisma = new PrismaClient();
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-    destination: async (req, file, cb) => {
-        const uploadDir = path.join(__dirname, '../uploads/resumes');
-        try {
-            await fs.mkdir(uploadDir, { recursive: true });
-            cb(null, uploadDir);
-        } catch (error) {
-            cb(error, null);
-        }
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, 'resume-' + uniqueSuffix + path.extname(file.originalname));
-    }
-});
-
+// Configure multer for memory storage (we'll upload to assets server)
 const upload = multer({
-    storage: storage,
+    storage: multer.memoryStorage(),
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
     fileFilter: (req, file, cb) => {
         if (file.mimetype === 'application/pdf') {
@@ -101,6 +84,12 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             });
         }
 
+        // Upload file to EKD Digital Assets
+        console.log('📤 Uploading resume to assets server...');
+        const uploadResult = await assetUploader.uploadResume(req.file.buffer, req.file.originalname);
+
+        console.log('✅ Resume uploaded successfully:', uploadResult.fileUrl);
+
         // If this resume is set as active, deactivate all others
         if (isActive === 'true' || isActive === true) {
             await prisma.resume.updateMany({
@@ -109,14 +98,12 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             });
         }
 
-        // Create the file URL (adjust this based on how you serve static files)
-        const fileUrl = `/uploads/resumes/${req.file.filename}`;
-
+        // Create resume record with assets server URL
         const resume = await prisma.resume.create({
             data: {
                 title,
                 description: description || '',
-                fileUrl,
+                fileUrl: uploadResult.fileUrl,
                 fileName: req.file.originalname,
                 isActive: isActive === 'true' || isActive === true
             }
@@ -124,9 +111,14 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
         res.status(201).json({
             success: true,
-            data: resume
+            data: resume,
+            asset: {
+                url: uploadResult.fileUrl,
+                size: uploadResult.size
+            }
         });
     } catch (error) {
+        console.error('❌ Resume upload error:', error);
         res.status(500).json({
             success: false,
             error: error.message

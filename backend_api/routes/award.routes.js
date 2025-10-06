@@ -1,8 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
+const multer = require('multer');
+const assetUploader = require('../utils/assetUploader');
 
 const prisma = new PrismaClient();
+
+// Configure multer for memory storage
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed'));
+        }
+    }
+});
 
 // Get all awards
 router.get('/', async (req, res) => {
@@ -79,6 +95,42 @@ router.get('/stats/by-year', async (req, res) => {
             data: groupedByYear
         });
     } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Upload image for award
+router.post('/upload-image', upload.single('image'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                error: 'No image file uploaded'
+            });
+        }
+
+        console.log('📤 Uploading award image to assets server...');
+        const uploadResult = await assetUploader.uploadImage(
+            req.file.buffer,
+            req.file.originalname,
+            req.file.mimetype
+        );
+
+        console.log('✅ Award image uploaded successfully:', uploadResult.fileUrl);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                imgUrl: uploadResult.fileUrl,
+                filename: uploadResult.filename,
+                size: uploadResult.size
+            }
+        });
+    } catch (error) {
+        console.error('❌ Award image upload error:', error);
         res.status(500).json({
             success: false,
             error: error.message
