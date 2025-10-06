@@ -1,21 +1,10 @@
 {
-    "version": 2,
     "buildCommand": "craco build",
     "devCommand": "craco start",
     "installCommand": "npm install",
     "framework": null,
-    "builds": [
-        {
-            "src": "backend_api/server.js",
-            "use": "@vercel/node"
-        }
-    ],
-    "rewrites": [
-        {
-            "source": "/api/(.*)",
-            "destination": "/backend_api/server.js"
-        }
-    ],
+    "cleanUrls": true,
+    "trailingSlash": false,
     "build": {
         "env": {
             "DISABLE_ESLINT_PLUGIN": "true",
