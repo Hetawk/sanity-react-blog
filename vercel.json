@@ -4,22 +4,16 @@
     "devCommand": "craco start",
     "installCommand": "npm install",
     "framework": null,
-    "cleanUrls": true,
-    "trailingSlash": false,
     "builds": [
         {
             "src": "backend_api/server.js",
             "use": "@vercel/node"
         }
     ],
-    "routes": [
+    "rewrites": [
         {
-            "src": "/api/(.*)",
-            "dest": "backend_api/server.js"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/$1"
+            "source": "/api/(.*)",
+            "destination": "/backend_api/server.js"
         }
     ],
     "build": {
