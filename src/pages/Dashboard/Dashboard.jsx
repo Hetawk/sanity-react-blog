@@ -91,7 +91,7 @@ const Dashboard = () => {
                                     <a href="mailto:ekd@ekddigital.com">ekd@ekddigital.com</a>
                                 </p>
                                 <p><strong>Current status:</strong> Environment variables are
-                                    {process.env.REACT_APP_ADMIN_PASSWORD && process.env.REACT_APP_SANITY_TOKEN
+                                    {process.env.REACT_APP_ADMIN_PASSWORD
                                         ? " loaded properly."
                                         : " missing or incomplete."}
                                 </p>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
-import { client } from '../../../client';
+import api from '../../../api/client';
 
 const ExperiencesManager = () => {
     const [experiences, setExperiences] = useState([]);
@@ -25,8 +25,8 @@ const ExperiencesManager = () => {
     useEffect(() => {
         const fetchExperiences = async () => {
             try {
-                const query = '*[_type == "experiences"] | order(year desc)';
-                const data = await client.fetch(query);
+                const response = await api.experiences.getAll();
+                const data = response.data || [];
                 setExperiences(data);
             } catch (error) {
                 console.error('Error fetching experiences:', error);

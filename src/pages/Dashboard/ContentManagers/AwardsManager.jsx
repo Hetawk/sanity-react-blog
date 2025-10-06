@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
-import { client, urlFor } from '../../../client';
+import api from '../../../api/client';
 
 const AwardsManager = () => {
     const [awards, setAwards] = useState([]);
@@ -18,8 +18,8 @@ const AwardsManager = () => {
     useEffect(() => {
         const fetchAwards = async () => {
             try {
-                const query = '*[_type == "awards"] | order(year desc)';
-                const data = await client.fetch(query);
+                const response = await api.awards.getAll();
+                const data = response.data || [];
                 setAwards(data);
             } catch (error) {
                 console.error('Error fetching awards:', error);
@@ -57,7 +57,7 @@ const AwardsManager = () => {
             name: award.name,
             company: award.company,
             year: award.year,
-            imgPreview: award.imgurl ? urlFor(award.imgurl).url() : null,
+            imgPreview: award.imgUrl || null,
             imgurl: null
         });
         setShowForm(true);
@@ -232,11 +232,11 @@ const AwardsManager = () => {
 
             <div className="items-grid">
                 {awards.map(award => (
-                    <div key={award._id} className="item-card">
-                        {award.imgurl && (
+                    <div key={award.id} className="item-card">
+                        {award.imgUrl && (
                             <img
                                 className="item-image"
-                                src={urlFor(award.imgurl)}
+                                src={award.imgUrl}
                                 alt={award.name}
                             />
                         )}

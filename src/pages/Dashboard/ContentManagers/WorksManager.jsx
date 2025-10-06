@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
-import { client, urlFor } from '../../../client';
+import api from '../../../api/client';
 
 const WorksManager = () => {
     const [works, setWorks] = useState([]);
@@ -22,8 +22,8 @@ const WorksManager = () => {
     useEffect(() => {
         const fetchWorks = async () => {
             try {
-                const query = '*[_type == "works"]';
-                const data = await client.fetch(query);
+                const response = await api.works.getAll();
+                const data = response.data || [];
                 setWorks(data);
             } catch (error) {
                 console.error('Error fetching works:', error);
@@ -81,7 +81,7 @@ const WorksManager = () => {
             description: work.description || '',
             projectLink: work.projectLink || '',
             codeLink: work.codeLink || '',
-            imgPreview: work.imgUrl ? urlFor(work.imgUrl).url() : null,
+            imgPreview: work.imgUrl || null,
             imgUrl: null,
             tags: work.tags || []
         });
@@ -307,11 +307,11 @@ const WorksManager = () => {
 
             <div className="items-grid">
                 {works.map(work => (
-                    <div key={work._id} className="item-card">
+                    <div key={work.id} className="item-card">
                         {work.imgUrl && (
                             <img
                                 className="item-image"
-                                src={urlFor(work.imgUrl)}
+                                src={work.imgUrl}
                                 alt={work.title}
                             />
                         )}

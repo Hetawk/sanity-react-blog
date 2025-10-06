@@ -14,12 +14,7 @@ import {
 
     from 'react-icons/fi';
 
-import {
-    client,
-    urlFor
-}
-
-    from '../../../client';
+import api from '../../../api/client';
 
 const SkillsManager = () => {
     const [skills,
@@ -44,8 +39,8 @@ const SkillsManager = () => {
     useEffect(() => {
         const fetchSkills = async () => {
             try {
-                const query = '*[_type == "skills"]';
-                const data = await client.fetch(query);
+                const response = await api.skills.getAll();
+                const data = response.data || [];
                 setSkills(data);
             }
 
@@ -113,7 +108,7 @@ const SkillsManager = () => {
         setFormData({
             name: skill.name,
             bgColor: skill.bgColor || '#FFFFFF',
-            iconPreview: skill.icon ? urlFor(skill.icon).url() : null,
+            iconPreview: skill.icon || null,
             icon: null
         }
 
@@ -303,7 +298,7 @@ const SkillsManager = () => {
                     skill.icon && (<img className="item-image"
 
                         src={
-                            urlFor(skill.icon)
+                            skill.icon
                         }
 
                         alt={
