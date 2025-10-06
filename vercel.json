@@ -1,10 +1,14 @@
 {
-    "buildCommand": "craco build",
+    "buildCommand": "craco build && cd backend_api && npm install",
     "devCommand": "craco start",
     "installCommand": "npm install",
     "framework": null,
-    "cleanUrls": true,
-    "trailingSlash": false,
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "/api"
+        }
+    ],
     "build": {
         "env": {
             "DISABLE_ESLINT_PLUGIN": "true",

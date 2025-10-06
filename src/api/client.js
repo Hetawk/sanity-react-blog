@@ -1,5 +1,9 @@
 // API Configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+// In production, API is on the same domain (unified app)
+// In development, API runs on localhost:5001
+const API_BASE_URL = process.env.NODE_ENV === 'production'
+    ? '' // Use relative URLs in production (same domain)
+    : (process.env.REACT_APP_API_URL || 'http://localhost:5001');
 
 // API Client with error handling and retry logic
 class APIClient {
