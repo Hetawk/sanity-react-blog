@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>API Test</title></head>
+<body>
+  <h1>Testing API Connection</h1>
+  <pre id="output"></pre>
+  <script>
+    fetch('http://localhost:5001/api/works')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+        console.log('Success:', data.count, 'works loaded');
+        console.log('First work:', data.data[0]);
+      })
+      .catch(err => {
+        document.getElementById('output').textContent = 'ERROR: ' + err.message;
+        console.error('Error:', err);
+      });
+  </script>
+</body>
+</html>

@@ -42,16 +42,96 @@ model Work {
   views Int @default(0)
   likes Int @default(0)
 
+  // === GitHub Integration Fields ===
+
+  // Repository Information
+  githubUrl       String? // Full GitHub repository URL
+  githubOwner     String? // Repository owner (username/org)
+  githubRepo      String? // Repository name
+  isPrivateRepo   Boolean @default(false) // Is this a private repository
+  isGithubProject Boolean @default(false) // Is this a GitHub-sourced project
+
+  // Repository Metrics
+  githubStars    Int? // Number of stars
+  githubForks    Int? // Number of forks
+  githubWatchers Int? // Number of watchers
+  githubIssues   Int? // Open issues count
+
+  // Project Analysis
+  projectCategory    String? // "Web Application", "Mobile", "Data Science", etc.
+  projectSubCategory String? // "Frontend", "Backend", "Full-Stack", etc.
+  totalFiles         Int? // Total files in project
+  totalFolders       Int? // Total folders
+  maxDepth           Int? // Maximum folder depth
+
+  // Technology Stack (Enhanced - structured)
+  languages       String? @db.Text // JSON array: ["JavaScript", "TypeScript"]
+  frameworks      String? @db.Text // JSON array: ["React", "Next.js"]
+  uiLibraries     String? @db.Text // JSON array: ["Tailwind CSS"]
+  databases       String? @db.Text // JSON array: ["PostgreSQL", "MongoDB"]
+  testingTools    String? @db.Text // JSON array: ["Jest", "Cypress"]
+  buildTools      String? @db.Text // JSON array: ["Webpack", "Vite"]
+  deploymentTools String? @db.Text // JSON array: ["Docker", "Kubernetes"]
+
+  // Project Features
+  hasTests  Boolean @default(false) // Has automated tests
+  hasDocs   Boolean @default(false) // Has documentation
+  hasCI     Boolean @default(false) // Has CI/CD pipeline
+  hasDocker Boolean @default(false) // Is Dockerized
+
+  // Project Structure
+  topLevelFolders String? @db.Text // JSON array of main folders
+  keyFiles        String? @db.Text // JSON array of important files
+  filesByType     String? @db.Text // JSON object: {".js": 150, ".ts": 200}
+
+  // Insights & Analysis
+  insights    String? @db.Text // JSON array of generated insights
+  complexity  String? // "Simple", "Medium", "Complex", "Very Complex"
+  codeQuality String? // "Excellent", "Good", "Fair", "Needs Improvement"
+
+  // Content (Enhanced)
+  readmePreview String? @db.LongText // First 1000 chars of README
+  fullReadme    String? @db.LongText // Complete README content
+
+  // Licensing
+  license    String? // License name (MIT, Apache, etc.)
+  licenseUrl String? // URL to license file
+
+  // Project Timeline
+  githubCreatedAt DateTime? // When repo was created on GitHub
+  githubUpdatedAt DateTime? // Last update on GitHub
+  lastPushedAt    DateTime? // Last push to repository
+
+  // Repository Status
+  isArchived    Boolean @default(false) // Is repository archived
+  isTemplate    Boolean @default(false) // Is it a template repo
+  defaultBranch String? // Default branch name
+
+  // Collaboration
+  contributors String? @db.Text // JSON array of contributor info
+  topics       String? @db.Text // JSON array of GitHub topics/tags
+
+  // External Links
+  homepage      String? // Project homepage/demo URL
+  documentation String? // Documentation URL
+
   // Timestamps
-  publishedAt DateTime?
-  featuredAt  DateTime?
-  deletedAt   DateTime? // Soft delete
+  publishedAt DateTime? // Track when work was published
+  featuredAt  DateTime? // Track when work was featured
+  deletedAt   DateTime? // Track when work was soft deleted
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  // === Indexes ===
   @@index([isPublished, isFeatured, displayOrder])
   @@index([slug])
   @@index([deletedAt])
+  @@index([isPrivateRepo])
+  @@index([isGithubProject])
+  @@index([projectCategory])
+  @@index([githubStars])
+  @@index([hasTests, hasDocs, hasCI])
+  @@index([isArchived])
   @@map("works")
 }
 

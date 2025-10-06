@@ -3,6 +3,7 @@ const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const multer = require('multer');
 const assetUploader = require('../utils/assetUploader');
+const queryBuilder = require('../utils/queryBuilder');
 
 const prisma = new PrismaClient();
 
@@ -20,17 +21,36 @@ const upload = multer({
     }
 });
 
-// Get all abouts
+// Get all abouts with advanced filtering
+// Query params:
+// - featured=true: Get only featured items
+// - sectionType=research: Filter by section type
+// - includeUnpublished=true: Include unpublished (for admin)
 router.get('/', async (req, res) => {
     try {
+        const queryOptions = queryBuilder.parseQueryParams(req.query);
+        const where = queryBuilder.buildWhereClause(queryOptions);
+        const orderBy = queryBuilder.buildOrderBy(
+            queryOptions.sortBy,
+            queryOptions.sortOrder,
+            queryOptions.featuredFirst
+        );
+
         const abouts = await prisma.about.findMany({
-            orderBy: { createdAt: 'asc' }
+            where,
+            orderBy
         });
+
+        // Parse JSON fields
+        const jsonFields = ['metrics', 'tags', 'competencies', 'achievements'];
+        const aboutsWithParsedFields = abouts.map(about =>
+            queryBuilder.parseJsonFields(about, jsonFields)
+        );
 
         res.json({
             success: true,
             count: abouts.length,
-            data: abouts
+            data: aboutsWithParsedFields
         });
     } catch (error) {
         res.status(500).json({
@@ -54,9 +74,13 @@ router.get('/:id', async (req, res) => {
             });
         }
 
+        // Parse JSON fields
+        const jsonFields = ['metrics', 'tags', 'competencies', 'achievements'];
+        const aboutWithParsedFields = queryBuilder.parseJsonFields(about, jsonFields);
+
         res.json({
             success: true,
-            data: about
+            data: aboutWithParsedFields
         });
     } catch (error) {
         res.status(500).json({
@@ -69,27 +93,27 @@ router.get('/:id', async (req, res) => {
 // Create new about
 router.post('/', async (req, res) => {
     try {
-        const { title, description, imgUrl } = req.body;
+        const data = req.body;
 
         // Validation
-        if (!title || !description) {
+        if (!data.title || !data.description) {
             return res.status(400).json({
                 success: false,
                 error: 'Title and description are required'
             });
         }
 
+        // Serialize JSON fields
+        const jsonFields = ['metrics', 'tags', 'competencies', 'achievements'];
+        const serializedData = queryBuilder.serializeJsonFields(data, jsonFields);
+
         const about = await prisma.about.create({
-            data: {
-                title,
-                description,
-                imgUrl: imgUrl || ''
-            }
+            data: serializedData
         });
 
         res.status(201).json({
             success: true,
-            data: about
+            data: queryBuilder.parseJsonFields(about, jsonFields)
         });
     } catch (error) {
         res.status(500).json({
@@ -102,32 +126,39 @@ router.post('/', async (req, res) => {
 // Update about
 router.put('/:id', async (req, res) => {
     try {
-        const { title, description, imgUrl } = req.body;
+        const { id } = req.params;
+        const data = req.body;
 
-        // Check if about exists
-        const existingAbout = await prisma.about.findUnique({
-            where: { id: req.params.id }
-        });
+        // Serialize JSON fields
+        const jsonFields = ['metrics', 'tags', 'competencies', 'achievements'];
+        const serializedData = queryBuilder.serializeJsonFields(data, jsonFields);
 
-        if (!existingAbout) {
-            return res.status(404).json({
-                success: false,
-                error: 'About not found'
-            });
-        }
-
-        // Update about
         const about = await prisma.about.update({
-            where: { id: req.params.id },
-            data: {
-                title: title || existingAbout.title,
-                description: description || existingAbout.description,
-                imgUrl: imgUrl !== undefined ? imgUrl : existingAbout.imgUrl
-            }
+            where: { id },
+            data: serializedData
         });
 
         res.json({
             success: true,
+            data: queryBuilder.parseJsonFields(about, jsonFields)
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Soft delete about
+router.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const about = await queryBuilder.softDelete(prisma, 'about', id);
+
+        res.json({
+            success: true,
+            message: 'About archived successfully',
             data: about
         });
     } catch (error) {
@@ -138,28 +169,80 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Delete about
-router.delete('/:id', async (req, res) => {
+// Restore soft-deleted about
+router.post('/:id/restore', async (req, res) => {
     try {
-        // Check if about exists
-        const existingAbout = await prisma.about.findUnique({
-            where: { id: req.params.id }
-        });
-
-        if (!existingAbout) {
-            return res.status(404).json({
-                success: false,
-                error: 'About not found'
-            });
-        }
-
-        await prisma.about.delete({
-            where: { id: req.params.id }
-        });
+        const { id } = req.params;
+        const about = await queryBuilder.restoreDeleted(prisma, 'about', id);
 
         res.json({
             success: true,
-            message: 'About deleted successfully'
+            message: 'About restored successfully',
+            data: about
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Toggle featured status
+router.post('/:id/toggle-featured', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const about = await queryBuilder.toggleFeatured(prisma, 'about', id);
+
+        res.json({
+            success: true,
+            message: `About ${about.isFeatured ? 'featured' : 'unfeatured'} successfully`,
+            data: about
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Toggle published status
+router.post('/:id/toggle-published', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const about = await queryBuilder.togglePublished(prisma, 'about', id);
+
+        res.json({
+            success: true,
+            message: `About ${about.isPublished ? 'published' : 'unpublished'} successfully`,
+            data: about
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Update display order for multiple abouts
+router.post('/reorder', async (req, res) => {
+    try {
+        const { items } = req.body;
+
+        if (!Array.isArray(items)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Items must be an array of {id, displayOrder} objects'
+            });
+        }
+
+        await queryBuilder.updateDisplayOrder(prisma, 'about', items);
+
+        res.json({
+            success: true,
+            message: 'Display order updated successfully'
         });
     } catch (error) {
         res.status(500).json({

@@ -1,0 +1,273 @@
+/**
+ * Card Component Styles
+ * Beautiful, modern, responsive card design
+ */
+
+.app__card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    // Featured card variant
+    &--featured {
+        border: 2px solid var(--primary-color, #6366f1);
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+
+        &:hover {
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+        }
+    }
+
+    // Compact variant
+    &--compact {
+        .app__card-image {
+            height: 150px;
+        }
+
+        .app__card-content {
+            padding: 1rem;
+        }
+
+        .app__card-title {
+            font-size: 1rem;
+        }
+    }
+
+    // Minimal variant
+    &--minimal {
+        box-shadow: none;
+        border: 1px solid #e5e7eb;
+
+        &:hover {
+            border-color: var(--primary-color, #6366f1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+    }
+}
+
+// Badge
+.app__card-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    &--featured {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: #fff;
+    }
+
+    &--new {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: #fff;
+    }
+
+    &--default {
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--text-color, #333);
+    }
+}
+
+// Image
+.app__card-image {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    &:hover img {
+        transform: scale(1.05);
+    }
+}
+
+// Overlay
+.app__card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    .app__card-image:hover & {
+        opacity: 1;
+    }
+}
+
+.app__card-link {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: #fff;
+        color: var(--primary-color, #6366f1);
+    }
+}
+
+// Content
+.app__card-content {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.app__card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color, #1f2937);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.app__card-subtitle {
+    font-size: 0.875rem;
+    color: var(--secondary-color, #6b7280);
+    margin: 0;
+    font-weight: 500;
+}
+
+.app__card-description {
+    font-size: 0.9375rem;
+    color: var(--text-color, #4b5563);
+    margin: 0;
+    line-height: 1.6;
+    flex: 1;
+}
+
+// Tags
+.app__card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.app__card-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    color: var(--text-color, #374151);
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+        transform: translateY(-2px);
+    }
+}
+
+// Footer
+.app__card-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.app__card-like {
+    background: none;
+    border: none;
+    font-size: 0.875rem;
+    color: var(--text-color, #6b7280);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+
+    &:hover {
+        background: #fef2f2;
+        color: #dc2626;
+        transform: scale(1.05);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+.app__card-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+// Responsive
+@media screen and (max-width: 768px) {
+    .app__card {
+        &-image {
+            height: 180px;
+        }
+
+        &-content {
+            padding: 1.25rem;
+        }
+
+        &-title {
+            font-size: 1.125rem;
+        }
+
+        &-description {
+            font-size: 0.875rem;
+        }
+
+        &-footer {
+            padding: 0.875rem 1.25rem;
+        }
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .app__card {
+        &-image {
+            height: 160px;
+        }
+
+        &-content {
+            padding: 1rem;
+        }
+
+        &-title {
+            font-size: 1rem;
+        }
+    }
+}

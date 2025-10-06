@@ -1,0 +1,89 @@
+/**
+ * Grid Component Styles
+ * Responsive grid layouts
+ */
+
+.app__grid {
+    display: grid;
+    width: 100%;
+
+    // Column variants
+    &--1-col {
+        grid-template-columns: 1fr;
+    }
+
+    &--2-col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    &--3-col {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    &--4-col {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    // Auto-fit variant (responsive)
+    &--auto-fit {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    // Gap variants
+    &--gap-small {
+        gap: 1rem;
+    }
+
+    &--gap-medium {
+        gap: 1.5rem;
+    }
+
+    &--gap-large {
+        gap: 2rem;
+    }
+
+    // Masonry variant
+    &--masonry {
+        grid-auto-rows: 10px;
+
+        > * {
+            grid-row-end: span var(--row-span, 20);
+        }
+    }
+}
+
+// Responsive adjustments
+@media screen and (max-width: 1200px) {
+    .app__grid {
+        &--4-col {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .app__grid {
+        &--3-col,
+        &--4-col {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .app__grid {
+        &--2-col,
+        &--3-col,
+        &--4-col {
+            grid-template-columns: 1fr;
+        }
+
+        &--gap-large {
+            gap: 1.5rem;
+        }
+
+        &--gap-medium {
+            gap: 1.25rem;
+        }
+    }
+}

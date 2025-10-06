@@ -1,0 +1,196 @@
+/**
+ * ErrorBoundary Component Styles
+ */
+
+.app__error-boundary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    padding: 2rem;
+    width: 100%;
+}
+
+.app__error-boundary-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 600px;
+    padding: 3rem;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.app__error-boundary-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1;
+}
+
+.app__error-boundary-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-color, #374151);
+    margin-bottom: 1rem;
+}
+
+.app__error-boundary-message {
+    font-size: 1rem;
+    color: var(--secondary-text-color, #6b7280);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.app__error-boundary-details {
+    width: 100%;
+    margin-bottom: 2rem;
+    text-align: left;
+
+    summary {
+        padding: 0.75rem 1rem;
+        background: #f9fafb;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--text-color, #374151);
+        user-select: none;
+
+        &:hover {
+            background: #f3f4f6;
+        }
+    }
+
+    .error-stack {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        color: #991b1b;
+        overflow-x: auto;
+
+        strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #dc2626;
+        }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.8125rem;
+            line-height: 1.5;
+        }
+    }
+}
+
+.app__error-boundary-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.app__error-boundary-button {
+    padding: 0.875rem 2rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &--primary {
+        background: linear-gradient(135deg, var(--primary-color, #6366f1) 0%, #8b5cf6 100%);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+
+        &:hover {
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+    }
+
+    &--secondary {
+        background: #fff;
+        color: var(--text-color, #374151);
+        border: 2px solid #e5e7eb;
+
+        &:hover {
+            border-color: var(--primary-color, #6366f1);
+            color: var(--primary-color, #6366f1);
+        }
+    }
+}
+
+// Responsive
+@media screen and (max-width: 768px) {
+    .app__error-boundary {
+        min-height: 400px;
+        padding: 1.5rem;
+    }
+
+    .app__error-boundary-content {
+        padding: 2.5rem 2rem;
+    }
+
+    .app__error-boundary-icon {
+        font-size: 4rem;
+    }
+
+    .app__error-boundary-title {
+        font-size: 1.5rem;
+    }
+
+    .app__error-boundary-message {
+        font-size: 0.9375rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .app__error-boundary {
+        min-height: 350px;
+        padding: 1rem;
+    }
+
+    .app__error-boundary-content {
+        padding: 2rem 1.5rem;
+    }
+
+    .app__error-boundary-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .app__error-boundary-title {
+        font-size: 1.375rem;
+    }
+
+    .app__error-boundary-message {
+        font-size: 0.875rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .app__error-boundary-actions {
+        flex-direction: column;
+        width: 100%;
+
+        button {
+            width: 100%;
+        }
+    }
+
+    .app__error-boundary-details {
+        .error-stack {
+            font-size: 0.75rem;
+
+            pre {
+                font-size: 0.75rem;
+            }
+        }
+    }
+}

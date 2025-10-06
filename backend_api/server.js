@@ -14,6 +14,10 @@ const brandRoutes = require('./routes/brand.routes');
 const awardRoutes = require('./routes/award.routes');
 const contactRoutes = require('./routes/contact.routes');
 const resumeRoutes = require('./routes/resume.routes');
+const researchRoutes = require('./routes/research.routes'); // Includes publications & research statement
+const testimonialRoutes = require('./routes/testimonial.routes');
+const leadershipRoutes = require('./routes/leadership.routes');
+const githubSyncRoutes = require('./routes/github-sync.routes');
 
 const app = express();
 
@@ -76,6 +80,10 @@ app.use('/api/brands', brandRoutes);
 app.use('/api/awards', awardRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/resumes', resumeRoutes);
+app.use('/api/research', researchRoutes); // Handles /statement, /publications, /stats, /featured
+app.use('/api/testimonials', testimonialRoutes);
+app.use('/api/leadership', leadershipRoutes);
+app.use('/api/github-sync', githubSyncRoutes);
 
 // Welcome endpoint
 app.get('/', (req, res) => {

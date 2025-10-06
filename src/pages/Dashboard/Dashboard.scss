@@ -596,6 +596,37 @@
             margin: 0 0 0.75rem;
         }
 
+        .item-status {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+
+            .status-badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.35rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                
+                &.published {
+                    background-color: #4caf50;
+                    color: white;
+                }
+                
+                &.draft {
+                    background-color: #ff9800;
+                    color: white;
+                }
+                
+                &.featured {
+                    background-color: #ffd700;
+                    color: #333;
+                }
+            }
+        }
+
         .item-actions {
             display: flex;
             gap: 0.5rem;
@@ -610,6 +641,38 @@
                 align-items: center;
                 justify-content: center;
                 transition: all 0.2s ease;
+                font-size: 1rem;
+
+                &.publish-btn {
+                    background-color: #2196F3;
+                    color: white;
+
+                    &:hover {
+                        background-color: darken(#2196F3, 10%);
+                        transform: translateY(-2px);
+                    }
+
+                    &.unpublish {
+                        background-color: #9e9e9e;
+                    }
+                }
+
+                &.feature-btn {
+                    background-color: #fff;
+                    color: #ffd700;
+                    border: 2px solid #ffd700;
+
+                    &:hover {
+                        background-color: #ffd700;
+                        color: #333;
+                        transform: translateY(-2px);
+                    }
+
+                    &.featured {
+                        background-color: #ffd700;
+                        color: #333;
+                    }
+                }
 
                 &.edit-btn {
                     background-color: #4caf50;
@@ -617,6 +680,7 @@
 
                     &:hover {
                         background-color: darken(#4caf50, 10%);
+                        transform: translateY(-2px);
                     }
                 }
 
@@ -626,6 +690,7 @@
 
                     &:hover {
                         background-color: darken(#f44336, 10%);
+                        transform: translateY(-2px);
                     }
                 }
             }

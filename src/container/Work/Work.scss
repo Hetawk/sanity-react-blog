@@ -11,9 +11,31 @@
   justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
+  gap: 0.5rem;
   
-
   margin: 4rem 0 2rem;
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--lightGray-color);
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 10px;
+    
+    &:hover {
+      background: #2430a0;
+    }
+  }
 
   .app__work-filter-item {
     padding: 0.5rem 1rem;
@@ -61,6 +83,7 @@
 
     cursor: pointer;
     transition: all 0.3s ease;
+    overflow: hidden; // Prevent any content from breaking out
 
     &:hover {
       box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
@@ -141,10 +164,30 @@
   h4 {
     margin-top: 1rem;
     line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; // Limit to 2 lines
+    -webkit-box-orient: vertical;
 
     @media screen and (min-width: 2000px) {
       margin-top: 3rem;
     }
+  }
+
+  .app__work-description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; // Limit to 4 lines
+    -webkit-box-orient: vertical;
+    line-height: 1.6;
+    max-height: calc(1.6em * 4); // 4 lines max
+    margin-bottom: 1rem;
+    word-wrap: break-word; // Break long words
+    word-break: break-word; // Break long words
+    overflow-wrap: break-word; // Break long words
+    hyphens: auto; // Add hyphens for better breaking
   }
 
   .app__work-tag {
@@ -154,5 +197,120 @@
     border-radius: 10px;
     background-color: #fff;
     top: -25px;
+  }
+}
+
+.app__work-loadmore {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin: 3rem 0 2rem;
+  width: 100%;
+  flex-wrap: wrap;
+
+  button {
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    min-width: 150px;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      
+      &:hover {
+        transform: none !important;
+        box-shadow: none !important;
+      }
+    }
+
+    &.load-more-btn {
+      background-color: var(--secondary-color);
+      color: var(--white-color);
+
+      &:hover:not(:disabled) {
+        background-color: #2430a0;
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(49, 59, 172, 0.3);
+      }
+    }
+
+    &.show-less-btn {
+      background-color: var(--lightGray-color);
+      color: var(--black-color);
+
+      &:hover:not(:disabled) {
+        background-color: var(--gray-color);
+        color: var(--white-color);
+        transform: scale(1.05);
+      }
+    }
+
+    &.reset-btn {
+      background-color: var(--brown-color);
+      color: var(--white-color);
+
+      &:hover:not(:disabled) {
+        background-color: #362837;
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(70, 54, 74, 0.3);
+      }
+    }
+
+    @media screen and (min-width: 2000px) {
+      padding: 1.5rem 3rem;
+      font-size: 1.2rem;
+      border-radius: 15px;
+      min-width: 200px;
+    }
+
+    @media screen and (max-width: 450px) {
+      padding: 0.8rem 1.2rem;
+      font-size: 0.85rem;
+      min-width: 120px;
+    }
+  }
+}
+
+.app__work-loadmore {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 3rem 0;
+
+  button {
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    border: 2px solid var(--secondary-color);
+    background-color: transparent;
+    color: var(--secondary-color);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: var(--secondary-color);
+      color: #fff;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(49, 59, 172, 0.3);
+    }
+
+    @media screen and (min-width: 2000px) {
+      padding: 1.5rem 3rem;
+      font-size: 1.2rem;
+      border-radius: 0.75rem;
+    }
+
+    @media screen and (max-width: 768px) {
+      padding: 0.8rem 1.5rem;
+      font-size: 0.9rem;
+    }
   }
 }

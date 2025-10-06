@@ -1,0 +1,195 @@
+/**
+ * Filter Bar Component Styles
+ */
+
+.app__filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+// Search
+.app__filter-search {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+    max-width: 400px;
+}
+
+.app__filter-search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    transition: all 0.3s ease;
+    outline: none;
+
+    &:focus {
+        border-color: var(--primary-color, #6366f1);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    &::placeholder {
+        color: #9ca3af;
+    }
+}
+
+.app__filter-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.125rem;
+    opacity: 0.5;
+}
+
+// Filter Buttons
+.app__filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    flex: 1;
+    justify-content: center;
+}
+
+.app__filter-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: #f9fafb;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-color, #374151);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+
+    .filter-icon {
+        font-size: 1rem;
+    }
+
+    .filter-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 1.5rem;
+        height: 1.5rem;
+        padding: 0 0.375rem;
+        background: #e5e7eb;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    &:hover {
+        background: #f3f4f6;
+        border-color: var(--primary-color, #6366f1);
+        color: var(--primary-color, #6366f1);
+    }
+
+    &.active {
+        background: linear-gradient(135deg, var(--primary-color, #6366f1) 0%, #8b5cf6 100%);
+        color: #fff;
+        border-color: transparent;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+
+        .filter-count {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+    }
+}
+
+// Sort Dropdown
+.app__filter-sort {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-color, #6b7280);
+        white-space: nowrap;
+    }
+}
+
+.app__filter-sort-select {
+    padding: 0.625rem 2.5rem 0.625rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-color, #374151);
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E") no-repeat right 1rem center;
+    background-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+    appearance: none;
+
+    &:hover {
+        border-color: var(--primary-color, #6366f1);
+    }
+
+    &:focus {
+        border-color: var(--primary-color, #6366f1);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+}
+
+// Responsive
+@media screen and (max-width: 900px) {
+    .app__filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .app__filter-search {
+        max-width: 100%;
+    }
+
+    .app__filter-buttons {
+        justify-content: flex-start;
+    }
+
+    .app__filter-sort {
+        justify-content: space-between;
+    }
+
+    .app__filter-sort-select {
+        flex: 1;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .app__filter-bar {
+        padding: 1.25rem;
+    }
+
+    .app__filter-buttons {
+        gap: 0.5rem;
+    }
+
+    .app__filter-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.8125rem;
+
+        .filter-count {
+            min-width: 1.25rem;
+            height: 1.25rem;
+            font-size: 0.6875rem;
+        }
+    }
+}

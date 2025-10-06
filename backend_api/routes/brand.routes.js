@@ -3,6 +3,7 @@ const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const multer = require('multer');
 const assetUploader = require('../utils/assetUploader');
+const queryBuilder = require('../utils/queryBuilder');
 
 const prisma = new PrismaClient();
 
@@ -20,17 +21,56 @@ const upload = multer({
     }
 });
 
-// Get all brands
+// Get all brands with advanced filtering
 router.get('/', async (req, res) => {
     try {
+        const {
+            featured,
+            category,
+            relationship,
+            includeUnpublished,
+            includeDrafts,
+            sortBy = 'displayOrder',
+            sortOrder = 'asc',
+            featuredFirst = true,
+            limit,
+            skip
+        } = queryBuilder.parseQueryParams(req.query);
+
+        // Build where clause
+        const where = {
+            ...queryBuilder.buildWhereClause({
+                featured,
+                category,
+                includeUnpublished,
+                includeDrafts
+            }),
+        };
+
+        // Add relationship filter
+        if (relationship) {
+            where.relationship = { contains: relationship, mode: 'insensitive' };
+        }
+
+        // Build order
+        const orderBy = queryBuilder.buildOrderBy(sortBy, sortOrder, featuredFirst);
+
         const brands = await prisma.brand.findMany({
-            orderBy: { name: 'asc' }
+            where,
+            orderBy,
+            ...(limit && { take: parseInt(limit) }),
+            ...(skip && { skip: parseInt(skip) })
         });
 
         res.json({
             success: true,
             count: brands.length,
-            data: brands
+            data: brands,
+            filters: {
+                category,
+                relationship,
+                featured: featured || false
+            }
         });
     } catch (error) {
         res.status(500).json({
@@ -95,6 +135,191 @@ router.post('/upload-logo', upload.single('logo'), async (req, res) => {
         });
     } catch (error) {
         console.error('❌ Brand logo upload error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Create new brand
+router.post('/', async (req, res) => {
+    try {
+        const brand = await prisma.brand.create({
+            data: req.body
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Brand created successfully',
+            data: brand
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Update brand
+router.put('/:id', async (req, res) => {
+    try {
+        const brand = await prisma.brand.update({
+            where: { id: req.params.id },
+            data: req.body
+        });
+
+        res.json({
+            success: true,
+            message: 'Brand updated successfully',
+            data: brand
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Soft delete brand
+router.delete('/:id', async (req, res) => {
+    try {
+        await queryBuilder.softDelete(prisma, 'brand', req.params.id);
+
+        res.json({
+            success: true,
+            message: 'Brand archived successfully'
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Restore deleted brand
+router.post('/:id/restore', async (req, res) => {
+    try {
+        const brand = await queryBuilder.restoreDeleted(prisma, 'brand', req.params.id);
+
+        res.json({
+            success: true,
+            message: 'Brand restored successfully',
+            data: brand
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Toggle featured status
+router.post('/:id/toggle-featured', async (req, res) => {
+    try {
+        const brand = await queryBuilder.toggleFeatured(prisma, 'brand', req.params.id);
+
+        res.json({
+            success: true,
+            message: `Brand ${brand.isFeatured ? 'featured' : 'unfeatured'}`,
+            data: brand
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Toggle published status
+router.post('/:id/toggle-published', async (req, res) => {
+    try {
+        const brand = await queryBuilder.togglePublished(prisma, 'brand', req.params.id);
+
+        res.json({
+            success: true,
+            message: `Brand ${brand.isPublished ? 'published' : 'unpublished'}`,
+            data: brand
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Update display order (batch)
+router.post('/reorder', async (req, res) => {
+    try {
+        const { items } = req.body; // [{ id, displayOrder }, ...]
+
+        await queryBuilder.updateDisplayOrder(prisma, 'brand', items);
+
+        res.json({
+            success: true,
+            message: 'Display order updated successfully'
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Get brand statistics
+router.get('/stats/overview', async (req, res) => {
+    try {
+        const [total, published, featured, byCategory] = await Promise.all([
+            prisma.brand.count({
+                where: { deletedAt: null }
+            }),
+            prisma.brand.count({
+                where: {
+                    deletedAt: null,
+                    isPublished: true
+                }
+            }),
+            prisma.brand.count({
+                where: {
+                    deletedAt: null,
+                    isPublished: true,
+                    isFeatured: true
+                }
+            }),
+            prisma.brand.groupBy({
+                by: ['category'],
+                where: {
+                    deletedAt: null,
+                    isPublished: true
+                },
+                _count: true
+            })
+        ]);
+
+        // Group by category
+        const categoryCounts = {};
+        byCategory.forEach(group => {
+            categoryCounts[group.category || 'Uncategorized'] = group._count;
+        });
+
+        res.json({
+            success: true,
+            data: {
+                total,
+                published,
+                featured,
+                drafts: total - published,
+                byCategory: categoryCounts
+            }
+        });
+    } catch (error) {
         res.status(500).json({
             success: false,
             error: error.message
