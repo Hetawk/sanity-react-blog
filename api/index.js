@@ -2,7 +2,7 @@
 // This exports the Express app to handle all /api/* routes
 
 try {
-    const app = require('../server/server');
+    const app = require('./server');
     module.exports = app;
 } catch (error) {
     console.error('❌ Failed to load backend server:', error);
