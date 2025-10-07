@@ -1,5 +1,5 @@
 {
-    "buildCommand": "craco build && cd backend_api && npm install && npx prisma generate",
+    "buildCommand": "craco build && cd backend_api && npm install --production && npx prisma generate",
     "devCommand": "craco start",
     "installCommand": "npm install",
     "framework": null,
@@ -11,7 +11,8 @@
     ],
     "functions": {
         "api/*.js": {
-            "includeFiles": "backend_api/**"
+            "maxDuration": 10,
+            "includeFiles": "backend_api/{routes,utils,prisma,node_modules}/**"
         }
     },
     "build": {

@@ -1,0 +1,58 @@
+# Vercel Ignore - Exclude from deployment
+
+# Node modules (will be reinstalled)
+node_modules
+
+# Build artifacts
+build
+.next
+out
+dist
+
+# Development files
+*.log
+*.md
+!README.md
+
+# Documentation
+docs/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Testing
+coverage
+*.test.js
+*.spec.js
+__tests__
+test
+tests
+
+# Backend development files
+backend_api/node_modules
+backend_api/*.log
+backend_api/.env.local
+backend_api/uploads
+
+# Sanity
+backend_sanity
+
+# Environment files (use Vercel env vars)
+.env
+.env.*
+!.env.example
+
+# Scripts
+scripts
