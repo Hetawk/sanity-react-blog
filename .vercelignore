@@ -1,58 +1,58 @@
 # Vercel Ignore - Exclude from deployment
 
-# Node modules (will be reinstalled)
-node_modules
+# Documentation
 
-# Build artifacts
-build
-.next
-out
-dist
+docs/
+
+# Root level documentation images only (keep src/assets!)
+
+backend_sanity.png
+contact.png
+header.png
 
 # Development files
-*.log
-*.md
+
+_.log
+_.md
 !README.md
 
-# Documentation
-docs/
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.svg
-
 # Git
+
 .git
 .gitignore
 
 # IDE
+
 .vscode
 .idea
-*.swp
-*.swo
+_.swp
+_.swo
 
 # Testing
+
 coverage
-*.test.js
-*.spec.js
-__tests__
+_.test.js
+_.spec.js
+**tests**
 test
 tests
 
 # Backend development files
-backend_api/node_modules
-backend_api/*.log
+
+backend_api/\*.log
 backend_api/.env.local
 backend_api/uploads
 
 # Sanity
+
 backend_sanity
 
 # Environment files (use Vercel env vars)
+
 .env
-.env.*
+.env.\*
 !.env.example
 
 # Scripts
+
 scripts
