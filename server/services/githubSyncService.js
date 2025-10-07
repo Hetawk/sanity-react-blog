@@ -11,23 +11,35 @@
  * - Can run on schedule or on-demand
  */
 
-const { Octokit } = require('@octokit/rest');
 const { PrismaClient } = require('@prisma/client');
 require('dotenv').config({ path: './.env' });
 
 const prisma = new PrismaClient();
 
-// GitHub clients for both accounts
-const octokitEkd = new Octokit({
-    auth: process.env.EKDDIGITAL_TOKEN
-});
-
-const octokitHetawk = new Octokit({
-    auth: process.env.HETAWK_TOKEN
-});
-
 // Default GitHub project image (can be updated via dashboard)
 const DEFAULT_GITHUB_IMAGE = 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png';
+
+// Lazy-load Octokit (ES Module)
+let Octokit;
+let octokitEkd;
+let octokitHetawk;
+
+async function initializeOctokit() {
+    if (!Octokit) {
+        const octokitModule = await import('@octokit/rest');
+        Octokit = octokitModule.Octokit;
+
+        // Initialize GitHub clients for both accounts
+        octokitEkd = new Octokit({
+            auth: process.env.EKDDIGITAL_TOKEN
+        });
+
+        octokitHetawk = new Octokit({
+            auth: process.env.HETAWK_TOKEN
+        });
+    }
+    return { octokitEkd, octokitHetawk };
+}
 
 /**
  * Analyze project structure to determine type and category
@@ -511,9 +523,12 @@ async function fetchAllRepositories(octokit, username, perPage = 30) {
 async function syncAllRepositories() {
     console.log('🚀 Starting GitHub Repository Auto-Sync...\n');
 
+    // Initialize Octokit (lazy load ES Module)
+    await initializeOctokit();
+
     const startTime = Date.now();
     let totalSynced = 0;
-    let totalFailed = 0; 
+    let totalFailed = 0;
 
     try {
         // Fetch repos from EKD Digital account
