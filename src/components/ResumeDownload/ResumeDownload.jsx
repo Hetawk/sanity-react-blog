@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaDownload } from 'react-icons/fa';
 import './ResumeDownload.scss';
-import apiClient from '../../api/client';
+import api from '../../api/client';
 
 const ResumeDownload = ({ location = 'home' }) => {
     const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +15,7 @@ const ResumeDownload = ({ location = 'home' }) => {
             setIsLoading(true);
             try {
                 // Fetch all resumes from MySQL
-                const response = await apiClient.get('/resumes');
+                const response = await api.resumes.getAll();
 
                 if (!response.data.success || response.data.count === 0) {
                     setErrorMessage('No resume documents found in the database');
