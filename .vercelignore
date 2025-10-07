@@ -39,7 +39,7 @@ tests
 
 # Backend development files
 
-api/*.log
+api/\*.log
 api/.env.local
 api/uploads
 

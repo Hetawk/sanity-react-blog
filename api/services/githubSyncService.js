@@ -513,7 +513,7 @@ async function syncAllRepositories() {
 
     const startTime = Date.now();
     let totalSynced = 0;
-    let totalFailed = 0;
+    let totalFailed = 0; 
 
     try {
         // Fetch repos from EKD Digital account
