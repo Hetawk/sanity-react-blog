@@ -1,11 +1,12 @@
 {
-    "buildCommand": "craco build && cd server && npm install",
+    "buildCommand": "npm install && cd server && npm install && cd .. && craco build",
     "devCommand": "craco start",
     "installCommand": "npm install",
     "framework": null,
     "functions": {
         "api/index.js": {
-            "maxDuration": 10
+            "maxDuration": 10,
+            "includeFiles": "server/**"
         }
     },
     "rewrites": [
