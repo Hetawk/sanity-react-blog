@@ -24,18 +24,18 @@ class APIClient {
         try {
             console.log('🌐 API Request:', url);
             const response = await fetch(url, config);
-            
+
             // Log response status
             console.log('📊 Response status:', response.status, response.statusText);
-            
+
             // Check content type
             const contentType = response.headers.get('content-type');
             console.log('📄 Content-Type:', contentType);
-            
+
             // Try to get response text first
             const text = await response.text();
             console.log('📝 Response preview:', text.substring(0, 200));
-            
+
             // Try to parse as JSON
             let data;
             try {
