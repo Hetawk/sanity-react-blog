@@ -1,5 +1,5 @@
 {
-    "buildCommand": "craco build && cd backend_api && npm install --production && npx prisma generate",
+    "buildCommand": "craco build",
     "devCommand": "craco start",
     "installCommand": "npm install",
     "framework": null,
@@ -9,12 +9,6 @@
             "destination": "/api"
         }
     ],
-    "functions": {
-        "api/*.js": {
-            "maxDuration": 10,
-            "includeFiles": "backend_api/{routes,utils,prisma,node_modules}/**"
-        }
-    },
     "build": {
         "env": {
             "DISABLE_ESLINT_PLUGIN": "true",

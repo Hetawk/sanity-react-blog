@@ -1,0 +1,21 @@
+{
+    "name": "api",
+    "version": "1.0.0",
+    "private": true,
+    "dependencies": {
+        "@octokit/rest": "^22.0.0",
+        "@prisma/client": "^6.16.3",
+        "cors": "^2.8.5",
+        "dotenv": "^17.2.3",
+        "express": "^5.1.0",
+        "form-data": "^4.0.4",
+        "helmet": "^8.1.0",
+        "morgan": "^1.10.1",
+        "multer": "^2.0.2",
+        "node-fetch": "^2.7.0",
+        "prisma": "^6.16.3"
+    },
+    "scripts": {
+        "postinstall": "cd ../backend_api && prisma generate"
+    }
+}
