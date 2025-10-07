@@ -1,5 +1,5 @@
 {
-    "buildCommand": "craco build",
+    "buildCommand": "craco build && cd server && npm install",
     "devCommand": "craco start",
     "installCommand": "npm install",
     "framework": null,

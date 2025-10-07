@@ -29,6 +29,9 @@ backend_sanity/
 api/.env
 api/.env.local
 api/.env.production
+server/.env
+server/.env.local
+server/.env.production
 
 # misc
 .DS_Store
