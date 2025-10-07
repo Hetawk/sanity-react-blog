@@ -661,6 +661,7 @@ const OrcidWorks = () => {
                     ) : (
                         visibleWorks.map((work, index) => (
                             <motion.div
+                                key={work.id || `work-${index}`}
                                 initial={{ opacity: 0, y: 50, scale: 0.9 }}
                                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                                 transition={{
@@ -671,7 +672,6 @@ const OrcidWorks = () => {
                                 }}
                                 viewport={{ once: true, amount: 0.3 }}
                                 className="app__orcid-work-item publication-card"
-                                key={work.id}
                             >
                                 <div className="card-icon">📄</div>
                                 <h3 className="bold-text">{work.title}</h3>
@@ -740,6 +740,7 @@ const OrcidWorks = () => {
                     ) : (
                         visibleEmployment.map((emp, index) => (
                             <motion.div
+                                key={emp.id || `emp-${index}`}
                                 initial={{ opacity: 0, x: -50, scale: 0.9 }}
                                 whileInView={{ opacity: 1, x: 0, scale: 1 }}
                                 transition={{
@@ -750,7 +751,6 @@ const OrcidWorks = () => {
                                 }}
                                 viewport={{ once: true, amount: 0.3 }}
                                 className="app__orcid-work-item employment-card"
-                                key={emp.id}
                             >
                                 <div className="card-icon">💼</div>
                                 <h3 className="bold-text">{emp.organization}</h3>
@@ -818,6 +818,7 @@ const OrcidWorks = () => {
                     ) : (
                         visibleReviews.map((review, index) => (
                             <motion.div
+                                key={review.id || `review-${index}`}
                                 initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
                                 whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
                                 transition={{
@@ -828,7 +829,6 @@ const OrcidWorks = () => {
                                 }}
                                 viewport={{ once: true, amount: 0.3 }}
                                 className="app__orcid-work-item review-card"
-                                key={review.id}
                             >
                                 <div className="card-icon">🔍</div>
                                 <h3 className="bold-text">{review.title}</h3>
@@ -909,6 +909,7 @@ const OrcidWorks = () => {
                     ) : (
                         visibleFunding.map((fund, index) => (
                             <motion.div
+                                key={fund.id || `fund-${index}`}
                                 initial={{ opacity: 0, y: 50, scale: 0.95 }}
                                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                                 transition={{
@@ -919,7 +920,6 @@ const OrcidWorks = () => {
                                 }}
                                 viewport={{ once: true, amount: 0.3 }}
                                 className="app__orcid-work-item funding-card"
-                                key={fund.id}
                             >
                                 <div className="card-icon">💰</div>
                                 <h3 className="bold-text">{fund.title}</h3>
@@ -987,6 +987,7 @@ const OrcidWorks = () => {
                     ) : (
                         visibleEducation.map((edu, index) => (
                             <motion.div
+                                key={edu.id || `edu-${index}`}
                                 initial={{ opacity: 0, x: 50, scale: 0.9 }}
                                 whileInView={{ opacity: 1, x: 0, scale: 1 }}
                                 transition={{
@@ -997,7 +998,6 @@ const OrcidWorks = () => {
                                 }}
                                 viewport={{ once: true, amount: 0.3 }}
                                 className="app__orcid-work-item education-card"
-                                key={edu.id}
                             >
                                 <div className="card-icon">🎓</div>
                                 <h3 className="bold-text">{edu.institution}</h3>
