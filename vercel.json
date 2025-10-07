@@ -3,6 +3,11 @@
     "devCommand": "craco start",
     "installCommand": "npm install",
     "framework": null,
+    "functions": {
+        "api/index.js": {
+            "maxDuration": 10
+        }
+    },
     "rewrites": [
         {
             "source": "/api/(.*)",
