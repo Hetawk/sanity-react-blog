@@ -16,6 +16,6 @@
         "prisma": "^6.16.3"
     },
     "scripts": {
-        "postinstall": "cd ../backend_api && prisma generate"
+        "postinstall": "prisma generate"
     }
 }
