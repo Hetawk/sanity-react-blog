@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { FiEdit, FiTrash2, FiPlus, FiEye, FiEyeOff, FiStar, FiSearch, FiFilter, FiChevronUp, FiChevronDown } from 'react-icons/fi';
 import api from '../../../api/client';
+import { useToast } from '../../../components/Toast/Toast';
 
 const WorksManager = () => {
+    const toast = useToast();
     const [works, setWorks] = useState([]);
     const [filteredWorks, setFilteredWorks] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -18,7 +20,7 @@ const WorksManager = () => {
     });
 
     const [tagInput, setTagInput] = useState('');
-    
+
     // Table controls
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState('title');
@@ -27,21 +29,23 @@ const WorksManager = () => {
     const [selectedRows, setSelectedRows] = useState([]);
 
     // Fetch works
-    useEffect(() => {
-        const fetchWorks = async () => {
-            try {
-                const response = await api.works.getAll();
-                const data = response.data || [];
-                setWorks(data);
-                setFilteredWorks(data);
-            } catch (error) {
-                console.error('Error fetching works:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const loadWorks = async () => {
+        try {
+            setLoading(true);
+            const response = await api.works.getAll();
+            const data = response.data || [];
+            setWorks(data);
+            setFilteredWorks(data);
+        } catch (error) {
+            console.error('Error fetching works:', error);
+            toast.error('Failed to load projects');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchWorks();
+    useEffect(() => {
+        loadWorks();
     }, []);
 
     // Filter and sort works
@@ -131,6 +135,36 @@ const WorksManager = () => {
         });
     };
 
+    // Handle drag start for tag reordering
+    const handleTagDragStart = (e, index) => {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', e.target);
+        e.dataTransfer.setData('tagIndex', index);
+    };
+
+    // Handle drag over for tag reordering
+    const handleTagDragOver = (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    };
+
+    // Handle drop for tag reordering
+    const handleTagDrop = (e, dropIndex) => {
+        e.preventDefault();
+        const dragIndex = parseInt(e.dataTransfer.getData('tagIndex'));
+
+        if (dragIndex === dropIndex) return;
+
+        const newTags = [...formData.tags];
+        const [draggedTag] = newTags.splice(dragIndex, 1);
+        newTags.splice(dropIndex, 0, draggedTag);
+
+        setFormData({
+            ...formData,
+            tags: newTags
+        });
+    };
+
     // Handle edit work
     const handleEdit = (work) => {
         setCurrentWork(work);
@@ -152,9 +186,10 @@ const WorksManager = () => {
             try {
                 await api.works.delete(workId);
                 setWorks(works.filter(work => work.id !== workId));
+                toast.success('Project deleted successfully!');
             } catch (error) {
                 console.error('Error deleting work:', error);
-                alert('Failed to delete work. Please try again.');
+                toast.error('Failed to delete project. Please try again.');
             }
         }
     };
@@ -162,33 +197,34 @@ const WorksManager = () => {
     // Handle toggle publish status
     const handleTogglePublish = async (work) => {
         try {
-            const updatedWork = await api.works.update(work.id, {
-                isPublished: !work.isPublished,
-                isDraft: work.isPublished // If unpublishing, mark as draft
+            const newPublishStatus = !work.isPublished;
+            await api.works.update(work.id, {
+                isPublished: newPublishStatus,
+                isDraft: !newPublishStatus // If unpublishing, mark as draft
             });
 
-            setWorks(works.map(w => w.id === work.id ? { ...w, isPublished: !w.isPublished, isDraft: w.isPublished } : w));
+            setWorks(works.map(w => w.id === work.id ? { ...w, isPublished: newPublishStatus, isDraft: !newPublishStatus } : w));
 
-            alert(`Project ${!work.isPublished ? 'published' : 'unpublished'} successfully!`);
+            toast.success(`Project ${newPublishStatus ? 'published' : 'unpublished'} successfully!`);
         } catch (error) {
             console.error('Error toggling publish status:', error);
-            alert('Failed to update publish status. Please try again.');
+            toast.error('Failed to update publish status. Please try again.');
         }
     };
 
     // Handle toggle feature status
     const handleToggleFeature = async (work) => {
         try {
-            const updatedWork = await api.works.update(work.id, {
+            await api.works.update(work.id, {
                 isFeatured: !work.isFeatured
             });
 
             setWorks(works.map(w => w.id === work.id ? { ...w, isFeatured: !w.isFeatured } : w));
 
-            alert(`Project ${!work.isFeatured ? 'featured' : 'unfeatured'} successfully!`);
+            toast.success(`Project ${!work.isFeatured ? 'featured' : 'unfeatured'} successfully! ⭐`);
         } catch (error) {
             console.error('Error toggling feature status:', error);
-            alert('Failed to update feature status. Please try again.');
+            toast.error('Failed to update feature status. Please try again.');
         }
     };
 
@@ -223,24 +259,22 @@ const WorksManager = () => {
     // Handle bulk delete
     const handleBulkDelete = async () => {
         if (selectedRows.length === 0) return;
-        
+
         if (window.confirm(`Are you sure you want to delete ${selectedRows.length} project(s)?`)) {
             try {
                 await Promise.all(selectedRows.map(id => api.works.delete(id)));
                 setWorks(works.filter(work => !selectedRows.includes(work.id)));
                 setSelectedRows([]);
-                alert(`Successfully deleted ${selectedRows.length} project(s)`);
+                toast.success(`Successfully deleted ${selectedRows.length} project(s)!`);
             } catch (error) {
                 console.error('Error bulk deleting works:', error);
-                alert('Failed to delete some projects. Please try again.');
+                toast.error('Failed to delete some projects. Please try again.');
             }
         }
-    };
-
-    // Handle bulk publish/unpublish
+    };    // Handle bulk publish/unpublish
     const handleBulkPublish = async (publish) => {
         if (selectedRows.length === 0) return;
-        
+
         try {
             await Promise.all(selectedRows.map(id =>
                 api.works.update(id, { isPublished: publish, isDraft: !publish })
@@ -251,14 +285,12 @@ const WorksManager = () => {
                     : work
             ));
             setSelectedRows([]);
-            alert(`Successfully ${publish ? 'published' : 'unpublished'} ${selectedRows.length} project(s)`);
+            toast.success(`Successfully ${publish ? 'published' : 'unpublished'} ${selectedRows.length} project(s)!`);
         } catch (error) {
             console.error('Error bulk updating works:', error);
-            alert('Failed to update some projects. Please try again.');
+            toast.error('Failed to update some projects. Please try again.');
         }
-    };
-
-    // Truncate text helper
+    };    // Truncate text helper
     const truncate = (text, length = 50) => {
         if (!text) return '';
         return text.length > length ? text.substring(0, length) + '...' : text;
@@ -269,49 +301,50 @@ const WorksManager = () => {
         e.preventDefault();
 
         try {
-            let imageAsset = null;
+            let uploadedImageUrl = currentWork ? currentWork.imgUrl : '';
 
-            // Upload image if new one is selected
-            if (formData.imgUrl) {
-                imageAsset = await client.assets.upload('image', formData.imgUrl, {
-                    contentType: formData.imgUrl.type,
-                    filename: formData.imgUrl.name,
-                });
+            // Upload image if a new file is provided
+            if (formData.imgUrl && typeof formData.imgUrl === 'object') {
+                toast.info('Uploading image to ekddigital Assets...', 5000);
+                const uploadResult = await api.works.uploadImage(formData.imgUrl);
+                console.log('📦 Full upload result from API:', uploadResult);
+                // The backend returns data nested in a 'data' object
+                uploadedImageUrl = uploadResult.data?.imgUrl || uploadResult.imgUrl;
+                console.log('🖼️ Extracted image URL:', uploadedImageUrl);
+                toast.success('Image uploaded successfully!');
             }
 
+            // Parse tags if they're a comma-separated string
+            const tagsArray = typeof formData.tags === 'string'
+                ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean)
+                : Array.isArray(formData.tags)
+                    ? formData.tags
+                    : [];
+
             const workDoc = {
-                _type: 'works',
                 title: formData.title,
                 description: formData.description,
                 projectLink: formData.projectLink,
                 codeLink: formData.codeLink,
-                tags: formData.tags
+                imgUrl: uploadedImageUrl,
+                tags: tagsArray,
             };
 
-            if (imageAsset) {
-                workDoc.imgUrl = {
-                    _type: 'image',
-                    asset: {
-                        _type: 'reference',
-                        _ref: imageAsset._id,
-                    },
-                };
-            }
+            console.log('💾 Saving work with data:', workDoc);
 
             if (currentWork) {
                 // Update existing work
-                const updatedWork = await client
-                    .patch(currentWork._id)
-                    .set(workDoc)
-                    .commit();
+                await api.works.update(currentWork.id, workDoc);
+                toast.success('Work updated successfully!');
 
                 const updatedWorks = works.map(work =>
-                    work._id === updatedWork._id ? updatedWork : work
+                    work.id === currentWork.id ? { ...work, ...workDoc } : work
                 );
                 setWorks(updatedWorks);
             } else {
                 // Create new work
-                const newWork = await client.create(workDoc);
+                const newWork = await api.works.create(workDoc);
+                toast.success('Work created successfully!');
                 setWorks([...works, newWork]);
             }
 
@@ -327,8 +360,12 @@ const WorksManager = () => {
                 imgPreview: null,
                 tags: []
             });
+
+            // Reload works to get fresh data
+            loadWorks();
         } catch (error) {
             console.error('Error saving work:', error);
+            toast.error(`Failed to ${currentWork ? 'update' : 'create'} work: ${error.message}`);
         }
     };
 
@@ -359,113 +396,149 @@ const WorksManager = () => {
             </div>
 
             {showForm && (
-                <div className="form-container">
-                    <h3>{currentWork ? 'Edit Work' : 'Add New Work'}</h3>
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label>Title</label>
-                            <input
-                                type="text"
-                                name="title"
-                                value={formData.title}
-                                onChange={handleChange}
-                                required
-                            />
+                <div className="modal-overlay" onClick={() => setShowForm(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3>{currentWork ? 'Edit Work' : 'Add New Work'}</h3>
+                            <button
+                                className="modal-close"
+                                onClick={() => setShowForm(false)}
+                                aria-label="Close"
+                            >
+                                ×
+                            </button>
                         </div>
 
-                        <div className="form-group">
-                            <label>Description</label>
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Project Link</label>
-                            <input
-                                type="text"
-                                name="projectLink"
-                                value={formData.projectLink}
-                                onChange={handleChange}
-                                placeholder="https://..."
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Code Link</label>
-                            <input
-                                type="text"
-                                name="codeLink"
-                                value={formData.codeLink}
-                                onChange={handleChange}
-                                placeholder="https://github.com/..."
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label>Project Image</label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageUpload}
-                            />
-                            {formData.imgPreview && (
-                                <div className="image-preview">
-                                    <img src={formData.imgPreview} alt="Project preview" />
+                        <form onSubmit={handleSubmit} className="modal-form">
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>Title *</label>
+                                    <input
+                                        type="text"
+                                        name="title"
+                                        value={formData.title}
+                                        onChange={handleChange}
+                                        required
+                                        placeholder="Enter project title"
+                                    />
                                 </div>
-                            )}
-                        </div>
 
-                        <div className="form-group">
-                            <label>Tags</label>
-                            <div className="tag-input">
-                                <input
-                                    type="text"
-                                    value={tagInput}
-                                    onChange={(e) => setTagInput(e.target.value)}
-                                    placeholder="Add a tag (e.g. React, UI/UX)"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleAddTag}
-                                >
-                                    Add
-                                </button>
+                                <div className="form-group full-width">
+                                    <label>Description *</label>
+                                    <textarea
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleChange}
+                                        required
+                                        rows="4"
+                                        placeholder="Describe your project..."
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Project Link</label>
+                                    <input
+                                        type="url"
+                                        name="projectLink"
+                                        value={formData.projectLink}
+                                        onChange={handleChange}
+                                        placeholder="https://example.com"
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Code Link</label>
+                                    <input
+                                        type="url"
+                                        name="codeLink"
+                                        value={formData.codeLink}
+                                        onChange={handleChange}
+                                        placeholder="https://github.com/..."
+                                    />
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <label>Project Image</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        className="file-input"
+                                    />
+                                    {formData.imgPreview && (
+                                        <div className="image-preview">
+                                            <img src={formData.imgPreview} alt="Project preview" />
+                                            <span className="image-label">Preview</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="form-group full-width">
+                                    <label>Tags</label>
+                                    <div className="tag-input-container">
+                                        <input
+                                            type="text"
+                                            value={tagInput}
+                                            onChange={(e) => setTagInput(e.target.value)}
+                                            onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    handleAddTag();
+                                                }
+                                            }}
+                                            placeholder="Add a tag and press Enter"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={handleAddTag}
+                                            className="add-tag-btn"
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+
+                                    {formData.tags.length > 0 && (
+                                        <div className="tags-list">
+                                            {formData.tags.map((tag, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="tag draggable-tag"
+                                                    draggable
+                                                    onDragStart={(e) => handleTagDragStart(e, index)}
+                                                    onDragOver={handleTagDragOver}
+                                                    onDrop={(e) => handleTagDrop(e, index)}
+                                                    title="Drag to reorder"
+                                                >
+                                                    <span className="drag-handle">⋮⋮</span>
+                                                    {tag}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveTag(tag)}
+                                                        className="remove-tag"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
-                            {formData.tags.length > 0 && (
-                                <div className="tags-list">
-                                    {formData.tags.map((tag, index) => (
-                                        <span key={index} className="tag">
-                                            {tag}
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemoveTag(tag)}
-                                            >
-                                                ×
-                                            </button>
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="form-actions">
-                            <button type="submit" className="save-btn">
-                                {currentWork ? 'Update Work' : 'Add Work'}
-                            </button>
-                            <button
-                                type="button"
-                                className="cancel-btn"
-                                onClick={() => setShowForm(false)}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn-secondary"
+                                    onClick={() => setShowForm(false)}
+                                >
+                                    Cancel
+                                </button>
+                                <button type="submit" className="btn-primary">
+                                    {currentWork ? 'Update Project' : 'Create Project'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             )}
 
@@ -523,7 +596,7 @@ const WorksManager = () => {
                                 />
                             </th>
                             <th className="image-cell">Image</th>
-                            <th 
+                            <th
                                 className="sortable"
                                 onClick={() => handleSort('title')}
                             >
@@ -533,7 +606,7 @@ const WorksManager = () => {
                                 )}
                             </th>
                             <th className="description-cell">Description</th>
-                            <th 
+                            <th
                                 className="sortable tags-cell"
                                 onClick={() => handleSort('tags')}
                             >
@@ -550,8 +623,8 @@ const WorksManager = () => {
                         {filteredWorks.length === 0 ? (
                             <tr>
                                 <td colSpan="7" className="no-data">
-                                    {searchTerm || filterStatus !== 'all' 
-                                        ? 'No projects match your filters' 
+                                    {searchTerm || filterStatus !== 'all'
+                                        ? 'No projects match your filters'
                                         : 'No projects yet. Click "Add Work" to create one.'}
                                 </td>
                             </tr>

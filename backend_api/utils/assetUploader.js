@@ -85,18 +85,23 @@ class AssetUploader {
 
             const result = await response.json();
 
-            // Construct the public URL from the API response
-            const publicUrl = result.download_url || `${this.baseUrl}/assets/${result.filePath || result.file_path}`;
+            // According to EKD Digital Assets documentation, 
+            // the correct way to access assets is via the download URL with asset ID
+            // Format: https://www.assets.andgroupco.com/api/v1/assets/{asset_id}/download
+            const assetId = result.id;
+            const publicUrl = `${this.apiUrl}/${assetId}/download`;
 
-            console.log(`✅ Upload successful: ${publicUrl}`);
+            console.log(`✅ Upload successful - Asset ID: ${assetId}`);
+            console.log(`✅ Download URL: ${publicUrl}`);
 
             return {
                 success: true,
-                filename: result.filename || filename,
+                assetId: assetId,
+                filename: result.filename || result.name || filename,
                 filePath: result.filePath || result.file_path,
                 fileUrl: publicUrl,
                 size: result.size || fileBuffer.length,
-                mimeType: result.mimeType || mimeType,
+                mimeType: result.mimeType || result.mime_type || mimeType,
                 uploadedAt: new Date().toISOString(),
                 vpsResponse: result
             };

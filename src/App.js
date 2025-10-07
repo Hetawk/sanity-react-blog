@@ -6,6 +6,7 @@ import { Navbar } from './components';
 import { Contact } from './pages';
 import Dashboard from './pages/Dashboard/Dashboard';
 import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './components/Toast/Toast';
 import './App.scss';
 
 const HomePage = () => (
@@ -22,17 +23,19 @@ const HomePage = () => (
 );
 
 const App = () => (
-  <AuthProvider>
-    <BrowserRouter>
-      <div className="app">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/dash" element={<Dashboard />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
-  </AuthProvider>
+  <ToastProvider>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="app">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/dash" element={<Dashboard />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
+  </ToastProvider>
 );
 
 export default App;

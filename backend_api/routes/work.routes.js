@@ -169,6 +169,7 @@ router.post('/upload-image', upload.single('image'), async (req, res) => {
         );
 
         console.log('✅ Work image uploaded successfully:', uploadResult.fileUrl);
+        console.log('📋 Full upload result:', JSON.stringify(uploadResult, null, 2));
 
         res.status(200).json({
             success: true,

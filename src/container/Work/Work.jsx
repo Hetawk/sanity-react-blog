@@ -38,6 +38,14 @@ const Work = () => {
         if (data.length > 0) {
           console.log('📝 First work sample:', data[0]);
           console.log('🏷️  Tags format:', typeof data[0].tags, data[0].tags);
+          console.log('🖼️  Image URL:', data[0].imgUrl);
+
+          // Check all image URLs
+          data.forEach((work, index) => {
+            if (work.imgUrl) {
+              console.log(`🖼️  Work ${index + 1} (${work.title}): ${work.imgUrl}`);
+            }
+          });
         }
 
         setWorks(data);
@@ -52,6 +60,32 @@ const Work = () => {
     fetchWorks();
   }, []);
 
+  // Smart tag detection functions for different categories
+  const isDatabaseTag = (tag) => {
+    const dbKeywords = ['mysql', 'postgresql', 'postgres', 'psql', 'mongodb', 'mongo', 'redis', 'sqlite', 'mariadb', 'oracle', 'mssql', 'cassandra', 'dynamodb', 'firestore', 'fauna', 'supabase', 'planetscale', 'cockroachdb', 'neo4j', 'arangodb'];
+    return dbKeywords.some(keyword => tag.toLowerCase().includes(keyword));
+  };
+
+  const isMobileTag = (tag) => {
+    const mobileKeywords = ['android', 'ios', 'react native', 'react-native', 'flutter', 'swift', 'kotlin', 'mobile', 'xamarin', 'ionic', 'cordova', 'capacitor'];
+    return mobileKeywords.some(keyword => tag.toLowerCase().includes(keyword));
+  };
+
+  const isDesktopTag = (tag) => {
+    const desktopKeywords = ['windows', 'mac', 'macos', 'linux', 'desktop', 'electron', 'tauri', 'qt', 'wpf', 'winforms', 'gtk'];
+    return desktopKeywords.some(keyword => tag.toLowerCase().includes(keyword));
+  };
+
+  const isCICDTag = (tag) => {
+    const cicdKeywords = ['github actions', 'github-actions', 'gitlab ci', 'gitlab-ci', 'jenkins', 'travis', 'circleci', 'circle ci', 'ci/cd', 'cicd', 'azure devops', 'azure-devops', 'bitbucket pipelines'];
+    return cicdKeywords.some(keyword => tag.toLowerCase().includes(keyword));
+  };
+
+  const isDockerTag = (tag) => {
+    const dockerKeywords = ['docker', 'dockerfile', 'docker-compose', 'kubernetes', 'k8s', 'container', 'podman'];
+    return dockerKeywords.some(keyword => tag.toLowerCase().includes(keyword));
+  };
+
   const handleWorkFilter = (item) => {
     setActiveFilter(item);
     setAnimateCard([{ y: 100, opacity: 0 }]);
@@ -59,14 +93,42 @@ const Work = () => {
     setTimeout(() => {
       setAnimateCard([{ y: 0, opacity: 1 }]);
 
+      let filtered;
+
       if (item === 'All') {
-        setFilterWork(works);
-        setShowLoadMore(works.length > 6);
+        filtered = works;
+      } else if (item === 'Database') {
+        // Smart filtering for database category
+        filtered = works.filter((work) =>
+          work.tags && work.tags.some(tag => isDatabaseTag(tag))
+        );
+      } else if (item === 'Mobile') {
+        // Smart filtering for mobile category (Android, iOS, React Native, Flutter, etc.)
+        filtered = works.filter((work) =>
+          work.tags && work.tags.some(tag => isMobileTag(tag))
+        );
+      } else if (item === 'Desktop') {
+        // Smart filtering for desktop category (Windows, Mac, Linux, Electron, etc.)
+        filtered = works.filter((work) =>
+          work.tags && work.tags.some(tag => isDesktopTag(tag))
+        );
+      } else if (item === 'CI/CD') {
+        // Smart filtering for CI/CD category
+        filtered = works.filter((work) =>
+          work.tags && work.tags.some(tag => isCICDTag(tag))
+        );
+      } else if (item === 'Docker') {
+        // Smart filtering for Docker/Container category
+        filtered = works.filter((work) =>
+          work.tags && work.tags.some(tag => isDockerTag(tag))
+        );
       } else {
-        const filtered = works.filter((work) => work.tags.includes(item));
-        setFilterWork(filtered);
-        setShowLoadMore(filtered.length > 6);
+        // Exact match filtering for specific tags (React, TypeScript, Python, etc.)
+        filtered = works.filter((work) => work.tags && work.tags.includes(item));
       }
+
+      setFilterWork(filtered);
+      setShowLoadMore(filtered.length > 6);
       setVisibleItems(6); // Reset to 6 when filtering
     }, 500);
   };
@@ -87,7 +149,7 @@ const Work = () => {
       <h2 className="head-text">My Creative <span>Portfolio</span> Section</h2>
 
       <div className="app__work-filter">
-        {['All', 'React', 'TypeScript', 'Next.js', 'Python', 'Testing', 'Documentation', 'Database', 'CI/CD', 'Docker'].map((item, index) => (
+        {['All', 'React', 'TypeScript', 'Next.js', 'Python', 'Mobile', 'Desktop', 'Documentation', 'Database', 'CI/CD', 'Docker'].map((item, index) => (
           <div
             key={index}
             onClick={() => handleWorkFilter(item)}
@@ -154,8 +216,15 @@ const Work = () => {
               </p>
 
               {work.tags && work.tags.length > 0 && (
-                <div className="app__work-tag app__flex">
-                  <p className="p-text">{Array.isArray(work.tags) ? work.tags[0] : work.tags}</p>
+                <div className="app__work-tags-container">
+                  {(Array.isArray(work.tags) ? work.tags.slice(0, 3) : [work.tags]).map((tag, tagIndex) => (
+                    <span key={tagIndex} className="app__work-tag">
+                      {tag}
+                    </span>
+                  ))}
+                  {work.tags.length > 3 && (
+                    <span className="app__work-tag-more">+{work.tags.length - 3}</span>
+                  )}
                 </div>
               )}
             </div>

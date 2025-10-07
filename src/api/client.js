@@ -73,6 +73,25 @@ export const api = {
         getAll: () => apiClient.get('/api/works'),
         getById: (id) => apiClient.get(`/api/works/${id}`),
         getByTag: (tag) => apiClient.get(`/api/works/tag/${tag}`),
+        create: (data) => apiClient.post('/api/works', data),
+        update: (id, data) => apiClient.put(`/api/works/${id}`, data),
+        delete: (id) => apiClient.delete(`/api/works/${id}`),
+        uploadImage: async (file) => {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            const response = await fetch(`${API_BASE_URL}/api/works/upload-image`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to upload image');
+            }
+
+            return await response.json();
+        },
     },
 
     // Abouts

@@ -40,6 +40,7 @@ yarn-error.log*
 
 # scripts (but keep docs)
 /scripts
+docs/
 
 # screenshots
 *.png
