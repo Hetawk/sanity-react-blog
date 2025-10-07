@@ -39,9 +39,9 @@ tests
 
 # Backend development files
 
-backend_api/\*.log
-backend_api/.env.local
-backend_api/uploads
+api/*.log
+api/.env.local
+api/uploads
 
 # Sanity
 

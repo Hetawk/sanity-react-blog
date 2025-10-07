@@ -106,7 +106,7 @@
 If you need to set up the backend API:
 
 ```bash
-cd backend_api
+cd api
 npm install
 node server.js
 ```
@@ -168,7 +168,7 @@ portfolio/
 │   ├── context/           # React context
 │   ├── wrapper/           # HOC wrappers
 │   └── constants/         # Constants and config
-├── backend_api/           # Backend server
+├── api/                   # Backend server
 ├── docs/                  # Documentation (gitignored)
 └── scripts/               # Utility scripts (gitignored)
 ```

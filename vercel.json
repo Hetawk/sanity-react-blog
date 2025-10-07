@@ -1,5 +1,5 @@
 {
-    "buildCommand": "craco build && cp -r backend_api/routes api/ && cp -r backend_api/utils api/ && cp -r backend_api/prisma api/ && cp backend_api/server.js api/",
+    "buildCommand": "craco build",
     "devCommand": "craco start",
     "installCommand": "npm install",
     "framework": null,

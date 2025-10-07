@@ -6,7 +6,7 @@ try {
     module.exports = app;
 } catch (error) {
     console.error('❌ Failed to load backend server:', error);
-    
+
     // Export a basic error handler
     module.exports = (req, res) => {
         res.status(500).json({

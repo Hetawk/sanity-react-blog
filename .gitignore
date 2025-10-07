@@ -25,9 +25,9 @@ backend_sanity/
 .env.production.local
 .env.vercel
 .env.vercel.*
-backend_api/.env
-backend_api/.env.local
-backend_api/.env.production
+api/.env
+api/.env.local
+api/.env.production
 
 # misc
 .DS_Store
