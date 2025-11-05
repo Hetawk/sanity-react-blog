@@ -26,6 +26,7 @@ backend_sanity/
 .env.production.local
 .env.vercel
 .env.vercel.*
+.env.server.secrets
 api/.env
 api/.env.local
 api/.env.production
