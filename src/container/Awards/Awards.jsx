@@ -84,7 +84,7 @@ const Awards = () => {
         viewMode === 'carousel' ? (
           <div className="app__award-carousel">
             <div className="app__award-item app__flex">
-              <img src={awards[currentIndex].imgUrl} alt={awards[currentIndex].name} />
+              <img src={awards[currentIndex].imgUrl} alt={awards[currentIndex].title} />
               <div className="app__award-content">
                 <span className="award-year">{awards[currentIndex].year}</span>
                 <h4 className="bold-text">{awards[currentIndex].title}</h4>
@@ -128,9 +128,8 @@ const Awards = () => {
                   className="app__award-grid-item"
                   key={`award-${index}`}
                 >
-                  <div className="award-icon">🏆</div>
                   <div className="award-image-container">
-                    <img src={award.imgUrl} alt={award.name} />
+                    <img src={award.imgUrl} alt={award.title} />
                   </div>
                   <div className="award-details">
                     <span className="award-year">{award.year}</span>
