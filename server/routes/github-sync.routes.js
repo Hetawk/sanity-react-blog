@@ -5,30 +5,36 @@
 
 const express = require('express');
 const router = express.Router();
-const { syncAllRepositories, syncRepository } = require('../services/githubSyncService');
+const { triggerManualSync, getSyncStatus } = require('../services/schedulerService');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 /**
  * POST /api/github-sync
- * Trigger full sync of all repositories from both GitHub accounts
+ * Trigger manual sync of all repositories from both GitHub accounts
  */
 router.post('/', async (req, res) => {
     try {
         console.log('🔄 Manual sync triggered via API');
 
-        // Run sync in background to avoid timeout
-        syncAllRepositories().catch(error => {
-            console.error('Background sync error:', error);
-        });
+        // Run sync immediately (non-blocking)
+        const result = await triggerManualSync();
 
-        res.status(202).json({
-            success: true,
-            message: 'GitHub sync started in background. Check server logs for progress.',
-            timestamp: new Date().toISOString()
-        });
+        if (result.success) {
+            res.status(200).json({
+                success: true,
+                message: 'GitHub sync completed successfully',
+                timestamp: new Date().toISOString()
+            });
+        } else {
+            res.status(409).json({
+                success: false,
+                message: result.message,
+                timestamp: new Date().toISOString()
+            });
+        }
     } catch (error) {
-        console.error('Error starting sync:', error);
+        console.error('Error during manual sync:', error);
         res.status(500).json({
             success: false,
             error: error.message
@@ -38,10 +44,13 @@ router.post('/', async (req, res) => {
 
 /**
  * GET /api/github-sync/status
- * Get sync status and statistics
+ * Get sync status and statistics including scheduler info
  */
 router.get('/status', async (req, res) => {
     try {
+        // Get scheduler status
+        const schedulerStatus = getSyncStatus();
+
         const stats = await prisma.work.aggregate({
             where: {
                 isGithubProject: true,
@@ -116,6 +125,7 @@ router.get('/status', async (req, res) => {
 
         res.json({
             success: true,
+            scheduler: schedulerStatus,
             data: {
                 total: stats._count.id,
                 totalStars: stats._sum.githubStars || 0,

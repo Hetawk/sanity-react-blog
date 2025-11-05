@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FiSearch } from 'react-icons/fi';
+import { Pagination } from '../../../components';
 import api from '../../../api/client';
 
 const AboutsManager = () => {
     const [abouts, setAbouts] = useState([]);
+    const [filteredAbouts, setFilteredAbouts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -15,6 +18,14 @@ const AboutsManager = () => {
         imgUrl: ''
     });
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(15);
+
+    // Filter and search state
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterStatus, setFilterStatus] = useState('all');
+
     useEffect(() => {
         fetchAbouts();
     }, []);
@@ -22,8 +33,10 @@ const AboutsManager = () => {
     const fetchAbouts = async () => {
         try {
             setLoading(true);
-            const response = await api.abouts.getAll();
+            // Fetch all abouts including unpublished for dashboard
+            const response = await api.abouts.getAll(true);
             setAbouts(response.data || []);
+            setFilteredAbouts(response.data || []);
             setError('');
         } catch (err) {
             console.error('Error fetching abouts:', err);
@@ -32,6 +45,29 @@ const AboutsManager = () => {
             setLoading(false);
         }
     };
+
+    // Filter abouts based on search and status
+    useEffect(() => {
+        let filtered = [...abouts];
+
+        // Apply search filter
+        if (searchTerm) {
+            filtered = filtered.filter(about =>
+                about.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                about.description?.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        // Apply status filter
+        if (filterStatus === 'published') {
+            filtered = filtered.filter(about => about.isPublished);
+        } else if (filterStatus === 'unpublished') {
+            filtered = filtered.filter(about => !about.isPublished);
+        }
+
+        setFilteredAbouts(filtered);
+        setCurrentPage(1);
+    }, [abouts, searchTerm, filterStatus]);
 
     const handleEdit = (about) => {
         setCurrentAbout(about);
@@ -91,6 +127,17 @@ const AboutsManager = () => {
         }
     };
 
+    const handleTogglePublish = async (about) => {
+        try {
+            await api.abouts.togglePublished(about.id);
+            await fetchAbouts();
+            setSuccess(`About ${about.isPublished ? 'unpublished' : 'published'} successfully!`);
+        } catch (err) {
+            console.error('Error toggling publish status:', err);
+            setError('Failed to update publish status. ' + err.message);
+        }
+    };
+
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this about content?')) {
             return;
@@ -147,6 +194,43 @@ const AboutsManager = () => {
                     </motion.button>
                 )}
             </div>
+
+            {/* Search and Filter Controls */}
+            {!isEditing && (
+                <div className="controls-bar" style={{ marginBottom: '20px', display: 'flex', gap: '15px', alignItems: 'center' }}>
+                    <div className="search-box" style={{ flex: 1, position: 'relative' }}>
+                        <FiSearch style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#666' }} />
+                        <input
+                            type="text"
+                            placeholder="Search by title or description..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '10px 10px 10px 40px',
+                                border: '1px solid #ddd',
+                                borderRadius: '8px',
+                                fontSize: '14px'
+                            }}
+                        />
+                    </div>
+                    <select
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                        style={{
+                            padding: '10px 15px',
+                            border: '1px solid #ddd',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            minWidth: '150px'
+                        }}
+                    >
+                        <option value="all">All ({abouts.length})</option>
+                        <option value="published">Published ({abouts.filter(a => a.isPublished).length})</option>
+                        <option value="unpublished">Unpublished ({abouts.filter(a => !a.isPublished).length})</option>
+                    </select>
+                </div>
+            )}
 
             <AnimatePresence>
                 {error && (
@@ -245,52 +329,78 @@ const AboutsManager = () => {
                     </form>
                 </motion.div>
             ) : (
-                <div className="items-grid">
-                    {abouts.length === 0 ? (
-                        <div className="empty-state">
-                            <p>No about content found. Create your first one!</p>
-                        </div>
-                    ) : (
-                        abouts.map((about, index) => (
-                            <motion.div
-                                key={about.id}
-                                className="item-card"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                whileHover={{ y: -5, boxShadow: "0 10px 30px rgba(0,0,0,0.15)" }}
-                            >
-                                {about.imgUrl && (
-                                    <div className="item-image">
-                                        <img src={about.imgUrl} alt={about.title} />
+                <>
+                    <div className="items-grid">
+                        {filteredAbouts.length === 0 ? (
+                            <div className="empty-state">
+                                <p>No about content found. {searchTerm || filterStatus !== 'all' ? 'Try different filters.' : 'Create your first one!'}</p>
+                            </div>
+                        ) : (
+                            filteredAbouts.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((about, index) => (
+                                <motion.div
+                                    key={about.id}
+                                    className="item-card"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.1 }}
+                                    whileHover={{ y: -5, boxShadow: "0 10px 30px rgba(0,0,0,0.15)" }}
+                                >
+                                    {about.imgUrl && (
+                                        <div className="item-image">
+                                            <img src={about.imgUrl} alt={about.title} />
+                                        </div>
+                                    )}
+                                    <div className="item-content">
+                                        <h3>{about.title}</h3>
+                                        <p>{about.description.substring(0, 150)}...</p>
+                                        <div className="status-badges">
+                                            <span className={`status-badge ${about.isPublished ? 'published' : 'draft'}`}>
+                                                {about.isPublished ? '✓ Published' : '📝 Draft'}
+                                            </span>
+                                        </div>
                                     </div>
-                                )}
-                                <div className="item-content">
-                                    <h3>{about.title}</h3>
-                                    <p>{about.description.substring(0, 150)}...</p>
-                                </div>
-                                <div className="item-actions">
-                                    <motion.button
-                                        className="btn-edit"
-                                        onClick={() => handleEdit(about)}
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.9 }}
-                                    >
-                                        ✏️ Edit
-                                    </motion.button>
-                                    <motion.button
-                                        className="btn-delete"
-                                        onClick={() => handleDelete(about.id)}
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.9 }}
-                                    >
-                                        🗑️ Delete
-                                    </motion.button>
-                                </div>
-                            </motion.div>
-                        ))
+                                    <div className="item-actions">
+                                        <motion.button
+                                            className={`btn-publish ${about.isPublished ? 'unpublish' : ''}`}
+                                            onClick={() => handleTogglePublish(about)}
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
+                                            title={about.isPublished ? 'Unpublish' : 'Publish'}
+                                        >
+                                            {about.isPublished ? '👁️ Unpublish' : '👁️ Publish'}
+                                        </motion.button>
+                                        <motion.button
+                                            className="btn-edit"
+                                            onClick={() => handleEdit(about)}
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
+                                        >
+                                            ✏️ Edit
+                                        </motion.button>
+                                        <motion.button
+                                            className="btn-delete"
+                                            onClick={() => handleDelete(about.id)}
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
+                                        >
+                                            🗑️ Delete
+                                        </motion.button>
+                                    </div>
+                                </motion.div>
+                            ))
+                        )}
+                    </div>
+
+                    {filteredAbouts.length > 0 && (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalItems={filteredAbouts.length}
+                            pageSize={pageSize}
+                            onPageChange={setCurrentPage}
+                            onPageSizeChange={setPageSize}
+                        />
                     )}
-                </div>
+                </>
             )}
         </div>
     );

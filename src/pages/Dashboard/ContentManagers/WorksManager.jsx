@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FiEdit, FiTrash2, FiPlus, FiEye, FiEyeOff, FiStar, FiSearch, FiFilter, FiChevronUp, FiChevronDown } from 'react-icons/fi';
 import api from '../../../api/client';
 import { useToast } from '../../../components/Toast/Toast';
+import Pagination from '../../../components/Pagination/Pagination';
 
 const WorksManager = () => {
     const toast = useToast();
@@ -10,6 +11,8 @@ const WorksManager = () => {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [currentWork, setCurrentWork] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(15);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -32,7 +35,8 @@ const WorksManager = () => {
     const loadWorks = async () => {
         try {
             setLoading(true);
-            const response = await api.works.getAll();
+            // Fetch all works including unpublished for dashboard
+            const response = await api.works.getAll({ includeUnpublished: true });
             const data = response.data || [];
             setWorks(data);
             setFilteredWorks(data);
@@ -629,7 +633,7 @@ const WorksManager = () => {
                                 </td>
                             </tr>
                         ) : (
-                            filteredWorks.map(work => (
+                            filteredWorks.slice((currentPage - 1) * pageSize, currentPage * pageSize).map(work => (
                                 <tr key={work.id} className={selectedRows.includes(work.id) ? 'selected' : ''}>
                                     <td className="checkbox-cell">
                                         <input
@@ -716,6 +720,16 @@ const WorksManager = () => {
                         )}
                     </tbody>
                 </table>
+
+                {filteredWorks.length > 0 && (
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={filteredWorks.length}
+                        pageSize={pageSize}
+                        onPageChange={setCurrentPage}
+                        onPageSizeChange={setPageSize}
+                    />
+                )}
             </div>
 
             {/* Table Footer */}

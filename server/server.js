@@ -19,6 +19,9 @@ const testimonialRoutes = require('./routes/testimonial.routes');
 const leadershipRoutes = require('./routes/leadership.routes');
 const githubSyncRoutes = require('./routes/github-sync.routes');
 
+// Services
+const { startScheduler } = require('./services/schedulerService');
+
 const app = express();
 
 // Middleware
@@ -147,6 +150,10 @@ if (process.env.VERCEL !== '1') {
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
     `);
+
+        // Start GitHub Auto-Sync Scheduler (syncs every 1 hour)
+        console.log('🔄 Initializing GitHub Auto-Sync Scheduler...');
+        startScheduler();
     });
 }
 

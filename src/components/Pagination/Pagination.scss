@@ -1,0 +1,167 @@
+.pagination-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    @media screen and (min-width: 768px) {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.pagination-info {
+    .pagination-text {
+        color: var(--gray-color);
+        font-size: 0.9rem;
+
+        strong {
+            color: var(--white-color);
+            font-weight: 600;
+        }
+    }
+}
+
+.pagination-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+
+    @media screen and (min-width: 768px) {
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+}
+
+.page-size-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    label {
+        color: var(--gray-color);
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .page-size-select {
+        padding: 0.5rem 0.75rem;
+        background: var(--white-color);
+        border: 1px solid rgba(255, 76, 41, 0.3);
+        border-radius: 4px;
+        color: var(--black-color);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 70px;
+
+        &:hover {
+            border-color: var(--secondary-color);
+        }
+
+        &:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(255, 76, 41, 0.1);
+        }
+    }
+}
+
+.pagination-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .pagination-btn {
+        padding: 0.5rem 1rem;
+        background: var(--white-color);
+        border: 1px solid rgba(255, 76, 41, 0.3);
+        border-radius: 4px;
+        color: var(--black-color);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+
+        &:hover:not(:disabled) {
+            background: var(--secondary-color);
+            color: var(--white-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 76, 41, 0.3);
+        }
+
+        &:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        &:active:not(:disabled) {
+            transform: translateY(0);
+        }
+    }
+
+    .page-indicator {
+        color: var(--gray-color);
+        font-size: 0.9rem;
+        padding: 0 0.5rem;
+        white-space: nowrap;
+
+        strong {
+            color: var(--white-color);
+            font-weight: 600;
+        }
+    }
+}
+
+// Dark theme support
+@media (prefers-color-scheme: dark) {
+    .pagination-container {
+        background: rgba(0, 0, 0, 0.3);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .page-size-select,
+    .pagination-btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--white-color);
+        border-color: rgba(255, 255, 255, 0.2);
+
+        &:hover:not(:disabled) {
+            background: var(--secondary-color);
+        }
+    }
+}
+
+// Mobile optimizations
+@media screen and (max-width: 480px) {
+    .pagination-container {
+        padding: 1rem;
+    }
+
+    .pagination-buttons {
+        .pagination-btn {
+            padding: 0.4rem 0.7rem;
+            font-size: 0.85rem;
+        }
+    }
+
+    .page-size-selector {
+        label {
+            font-size: 0.85rem;
+        }
+
+        .page-size-select {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.6rem;
+        }
+    }
+}

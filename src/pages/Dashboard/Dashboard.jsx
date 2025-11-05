@@ -1,28 +1,28 @@
 import React,
-    {
+{
     useState
 }
 
-from 'react';
+    from 'react';
 
 import {
     motion,
     AnimatePresence
 }
 
-from 'framer-motion';
+    from 'framer-motion';
 
 import {
     Navbar
 }
 
-from '../../components';
+    from '../../components';
 
 import {
     useAuth
 }
 
-from '../../context/AuthContext';
+    from '../../context/AuthContext';
 import './Dashboard.scss';
 
 // Content type tabs
@@ -32,46 +32,26 @@ import ExperiencesManager from './ContentManagers/ExperiencesManager';
 import AwardsManager from './ContentManagers/AwardsManager';
 import WorksManager from './ContentManagers/WorksManager';
 import ResumeManager from './ContentManagers/ResumeManager';
+import GithubSyncManager from './ContentManagers/GithubSyncManager';
 
 // Tab configuration with icons - using brand colors
-const tabs=[ {
-    id: 'abouts', label: 'About', icon: '👤', color: '#FF4C29'
-}
-
-,
-    {
-    id: 'skills', label: 'Skills', icon: '⚡', color: '#FF4C29'
-}
-
-,
-    {
-    id: 'works', label: 'Works', icon: '💼', color: '#8E0E00'
-}
-
-,
-    {
-    id: 'experiences', label: 'Experience', icon: '🎯', color: '#8E0E00'
-}
-
-,
-    {
-    id: 'awards', label: 'Awards', icon: '🏆', color: '#1F1C18'
-}
-
-,
-    {
-    id: 'resume', label: 'Resume', icon: '📄', color: '#1F1C18'
-}
-
+const tabs = [
+    { id: 'abouts', label: 'About', icon: '👤', color: '#FF4C29' },
+    { id: 'skills', label: 'Skills', icon: '⚡', color: '#FF4C29' },
+    { id: 'works', label: 'Works', icon: '💼', color: '#8E0E00' },
+    { id: 'experiences', label: 'Experience', icon: '🎯', color: '#8E0E00' },
+    { id: 'awards', label: 'Awards', icon: '🏆', color: '#1F1C18' },
+    { id: 'resume', label: 'Resume', icon: '📄', color: '#1F1C18' },
+    { id: 'github', label: 'GitHub Sync', icon: '🔄', color: '#0366d6' },
 ];
 
-const Dashboard=()=> {
+const Dashboard = () => {
     const [password,
-    setPassword]=useState('');
+        setPassword] = useState('');
     const [error,
-    setError]=useState('');
+        setError] = useState('');
     const [activeTab,
-    setActiveTab]=useState('abouts');
+        setActiveTab] = useState('abouts');
 
     const {
         isAuthenticated,
@@ -80,13 +60,13 @@ const Dashboard=()=> {
         loading
     }
 
-    =useAuth();
+        = useAuth();
     const [showHelp,
-    setShowHelp]=useState(false);
+        setShowHelp] = useState(false);
     const [sidebarCollapsed,
-    setSidebarCollapsed]=useState(false);
+        setSidebarCollapsed] = useState(false);
 
-    const handleLogin=(e)=> {
+    const handleLogin = (e) => {
         e.preventDefault();
 
         if (login(password)) {
@@ -98,113 +78,113 @@ const Dashboard=()=> {
         }
     }
 
-    ;
+        ;
 
-    const handleLogout=()=> {
+    const handleLogout = () => {
         logout();
     }
 
-    ;
+        ;
 
     if (loading) {
         return <div className="dashboard-loading">Loading...</div>;
     }
 
     // If not authenticated, show login form
-    if ( !isAuthenticated) {
-        return (<div className="dashboard-login"> <h1>Dashboard Login</h1> <form onSubmit= {
-                handleLogin
-            }
+    if (!isAuthenticated) {
+        return (<div className="dashboard-login"> <h1>Dashboard Login</h1> <form onSubmit={
+            handleLogin
+        }
 
-            > <div className="form-group"> <label>Password</label> <input type="password"
+        > <div className="form-group"> <label>Password</label> <input type="password"
 
-            value= {
+            value={
                 password
             }
 
-            onChange= {
-                (e)=> setPassword(e.target.value)
+            onChange={
+                (e) => setPassword(e.target.value)
             }
 
             placeholder="Enter dashboard password"
 
-            /> </div> {
+        /> </div> {
                 error && (<p className="error"> {
-                        error
+                    error
+                }
+
+                    {
+                        process.env.NODE_ENV === 'development' && !process.env.REACT_APP_ADMIN_PASSWORD && (<span> - Environment variables not loaded properly</span>)
                     }
 
-                        {
-                        process.env.NODE_ENV==='development'&& !process.env.REACT_APP_ADMIN_PASSWORD && (<span> - Environment variables not loaded properly</span>)
-                    }
-
-                    </p>)
+                </p>)
             }
 
             <button type="submit">Login</button> <div className="login-help"> <button type="button"
-            className="help-btn"
+                className="help-btn"
 
-            onClick= {
-                ()=> setShowHelp( !showHelp)
-            }
+                onClick={
+                    () => setShowHelp(!showHelp)
+                }
 
             > {
-                showHelp ? 'Hide Help' : 'Need Help?'
-            }
+                    showHelp ? 'Hide Help' : 'Need Help?'
+                }
 
             </button> {
-                showHelp && (<div className="help-content"> <p><strong>Need Access?</strong></p> <p>Please contact the administrator:</p> <p className="admin-contact"> <strong>Enoch Kwateh Dongbo</strong><br /> <a href="mailto:ekd@ekddigital.com">ekd@ekddigital.com</a> </p> <p><strong>Current status:</strong> Environment variables are {
+                    showHelp && (<div className="help-content"> <p><strong>Need Access?</strong></p> <p>Please contact the administrator:</p> <p className="admin-contact"> <strong>Enoch Kwateh Dongbo</strong><br /> <a href="mailto:ekd@ekddigital.com">ekd@ekddigital.com</a> </p> <p><strong>Current status:</strong> Environment variables are {
                         process.env.REACT_APP_ADMIN_PASSWORD ? " loaded properly."
-                        : " missing or incomplete."
+                            : " missing or incomplete."
                     }
 
                     </p> </div>)
-            }
+                }
 
             </div> </form> </div>);
     }
 
     // Render dashboard if authenticated
     return (<div className="dashboard-container"> <Navbar /> {
-            /* Modern Header with Stats */
-        }
+        /* Modern Header with Stats */
+    }
 
         <motion.div className="dashboard-header-modern"
 
-        initial= {
+            initial={
                 {
-                opacity: 0, y: -20
+                    opacity: 0, y: -20
+                }
             }
-        }
 
-        animate= {
+            animate={
                 {
-                opacity: 1, y: 0
+                    opacity: 1, y: 0
+                }
             }
-        }
 
-        transition= {
+            transition={
                 {
-                duration: 0.5
+                    duration: 0.5
+                }
             }
-        }
 
         > <div className="header-left"> <h1> <span className="gradient-text">Content Manager</span> </h1> <p className="header-subtitle">Manage your portfolio content with ease</p> </div> <div className="header-right"> <motion.button className="logout-btn-modern"
 
-        onClick= {
-            handleLogout
-        }
-
-        whileHover= {
-                {
-                scale: 1.05
+            onClick={
+                handleLogout
             }
-        }
 
-        whileTap= {
+            whileHover={
                 {
-                scale: 0.95
+                    scale: 1.05
+                }
             }
-        }
+
+            whileTap={
+                {
+                    scale: 0.95
+                }
+            }
 
         > <span>🚪</span> Logout </motion.button> </div> </motion.div> {
             /* Modern Tab Navigation */
@@ -212,30 +192,30 @@ const Dashboard=()=> {
 
         <div className="dashboard-content-modern"> <motion.div className="dashboard-tabs-modern"
 
-        initial= {
+            initial={
                 {
-                opacity: 0
+                    opacity: 0
+                }
             }
-        }
 
-        animate= {
+            animate={
                 {
-                opacity: 1
+                    opacity: 1
+                }
             }
-        }
 
-        transition= {
+            transition={
                 {
-                delay: 0.2
+                    delay: 0.2
+                }
             }
-        }
 
         > {
-            tabs.map((tab, index)=> (<motion.button key= {
-                        tab.id
-                    }
+                tabs.map((tab, index) => (<motion.button key={
+                    tab.id
+                }
 
-                    className= {
+                    className={
                         `tab-btn-modern $ {
                             activeTab===tab.id ? 'active' : ''
                         }
@@ -243,131 +223,115 @@ const Dashboard=()=> {
                         `
                     }
 
-                    onClick= {
-                        ()=> setActiveTab(tab.id)
+                    onClick={
+                        () => setActiveTab(tab.id)
                     }
 
-                    initial= {
-                            {
+                    initial={
+                        {
                             opacity: 0, y: 20
                         }
                     }
 
-                    animate= {
-                            {
+                    animate={
+                        {
                             opacity: 1, y: 0
                         }
                     }
 
-                    transition= {
-                            {
+                    transition={
+                        {
                             delay: index * 0.05
                         }
                     }
 
-                    whileHover= {
-                            {
+                    whileHover={
+                        {
                             y: -3
                         }
                     }
 
-                    whileTap= {
-                            {
+                    whileTap={
+                        {
                             scale: 0.95
                         }
                     }
 
-                    style= {
-                            {
+                    style={
+                        {
                             '--tab-color': tab.color
                         }
                     }
 
-                    > <span className="tab-icon"> {
-                        tab.icon
-                    }
+                > <span className="tab-icon"> {
+                    tab.icon
+                }
 
                     </span> <span className="tab-label"> {
                         tab.label
                     }
 
                     </span> {
-                        activeTab===tab.id && (<motion.div className="tab-indicator"
+                        activeTab === tab.id && (<motion.div className="tab-indicator"
                             layoutId="activeTab"
 
-                            transition= {
-                                    {
+                            transition={
+                                {
                                     type: 'spring', stiffness: 380, damping: 30
                                 }
                             }
 
-                            />)
+                        />)
                     }
 
-                    </motion.button>))
-        }
+                </motion.button>))
+            }
 
         </motion.div> {
-            /* Tab Content with Animation */
-        }
-
-        <AnimatePresence mode="wait"> <motion.div key= {
-            activeTab
-        }
-
-        className="dashboard-tab-content-modern"
-
-        initial= {
-                {
-                opacity: 0, x: 20
+                /* Tab Content with Animation */
             }
-        }
 
-        animate= {
-                {
-                opacity: 1, x: 0
+            <AnimatePresence mode="wait"> <motion.div key={
+                activeTab
             }
-        }
 
-        exit= {
-                {
-                opacity: 0, x: -20
-            }
-        }
+                className="dashboard-tab-content-modern"
 
-        transition= {
-                {
-                duration: 0.3
-            }
-        }
+                initial={
+                    {
+                        opacity: 0, x: 20
+                    }
+                }
 
-        > {
-            activeTab==='abouts'&& <AboutsManager />
-        }
+                animate={
+                    {
+                        opacity: 1, x: 0
+                    }
+                }
 
-            {
-            activeTab==='skills'&& <SkillsManager />
-        }
+                exit={
+                    {
+                        opacity: 0, x: -20
+                    }
+                }
 
-            {
-            activeTab==='experiences'&& <ExperiencesManager />
-        }
+                transition={
+                    {
+                        duration: 0.3
+                    }
+                }
 
-            {
-            activeTab==='awards'&& <AwardsManager />
-        }
-
-            {
-            activeTab==='works'&& <WorksManager />
-        }
-
-            {
-            activeTab==='resume'&& <ResumeManager />
-        }
-
-        </motion.div> </AnimatePresence> </div> </div>);
+            >
+                {activeTab === 'abouts' && <AboutsManager />}
+                {activeTab === 'skills' && <SkillsManager />}
+                {activeTab === 'experiences' && <ExperiencesManager />}
+                {activeTab === 'awards' && <AwardsManager />}
+                {activeTab === 'works' && <WorksManager />}
+                {activeTab === 'resume' && <ResumeManager />}
+                {activeTab === 'github' && <GithubSyncManager />}
+            </motion.div> </AnimatePresence> </div> </div>);
 }
 
-;
+    ;
 
 export default Dashboard;

@@ -87,8 +87,8 @@ const Awards = () => {
               <img src={awards[currentIndex].imgUrl} alt={awards[currentIndex].name} />
               <div className="app__award-content">
                 <span className="award-year">{awards[currentIndex].year}</span>
-                <h4 className="bold-text">{awards[currentIndex].name}</h4>
-                <h5 className="p-text">{awards[currentIndex].company}</h5>
+                <h4 className="bold-text">{awards[currentIndex].title}</h4>
+                <h5 className="p-text">{awards[currentIndex].issuer}</h5>
               </div>
             </div>
 
@@ -134,8 +134,8 @@ const Awards = () => {
                   </div>
                   <div className="award-details">
                     <span className="award-year">{award.year}</span>
-                    <h4 className="bold-text">{award.name}</h4>
-                    <h5 className="p-text">{award.company}</h5>
+                    <h4 className="bold-text">{award.title}</h4>
+                    <h5 className="p-text">{award.issuer}</h5>
                   </div>
                 </motion.div>
               ))}

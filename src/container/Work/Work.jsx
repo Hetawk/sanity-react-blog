@@ -26,41 +26,39 @@ const Work = () => {
       .trim();
   };
 
-  useEffect(() => {
-    const fetchWorks = async () => {
-      try {
-        console.log('🔍 Fetching works from API...');
-        const response = await api.works.getAll();
-        console.log('✅ API Response:', response);
-        console.log('📊 Number of works:', response.data?.length || 0);
-        const data = response.data || [];
+  const fetchWorks = async () => {
+    try {
+      console.log('🔍 Fetching works from API...');
+      const response = await api.works.getAll();
+      console.log('✅ API Response:', response);
+      console.log('📊 Number of works:', response.data?.length || 0);
+      const data = response.data || [];
 
-        if (data.length > 0) {
-          console.log('📝 First work sample:', data[0]);
-          console.log('🏷️  Tags format:', typeof data[0].tags, data[0].tags);
-          console.log('🖼️  Image URL:', data[0].imgUrl);
+      if (data.length > 0) {
+        console.log('📝 First work sample:', data[0]);
+        console.log('🏷️  Tags format:', typeof data[0].tags, data[0].tags);
+        console.log('🖼️  Image URL:', data[0].imgUrl);
 
-          // Check all image URLs
-          data.forEach((work, index) => {
-            if (work.imgUrl) {
-              console.log(`🖼️  Work ${index + 1} (${work.title}): ${work.imgUrl}`);
-            }
-          });
-        }
-
-        setWorks(data);
-        setFilterWork(data);
-        setShowLoadMore(data.length > 6);
-        console.log('✅ Works state updated with', data.length, 'items');
-      } catch (error) {
-        console.error('❌ Error fetching works:', error);
+        // Check all image URLs
+        data.forEach((work, index) => {
+          if (work.imgUrl) {
+            console.log(`🖼️  Work ${index + 1} (${work.title}): ${work.imgUrl}`);
+          }
+        });
       }
-    };
 
+      setWorks(data);
+      setFilterWork(data);
+      setShowLoadMore(data.length > 6);
+      console.log('✅ Works state updated with', data.length, 'items');
+    } catch (error) {
+      console.error('❌ Error fetching works:', error);
+    }
+  };
+
+  useEffect(() => {
     fetchWorks();
-  }, []);
-
-  // Smart tag detection functions for different categories
+  }, []);  // Smart tag detection functions for different categories
   const isDatabaseTag = (tag) => {
     const dbKeywords = ['mysql', 'postgresql', 'postgres', 'psql', 'mongodb', 'mongo', 'redis', 'sqlite', 'mariadb', 'oracle', 'mssql', 'cassandra', 'dynamodb', 'firestore', 'fauna', 'supabase', 'planetscale', 'cockroachdb', 'neo4j', 'arangodb'];
     return dbKeywords.some(keyword => tag.toLowerCase().includes(keyword));

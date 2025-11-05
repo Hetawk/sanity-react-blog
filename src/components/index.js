@@ -14,6 +14,7 @@ import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 import Timeline from './Timeline/Timeline';
 import Badge from './Badge/Badge';
 import Button from './Button/Button';
+import Pagination from './Pagination/Pagination';
 
 export {
   // Existing
@@ -32,4 +33,5 @@ export {
   Timeline,
   Badge,
   Button,
+  Pagination,
 };

@@ -209,12 +209,22 @@ const togglePublished = async (prisma, model, id) => {
     const item = await prisma[model].findUnique({ where: { id } });
     const newPublishedStatus = !item.isPublished;
 
+    // Only Work and ResearchStatement models have publishedAt field
+    const modelsWithPublishedAt = ['work', 'researchStatement'];
+    const shouldIncludePublishedAt = modelsWithPublishedAt.includes(model);
+
+    const updateData = {
+        isPublished: newPublishedStatus
+    };
+
+    // Add publishedAt only for models that have this field
+    if (shouldIncludePublishedAt) {
+        updateData.publishedAt = newPublishedStatus ? new Date() : null;
+    }
+
     return await prisma[model].update({
         where: { id },
-        data: {
-            isPublished: newPublishedStatus,
-            publishedAt: newPublishedStatus ? new Date() : null
-        }
+        data: updateData
     });
 };
 

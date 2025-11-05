@@ -241,26 +241,29 @@ const OrcidWorks = () => {
 
             let formattedReviews = [];
 
-            // Map of known ISSNs to journal names
-            const journalNames = {
-                '1402-4896': 'Physica Scripta',
-                '0950-7051': 'Knowledge-Based Systems'
-            };
-
             if (data && data.group) {
                 console.log('Found peer review groups:', data.group.length);
 
                 data.group.forEach(group => {
-                    // Extract ISSN from group external-ids
+                    // Extract ISSN and journal name from group external-ids
                     let journalISSN = null;
                     let journalName = null;
+
+                    // Try to get journal name from group identifiers
+                    if (group['identifiers'] && group['identifiers']['identifier']) {
+                        const identifiers = group['identifiers']['identifier'];
+                        for (const identifier of identifiers) {
+                            if (identifier['external-id-type'] === 'issn' && identifier['external-id-value']) {
+                                journalISSN = identifier['external-id-value'].replace('issn:', '');
+                            }
+                        }
+                    }
 
                     if (group['external-ids'] && group['external-ids']['external-id']) {
                         const groupExtIds = group['external-ids']['external-id'];
                         for (const extId of groupExtIds) {
                             if (extId['external-id-type'] === 'peer-review' && extId['external-id-value']) {
                                 journalISSN = extId['external-id-value'].replace('issn:', '');
-                                journalName = journalNames[journalISSN] || null;
                             }
                         }
                     }
@@ -289,7 +292,18 @@ const OrcidWorks = () => {
                                     // Determine journal name from review-group-id if not found
                                     if (!journalName && review['review-group-id']) {
                                         const reviewGroupISSN = review['review-group-id'].replace('issn:', '');
-                                        journalName = journalNames[reviewGroupISSN] || null;
+                                        journalISSN = reviewGroupISSN;
+                                    }
+
+                                    // Try to extract journal name from subject-name or subject fields
+                                    if (!journalName && review['subject-name']?.value) {
+                                        journalName = review['subject-name'].value;
+                                    } else if (!journalName && review['subject-external-identifier']) {
+                                        const subjectIds = review['subject-external-identifier'];
+                                        if (subjectIds['external-id-type'] === 'source-work-id' && subjectIds['external-id-value']) {
+                                            // Could be a journal name or identifier
+                                            journalName = subjectIds['external-id-value'];
+                                        }
                                     }
 
                                     // Get organization info
@@ -849,14 +863,14 @@ const OrcidWorks = () => {
                                         <p className="p-text"><strong>Status:</strong> {review.verified}</p>
                                     </div>
                                 )}
-                                {review.reviewUrl && (
+                                {review.reviewUrl && !review.reviewUrl.includes('publons') && (
                                     <a
                                         href={review.reviewUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="work-link"
                                     >
-                                        {review.reviewUrl.includes('publons') ? 'View on Publons' : 'View Review'}
+                                        View Review
                                     </a>
                                 )}
                             </motion.div>

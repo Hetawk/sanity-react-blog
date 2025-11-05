@@ -45,7 +45,9 @@ async function initializeOctokit() {
  * Analyze project structure to determine type and category
  */
 function analyzeProjectStructure(tree, languages, readme) {
-    const files = tree.map(item => item.path);
+    // Ensure tree is always an array
+    const safeTree = Array.isArray(tree) ? tree : [];
+    const files = safeTree.map(item => item.path);
     const analysis = {
         projectCategory: 'Unknown',
         projectSubCategory: 'Unknown',
@@ -276,7 +278,7 @@ async function fetchRepoDetails(octokit, owner, repo) {
                 tree_sha: repoData.default_branch,
                 recursive: 1
             });
-            tree = treeData.tree;
+            tree = treeData.tree || [];
         } catch (error) {
             console.log(`Could not fetch tree for ${owner}/${repo}: ${error.message}`);
         }
@@ -302,7 +304,7 @@ async function fetchRepoDetails(octokit, owner, repo) {
             const { data: contributorsData } = await octokit.repos.listContributors({
                 owner,
                 repo,
-                per_page: 10
+                per_page: 100 // Fetch up to 100 contributors
             });
             contributors = contributorsData.map(c => ({
                 login: c.login,
@@ -355,8 +357,9 @@ async function syncRepository(octokit, owner, repo, accountName) {
         tags: JSON.stringify(repoData.topics || []),
 
         // Content Management
-        isPublished: false, // Start as draft, admin can publish
-        isDraft: true,
+        // Auto-publish public, non-archived repos; keep private/archived as drafts
+        isPublished: !repoData.private && !repoData.archived,
+        isDraft: repoData.private || repoData.archived,
         isFeatured: false,
         displayOrder: 0,
 
@@ -399,9 +402,9 @@ async function syncRepository(octokit, owner, repo, accountName) {
         // Project Analysis
         projectCategory: analysis.projectCategory,
         projectSubCategory: analysis.projectSubCategory,
-        totalFiles: tree.filter(item => item.type === 'blob').length,
-        totalFolders: tree.filter(item => item.type === 'tree').length,
-        maxDepth: Math.max(...tree.map(item => item.path.split('/').length)),
+        totalFiles: (tree || []).filter(item => item.type === 'blob').length,
+        totalFolders: (tree || []).filter(item => item.type === 'tree').length,
+        maxDepth: (tree && tree.length > 0) ? Math.max(...tree.map(item => item.path.split('/').length)) : 0,
 
         // Technology Stack
         languages: JSON.stringify(analysis.languages),
@@ -486,7 +489,7 @@ async function syncRepository(octokit, owner, repo, accountName) {
 /**
  * Fetch all repositories with pagination
  */
-async function fetchAllRepositories(octokit, username, perPage = 30) {
+async function fetchAllRepositories(octokit, username, perPage = 100) {
     let page = 1;
     let allRepos = [];
     let hasMore = true;
@@ -507,6 +510,11 @@ async function fetchAllRepositories(octokit, username, perPage = 30) {
                 allRepos = [...allRepos, ...repos];
                 console.log(`📄 Fetched page ${page} for ${username} (${repos.length} repos)`);
                 page++;
+
+                // If we got less than perPage, we've reached the end
+                if (repos.length < perPage) {
+                    hasMore = false;
+                }
             }
         } catch (error) {
             console.error(`Error fetching repos for ${username}:`, error.message);
@@ -514,6 +522,7 @@ async function fetchAllRepositories(octokit, username, perPage = 30) {
         }
     }
 
+    console.log(`✅ Total repositories fetched for ${username}: ${allRepos.length}`);
     return allRepos;
 }
 

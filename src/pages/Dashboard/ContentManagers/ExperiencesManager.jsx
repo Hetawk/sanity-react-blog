@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
+import { Pagination } from '../../../components';
 import api from '../../../api/client';
 
 const ExperiencesManager = () => {
@@ -11,6 +12,10 @@ const ExperiencesManager = () => {
         year: '',
         works: []
     });
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(15);
 
     // Form data for individual work experience
     const [workFormData, setWorkFormData] = useState({
@@ -25,7 +30,8 @@ const ExperiencesManager = () => {
     useEffect(() => {
         const fetchExperiences = async () => {
             try {
-                const response = await api.experiences.getAll();
+                // Fetch all experiences including unpublished for dashboard
+                const response = await api.experiences.getAll(true);
                 const data = response.data || [];
                 setExperiences(data);
             } catch (error) {
@@ -88,6 +94,19 @@ const ExperiencesManager = () => {
             works: experience.works || []
         });
         setShowForm(true);
+    };
+
+    // Handle toggle publish status
+    const handleTogglePublish = async (experience) => {
+        try {
+            await api.experiences.togglePublished(experience.id || experience._id);
+            // Refetch all experiences including unpublished
+            const response = await api.experiences.getAll(true);
+            setExperiences(response.data || []);
+        } catch (error) {
+            console.error('Error toggling publish status:', error);
+            alert('Failed to update publish status');
+        }
     };
 
     // Handle delete experience
@@ -273,7 +292,7 @@ const ExperiencesManager = () => {
             )}
 
             <div className="items-grid experiences-grid">
-                {experiences.map(experience => (
+                {experiences.slice((currentPage - 1) * pageSize, currentPage * pageSize).map(experience => (
                     <div key={experience._id} className="experience-card">
                         <h3>{experience.year}</h3>
                         <div className="works-list">
@@ -285,7 +304,19 @@ const ExperiencesManager = () => {
                                 </div>
                             ))}
                         </div>
+                        <div className="status-badges">
+                            <span className={`status-badge ${experience.isPublished ? 'published' : 'draft'}`}>
+                                {experience.isPublished ? '✓ Published' : '📝 Draft'}
+                            </span>
+                        </div>
                         <div className="item-actions">
+                            <button
+                                className={`publish-btn ${experience.isPublished ? 'unpublish' : ''}`}
+                                onClick={() => handleTogglePublish(experience)}
+                                title={experience.isPublished ? 'Unpublish' : 'Publish'}
+                            >
+                                {experience.isPublished ? '👁️' : '👁️'}
+                            </button>
                             <button
                                 className="edit-btn"
                                 onClick={() => handleEdit(experience)}
@@ -302,6 +333,16 @@ const ExperiencesManager = () => {
                     </div>
                 ))}
             </div>
+
+            {experiences.length > 0 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={experiences.length}
+                    pageSize={pageSize}
+                    onPageChange={setCurrentPage}
+                    onPageSizeChange={setPageSize}
+                />
+            )}
         </div>
     );
 };

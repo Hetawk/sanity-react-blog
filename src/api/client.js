@@ -78,6 +78,14 @@ class APIClient {
         });
     }
 
+    // PATCH request
+    async patch(endpoint, body) {
+        return this.request(endpoint, {
+            method: 'PATCH',
+            body: body ? JSON.stringify(body) : undefined,
+        });
+    }
+
     // DELETE request
     async delete(endpoint) {
         return this.request(endpoint, { method: 'DELETE' });
@@ -91,12 +99,20 @@ const apiClient = new APIClient();
 export const api = {
     // Works
     works: {
-        getAll: () => apiClient.get('/api/works'),
+        getAll: (params = {}) => {
+            const queryParams = new URLSearchParams();
+            if (params.includeUnpublished) queryParams.append('includeUnpublished', 'true');
+            if (params.category) queryParams.append('category', params.category);
+            if (params.featured) queryParams.append('featured', 'true');
+            const queryString = queryParams.toString();
+            return apiClient.get(`/api/works${queryString ? `?${queryString}` : ''}`);
+        },
         getById: (id) => apiClient.get(`/api/works/${id}`),
         getByTag: (tag) => apiClient.get(`/api/works/tag/${tag}`),
         create: (data) => apiClient.post('/api/works', data),
         update: (id, data) => apiClient.put(`/api/works/${id}`, data),
         delete: (id) => apiClient.delete(`/api/works/${id}`),
+        togglePublished: (id) => apiClient.post(`/api/works/${id}/toggle-published`),
         uploadImage: async (file) => {
             const formData = new FormData();
             formData.append('image', file);
@@ -117,55 +133,93 @@ export const api = {
 
     // Abouts
     abouts: {
-        getAll: () => apiClient.get('/api/abouts'),
+        getAll: (includeUnpublished = false) => apiClient.get(`/api/abouts${includeUnpublished ? '?includeUnpublished=true' : ''}`),
         getById: (id) => apiClient.get(`/api/abouts/${id}`),
         create: (data) => apiClient.post('/api/abouts', data),
         update: (id, data) => apiClient.put(`/api/abouts/${id}`, data),
         delete: (id) => apiClient.delete(`/api/abouts/${id}`),
+        togglePublished: (id) => apiClient.post(`/api/abouts/${id}/toggle-published`),
     },
 
     // Skills
     skills: {
-        getAll: () => apiClient.get('/api/skills'),
+        getAll: (includeUnpublished = false) => apiClient.get(`/api/skills${includeUnpublished ? '?includeUnpublished=true' : ''}`),
         getById: (id) => apiClient.get(`/api/skills/${id}`),
+        togglePublished: (id) => apiClient.post(`/api/skills/${id}/toggle-published`),
     },
 
     // Experiences
     experiences: {
-        getAll: () => apiClient.get('/api/experiences'),
+        getAll: (includeUnpublished = false) => apiClient.get(`/api/experiences${includeUnpublished ? '?includeUnpublished=true' : ''}`),
         getById: (id) => apiClient.get(`/api/experiences/${id}`),
+        togglePublished: (id) => apiClient.post(`/api/experiences/${id}/toggle-published`),
     },
 
     // Work Experiences
     workExperiences: {
-        getAll: () => apiClient.get('/api/work-experiences'),
+        getAll: (includeUnpublished = false) => apiClient.get(`/api/work-experiences${includeUnpublished ? '?includeUnpublished=true' : ''}`),
         getById: (id) => apiClient.get(`/api/work-experiences/${id}`),
+        togglePublished: (id) => apiClient.post(`/api/work-experiences/${id}/toggle-published`),
     },
 
     // Brands
     brands: {
-        getAll: () => apiClient.get('/api/brands'),
+        getAll: (includeUnpublished = false) => apiClient.get(`/api/brands${includeUnpublished ? '?includeUnpublished=true' : ''}`),
         getById: (id) => apiClient.get(`/api/brands/${id}`),
+        togglePublished: (id) => apiClient.post(`/api/brands/${id}/toggle-published`),
     },
 
     // Awards
     awards: {
-        getAll: (year) => apiClient.get(`/api/awards${year ? `?year=${year}` : ''}`),
+        getAll: (params = {}) => {
+            const queryParams = new URLSearchParams();
+            if (params.year) queryParams.append('year', params.year);
+            if (params.includeUnpublished) queryParams.append('includeUnpublished', 'true');
+            const queryString = queryParams.toString();
+            return apiClient.get(`/api/awards${queryString ? `?${queryString}` : ''}`);
+        },
         getById: (id) => apiClient.get(`/api/awards/${id}`),
         getByYear: () => apiClient.get('/api/awards/stats/by-year'),
+        togglePublished: (id) => apiClient.post(`/api/awards/${id}/toggle-published`),
+        create: (data) => apiClient.post('/api/awards', data),
+        update: (id, data) => apiClient.put(`/api/awards/${id}`, data),
+        delete: (id) => apiClient.delete(`/api/awards/${id}`),
     },
 
     // Contacts
     contacts: {
         create: (data) => apiClient.post('/api/contacts', data),
-        getAll: () => apiClient.get('/api/contacts'),
+        getAll: (includeUnpublished = false) => apiClient.get(`/api/contacts${includeUnpublished ? '?includeUnpublished=true' : ''}`),
         delete: (id) => apiClient.delete(`/api/contacts/${id}`),
+        togglePublished: (id) => apiClient.post(`/api/contacts/${id}/toggle-published`),
     },
 
     // Resumes
     resumes: {
-        getAll: () => apiClient.get('/api/resumes'),
+        getAll: (includeUnpublished = false) => apiClient.get(`/api/resumes${includeUnpublished ? '?includeUnpublished=true' : ''}`),
         getById: (id) => apiClient.get(`/api/resumes/${id}`),
+        togglePublished: (id) => apiClient.post(`/api/resumes/${id}/toggle-published`),
+    },
+
+    // GitHub Sync
+    githubSync: {
+        // Trigger full sync of all repositories
+        sync: () => apiClient.post('/api/github-sync', {}),
+
+        // Get sync status and statistics
+        getStatus: () => apiClient.get('/api/github-sync/status'),
+
+        // Get all GitHub projects with filtering
+        getProjects: (params = {}) => {
+            const queryString = new URLSearchParams(params).toString();
+            return apiClient.get(`/api/github-sync/projects${queryString ? `?${queryString}` : ''}`);
+        },
+
+        // Publish a GitHub project
+        publishProject: (id) => apiClient.post(`/api/github-sync/projects/${id}/publish`, {}),
+
+        // Update a GitHub project
+        updateProject: (id, data) => apiClient.put(`/api/github-sync/projects/${id}`, data),
     },
 };
 

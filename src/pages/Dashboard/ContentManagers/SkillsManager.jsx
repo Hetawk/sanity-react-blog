@@ -1,45 +1,32 @@
-import React,
-{
-    useState,
-    useEffect
-}
-
-    from 'react';
-
-import {
-    FiEdit,
-    FiTrash2,
-    FiPlus
-}
-
-    from 'react-icons/fi';
-
+import React, { useState, useEffect } from 'react';
+import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
+import { Pagination } from '../../../components';
 import api from '../../../api/client';
 
 const SkillsManager = () => {
-    const [skills,
-        setSkills] = useState([]);
-    const [loading,
-        setLoading] = useState(true);
-    const [showForm,
-        setShowForm] = useState(false);
-    const [currentSkill,
-        setCurrentSkill] = useState(null);
+    const [skills, setSkills] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showForm, setShowForm] = useState(false);
+    const [currentSkill, setCurrentSkill] = useState(null);
 
-    const [formData,
-        setFormData] = useState({
-            name: '',
-            bgColor: '#FFFFFF',
-            icon: null
-        }
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(15);
 
-        );
+    const [formData, setFormData] = useState({
+        name: '',
+        bgColor: '#FFFFFF',
+        icon: null
+    }
+
+    );
 
     // Fetch skills
     useEffect(() => {
         const fetchSkills = async () => {
             try {
-                const response = await api.skills.getAll();
+                // Fetch all skills including unpublished for dashboard
+                const response = await api.skills.getAll(true);
                 const data = response.data || [];
                 setSkills(data);
             }
@@ -117,6 +104,19 @@ const SkillsManager = () => {
     }
 
         ;
+
+    // Handle toggle publish status
+    const handleTogglePublish = async (skill) => {
+        try {
+            await api.skills.togglePublished(skill.id || skill._id);
+            // Refetch all skills including unpublished
+            const response = await api.skills.getAll(true);
+            setSkills(response.data || []);
+        } catch (error) {
+            console.error('Error toggling publish status:', error);
+            alert('Failed to update publish status');
+        }
+    };
 
     // Handle delete skill
     const handleDelete = async (skillId) => {
@@ -290,7 +290,7 @@ const SkillsManager = () => {
         }
 
         <div className="items-grid"> {
-            skills.map(skill => (<div key={
+            skills.slice((currentPage - 1) * pageSize, currentPage * pageSize).map(skill => (<div key={
                 skill._id
             }
 
@@ -312,22 +312,47 @@ const SkillsManager = () => {
                     skill.name
                 }
 
-                </h3> <div className="item-actions"> <button className="edit-btn"
+                </h3>
+                <div className="status-badges">
+                    <span className={`status-badge ${skill.isPublished ? 'published' : 'draft'}`}>
+                        {skill.isPublished ? '✓ Published' : '📝 Draft'}
+                    </span>
+                </div>
+                <div className="item-actions">
+                    <button
+                        className={`publish-btn ${skill.isPublished ? 'unpublish' : ''}`}
+                        onClick={() => handleTogglePublish(skill)}
+                        title={skill.isPublished ? 'Unpublish' : 'Publish'}
+                    >
+                        {skill.isPublished ? '👁️' : '👁️'}
+                    </button>
+                    <button className="edit-btn"
 
-                    onClick={
-                        () => handleEdit(skill)
-                    }
+                        onClick={
+                            () => handleEdit(skill)
+                        }
 
-                > <FiEdit /> </button> <button className="delete-btn"
+                    > <FiEdit /> </button> <button className="delete-btn"
 
-                    onClick={
-                        () => handleDelete(skill._id)
-                    }
+                        onClick={
+                            () => handleDelete(skill._id)
+                        }
 
-                > <FiTrash2 /> </button> </div> </div>))
+                    > <FiTrash2 /> </button> </div> </div>))
         }
 
-        </div> </div>);
+        </div>
+
+        {skills.length > 0 && (
+            <Pagination
+                currentPage={currentPage}
+                totalItems={skills.length}
+                pageSize={pageSize}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={setPageSize}
+            />
+        )}
+    </div>);
 }
 
     ;

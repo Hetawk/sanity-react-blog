@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiUpload, FiTrash2, FiCheckCircle, FiFile } from 'react-icons/fi';
 import apiClient from '../../../api/client';
+import Pagination from '../../../components/Pagination/Pagination';
 
 const ResumeManager = () => {
     const [resumes, setResumes] = useState([]);
@@ -8,6 +9,8 @@ const ResumeManager = () => {
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [uploadError, setUploadError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(15);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -22,7 +25,8 @@ const ResumeManager = () => {
 
     const fetchResumes = async () => {
         try {
-            const response = await apiClient.get('/resumes');
+            // Fetch all resumes including unpublished for dashboard
+            const response = await apiClient.resumes.getAll(true);
             if (response.data.success) {
                 setResumes(response.data.data);
             }
@@ -153,6 +157,17 @@ const ResumeManager = () => {
         }
     };
 
+    // Toggle publish status
+    const handleTogglePublish = async (resume) => {
+        try {
+            await api.resumes.togglePublished(resume.id);
+            await fetchResumes();
+        } catch (error) {
+            console.error('Error toggling publish status:', error);
+            alert('Failed to update publish status');
+        }
+    };
+
     // Delete resume
     const handleDelete = async (resumeId) => {
         if (window.confirm('Are you sure you want to delete this resume?')) {
@@ -267,63 +282,81 @@ const ResumeManager = () => {
                 {resumes.length === 0 ? (
                     <p className="no-resumes">No resumes uploaded yet.</p>
                 ) : (
-                    <div className="resume-items">
-                        {resumes.map((resume) => (
-                            <div key={resume.id} className={`resume-item ${resume.isActive ? 'active' : ''}`}>
-                                <div className="resume-content">
-                                    <div className="resume-icon">
-                                        <FiFile />
+                    <>
+                        <div className="resume-items">
+                            {resumes.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((resume) => (
+                                <div key={resume.id} className={`resume-item ${resume.isActive ? 'active' : ''}`}>
+                                    <div className="resume-content">
+                                        <div className="resume-icon">
+                                            <FiFile />
+                                        </div>
+                                        <div className="resume-details">
+                                            <h3>{resume.title}</h3>
+                                            <p>{resume.description}</p>
+                                            <p className="upload-date">
+                                                Uploaded: {new Date(resume.createdAt).toLocaleDateString()}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="resume-details">
-                                        <h3>{resume.title}</h3>
-                                        <p>{resume.description}</p>
-                                        <p className="upload-date">
-                                            Uploaded: {new Date(resume.createdAt).toLocaleDateString()}
-                                        </p>
+
+                                    <div className="resume-actions">
+                                        {resume.isActive ? (
+                                            <span className="active-badge">
+                                                <FiCheckCircle /> Active
+                                            </span>
+                                        ) : (
+                                            <button
+                                                className="set-active-btn"
+                                                onClick={() => handleSetActive(resume.id)}
+                                            >
+                                                Set as Active
+                                            </button>
+                                        )}
+
+                                        {resume.fileUrl ? (
+                                            <button
+                                                onClick={() => handleDownload(resume.fileUrl)}
+                                                className="view-btn"
+                                            >
+                                                View
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className="view-btn disabled"
+                                                disabled
+                                                title="File URL not available"
+                                            >
+                                                View
+                                            </button>
+                                        )}
+
+                                        <button
+                                            className={`publish-btn ${resume.isPublished ? 'unpublish' : ''}`}
+                                            onClick={() => handleTogglePublish(resume)}
+                                            title={resume.isPublished ? 'Unpublish' : 'Publish'}
+                                        >
+                                            {resume.isPublished ? '👁️ Unpublish' : '👁️ Publish'}
+                                        </button>
+
+                                        <button
+                                            className="delete-btn"
+                                            onClick={() => handleDelete(resume.id)}
+                                        >
+                                            <FiTrash2 />
+                                        </button>
                                     </div>
                                 </div>
+                            ))}
+                        </div>
 
-                                <div className="resume-actions">
-                                    {resume.isActive ? (
-                                        <span className="active-badge">
-                                            <FiCheckCircle /> Active
-                                        </span>
-                                    ) : (
-                                        <button
-                                            className="set-active-btn"
-                                            onClick={() => handleSetActive(resume.id)}
-                                        >
-                                            Set as Active
-                                        </button>
-                                    )}
-
-                                    {resume.fileUrl ? (
-                                        <button
-                                            onClick={() => handleDownload(resume.fileUrl)}
-                                            className="view-btn"
-                                        >
-                                            View
-                                        </button>
-                                    ) : (
-                                        <button
-                                            className="view-btn disabled"
-                                            disabled
-                                            title="File URL not available"
-                                        >
-                                            View
-                                        </button>
-                                    )}
-
-                                    <button
-                                        className="delete-btn"
-                                        onClick={() => handleDelete(resume.id)}
-                                    >
-                                        <FiTrash2 />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                        <Pagination
+                            currentPage={currentPage}
+                            totalItems={resumes.length}
+                            pageSize={pageSize}
+                            onPageChange={setCurrentPage}
+                            onPageSizeChange={setPageSize}
+                        />
+                    </>
                 )}
             </div>
         </div>

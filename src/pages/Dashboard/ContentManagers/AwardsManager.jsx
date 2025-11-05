@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FiEdit, FiTrash2, FiPlus } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiPlus, FiSearch } from 'react-icons/fi';
+import { Pagination } from '../../../components';
 import api from '../../../api/client';
 
 const AwardsManager = () => {
     const [awards, setAwards] = useState([]);
+    const [filteredAwards, setFilteredAwards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [currentAward, setCurrentAward] = useState(null);
@@ -14,13 +16,23 @@ const AwardsManager = () => {
         imgurl: null
     });
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(15);
+
+    // Filter and search state
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterStatus, setFilterStatus] = useState('all'); // all, published, unpublished
+
     // Fetch awards
     useEffect(() => {
         const fetchAwards = async () => {
             try {
-                const response = await api.awards.getAll();
+                // Fetch all awards including unpublished for dashboard
+                const response = await api.awards.getAll({ includeUnpublished: true });
                 const data = response.data || [];
                 setAwards(data);
+                setFilteredAwards(data);
             } catch (error) {
                 console.error('Error fetching awards:', error);
             } finally {
@@ -30,6 +42,30 @@ const AwardsManager = () => {
 
         fetchAwards();
     }, []);
+
+    // Filter awards based on search and status
+    useEffect(() => {
+        let filtered = [...awards];
+
+        // Apply search filter
+        if (searchTerm) {
+            filtered = filtered.filter(award =>
+                award.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                award.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                award.year?.toString().includes(searchTerm)
+            );
+        }
+
+        // Apply status filter
+        if (filterStatus === 'published') {
+            filtered = filtered.filter(award => award.isPublished);
+        } else if (filterStatus === 'unpublished') {
+            filtered = filtered.filter(award => !award.isPublished);
+        }
+
+        setFilteredAwards(filtered);
+        setCurrentPage(1); // Reset to first page when filters change
+    }, [awards, searchTerm, filterStatus]);
 
     // Handle form input changes
     const handleChange = (e) => {
@@ -61,6 +97,19 @@ const AwardsManager = () => {
             imgurl: null
         });
         setShowForm(true);
+    };
+
+    // Handle toggle publish status
+    const handleTogglePublish = async (award) => {
+        try {
+            await api.awards.togglePublished(award.id || award._id);
+            // Refetch all awards including unpublished
+            const response = await api.awards.getAll({ includeUnpublished: true });
+            setAwards(response.data || []);
+        } catch (error) {
+            console.error('Error toggling publish status:', error);
+            alert('Failed to update publish status');
+        }
     };
 
     // Handle delete award
@@ -143,7 +192,7 @@ const AwardsManager = () => {
 
     return (
         <div className="content-manager awards-manager">
-            <div className="manager-header">
+            <div className="header">
                 <h2>Manage Awards & Certificates</h2>
                 <button
                     className="add-btn"
@@ -161,6 +210,41 @@ const AwardsManager = () => {
                 >
                     <FiPlus /> Add Award
                 </button>
+            </div>
+
+            {/* Search and Filter Controls */}
+            <div className="controls-bar" style={{ marginBottom: '20px', display: 'flex', gap: '15px', alignItems: 'center' }}>
+                <div className="search-box" style={{ flex: 1, position: 'relative' }}>
+                    <FiSearch style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#666' }} />
+                    <input
+                        type="text"
+                        placeholder="Search awards by name, company, or year..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{
+                            width: '100%',
+                            padding: '10px 10px 10px 40px',
+                            border: '1px solid #ddd',
+                            borderRadius: '8px',
+                            fontSize: '14px'
+                        }}
+                    />
+                </div>
+                <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    style={{
+                        padding: '10px 15px',
+                        border: '1px solid #ddd',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        minWidth: '150px'
+                    }}
+                >
+                    <option value="all">All ({awards.length})</option>
+                    <option value="published">Published ({awards.filter(a => a.isPublished).length})</option>
+                    <option value="unpublished">Unpublished ({awards.filter(a => !a.isPublished).length})</option>
+                </select>
             </div>
 
             {showForm && (
@@ -231,7 +315,7 @@ const AwardsManager = () => {
             )}
 
             <div className="items-grid">
-                {awards.map(award => (
+                {filteredAwards.slice((currentPage - 1) * pageSize, currentPage * pageSize).map(award => (
                     <div key={award.id} className="item-card">
                         {award.imgUrl && (
                             <img
@@ -243,7 +327,19 @@ const AwardsManager = () => {
                         <h3>{award.name}</h3>
                         <p>{award.company}</p>
                         <p><strong>Year:</strong> {award.year}</p>
+                        <div className="status-badges">
+                            <span className={`status-badge ${award.isPublished ? 'published' : 'draft'}`}>
+                                {award.isPublished ? '✓ Published' : '📝 Draft'}
+                            </span>
+                        </div>
                         <div className="item-actions">
+                            <button
+                                className={`publish-btn ${award.isPublished ? 'unpublish' : ''}`}
+                                onClick={() => handleTogglePublish(award)}
+                                title={award.isPublished ? 'Unpublish' : 'Publish'}
+                            >
+                                {award.isPublished ? '👁️' : '👁️'}
+                            </button>
                             <button
                                 className="edit-btn"
                                 onClick={() => handleEdit(award)}
@@ -260,6 +356,16 @@ const AwardsManager = () => {
                     </div>
                 ))}
             </div>
+
+            {filteredAwards.length > 0 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={filteredAwards.length}
+                    pageSize={pageSize}
+                    onPageChange={setCurrentPage}
+                    onPageSizeChange={setPageSize}
+                />
+            )}
         </div>
     );
 };
