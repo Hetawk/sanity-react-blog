@@ -58,8 +58,23 @@ router.get('/', async (req, res) => {
             where.year = parseInt(year);
         }
 
-        // Build order
-        const orderBy = queryBuilder.buildOrderBy(sortBy, sortOrder, featuredFirst);
+        // Build order - prioritize date over year for better sorting
+        let orderBy = [];
+
+        if (featuredFirst) {
+            orderBy.push({ isFeatured: 'desc' });
+        }
+
+        if (sortBy === 'year' || sortBy === 'date') {
+            // Sort by date first (if exists), then year, then displayOrder
+            orderBy.push(
+                { date: sortOrder },
+                { year: sortOrder },
+                { displayOrder: 'asc' }
+            );
+        } else {
+            orderBy = queryBuilder.buildOrderBy(sortBy, sortOrder, featuredFirst);
+        }
 
         const awards = await prisma.award.findMany({
             where,

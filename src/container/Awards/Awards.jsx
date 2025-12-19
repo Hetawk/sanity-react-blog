@@ -18,6 +18,22 @@ const Awards = () => {
     setCurrentIndex(index);
   };
 
+  // Format date for display
+  const formatAwardDate = (award) => {
+    if (award.date) {
+      try {
+        // Handle both "YYYY-MM" and full date strings
+        const dateStr = award.date.includes('-') ? award.date : `${award.date}-01`;
+        const dateObj = new Date(dateStr);
+        return dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+      } catch (error) {
+        console.error('Error formatting date:', award.date, error);
+        return award.year || '';
+      }
+    }
+    return award.year || '';
+  };
+
   const toggleViewMode = (mode) => {
     if (mode !== viewMode) {
       setViewMode(mode);
@@ -86,9 +102,11 @@ const Awards = () => {
             <div className="app__award-item app__flex">
               <img src={awards[currentIndex].imgUrl} alt={awards[currentIndex].title} />
               <div className="app__award-content">
-                <span className="award-year">{awards[currentIndex].year}</span>
+                {(awards[currentIndex].date || awards[currentIndex].year) && (
+                  <span className="award-year">{formatAwardDate(awards[currentIndex])}</span>
+                )}
                 <h4 className="bold-text">{awards[currentIndex].title}</h4>
-                <h5 className="p-text">{awards[currentIndex].issuer}</h5>
+                {awards[currentIndex].issuer && <h5 className="p-text">{awards[currentIndex].issuer}</h5>}
               </div>
             </div>
 
@@ -132,9 +150,11 @@ const Awards = () => {
                     <img src={award.imgUrl} alt={award.title} />
                   </div>
                   <div className="award-details">
-                    <span className="award-year">{award.year}</span>
+                    {(award.date || award.year) && (
+                      <span className="award-year">{formatAwardDate(award)}</span>
+                    )}
                     <h4 className="bold-text">{award.title}</h4>
-                    <h5 className="p-text">{award.issuer}</h5>
+                    {award.issuer && <h5 className="p-text">{award.issuer}</h5>}
                   </div>
                 </motion.div>
               ))}

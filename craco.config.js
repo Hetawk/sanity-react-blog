@@ -46,6 +46,44 @@ module.exports = {
             return webpackConfig;
         },
     },
+    devServer: (devServerConfig, { env, paths, proxy, allowedHost }) => {
+        // Remove deprecated webpack-dev-server v4 properties that don't work with v5
+        delete devServerConfig.onBeforeSetupMiddleware;
+        delete devServerConfig.onAfterSetupMiddleware;
+
+        // Migrate https to the webpack-dev-server v5 'server' format
+        if (devServerConfig.https !== undefined) {
+            const httpsValue = devServerConfig.https;
+            if (typeof httpsValue === 'object' && httpsValue !== null) {
+                devServerConfig.server = {
+                    type: 'https',
+                    options: { ...httpsValue },
+                };
+            } else if (httpsValue) {
+                devServerConfig.server = { type: 'https' };
+            }
+            delete devServerConfig.https;
+        }
+
+        // Migrate legacy sockPath to client.webSocketURL.pathname if present
+        if (devServerConfig.sockPath) {
+            devServerConfig.client = devServerConfig.client || {};
+            devServerConfig.client.webSocketURL = devServerConfig.client.webSocketURL || {};
+            if (typeof devServerConfig.sockPath === 'string') {
+                devServerConfig.client.webSocketURL.pathname = devServerConfig.sockPath;
+            }
+            delete devServerConfig.sockPath;
+        }
+
+        // Ensure setupMiddlewares exists for v5
+        if (!devServerConfig.setupMiddlewares) {
+            devServerConfig.setupMiddlewares = (middlewares, devServer) => {
+                return middlewares;
+            };
+        }
+
+        return devServerConfig;
+    },
     babel: {
         loaderOptions: (babelLoaderOptions, { env }) => {
             // Completely disable react-refresh in production
