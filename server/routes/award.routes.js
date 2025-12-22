@@ -4,19 +4,22 @@ const { PrismaClient } = require('@prisma/client');
 const multer = require('multer');
 const assetUploader = require('../utils/assetUploader');
 const queryBuilder = require('../utils/queryBuilder');
+const { handleMulterError, createUploadErrorResponse } = require('../utils/uploadErrorHandler');
 
 const prisma = new PrismaClient();
 
 // Configure multer for memory storage
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit (multer catches before upload)
+    },
     fileFilter: (req, file, cb) => {
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
         if (allowedTypes.includes(file.mimetype)) {
             cb(null, true);
         } else {
-            cb(new Error('Only image files are allowed'));
+            cb(new Error('Only image files are allowed (JPEG, JPG, PNG, GIF, WEBP)'));
         }
     }
 });
@@ -129,16 +132,17 @@ router.get('/:id', async (req, res) => {
 });
 
 // Upload image for award
-router.post('/upload-image', upload.single('image'), async (req, res) => {
+router.post('/upload-image', upload.single('image'), handleMulterError, async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({
                 success: false,
-                error: 'No image file uploaded'
+                error: 'No image file uploaded',
+                message: 'Please select an image file to upload'
             });
         }
 
-        console.log('📤 Uploading award image to assets server...');
+        console.log(`📤 Uploading award image to assets server... (${(req.file.size / 1024).toFixed(2)} KB)`);
         const uploadResult = await assetUploader.uploadImage(
             req.file.buffer,
             req.file.originalname,
@@ -157,24 +161,23 @@ router.post('/upload-image', upload.single('image'), async (req, res) => {
         });
     } catch (error) {
         console.error('❌ Award image upload error:', error);
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
+        const errorResponse = createUploadErrorResponse(error, 'award image');
+        res.status(errorResponse.status).json(errorResponse.json);
     }
 });
 
 // Upload issuer logo for award
-router.post('/upload-logo', upload.single('logo'), async (req, res) => {
+router.post('/upload-logo', upload.single('logo'), handleMulterError, async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({
                 success: false,
-                error: 'No logo file uploaded'
+                error: 'No logo file uploaded',
+                message: 'Please select a logo file to upload'
             });
         }
 
-        console.log('📤 Uploading issuer logo to assets server...');
+        console.log(`📤 Uploading issuer logo to assets server... (${(req.file.size / 1024).toFixed(2)} KB)`);
         const uploadResult = await assetUploader.uploadImage(
             req.file.buffer,
             req.file.originalname,
@@ -193,10 +196,8 @@ router.post('/upload-logo', upload.single('logo'), async (req, res) => {
         });
     } catch (error) {
         console.error('❌ Issuer logo upload error:', error);
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
+        const errorResponse = createUploadErrorResponse(error, 'issuer logo');
+        res.status(errorResponse.status).json(errorResponse.json);
     }
 });
 

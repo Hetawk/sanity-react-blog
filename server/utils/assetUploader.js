@@ -8,15 +8,15 @@ const fetch = require('node-fetch');
 
 class AssetUploader {
     constructor() {
-        // EKD Digital Assets API Configuration
+        // EKD Digital Assets API Configuration (per guide)
         this.apiUrl = process.env.ASSETS_API_URL || 'https://www.assets.andgroupco.com/api/v1/assets';
-        this.baseUrl = process.env.VPS_BASE_URL || 'https://www.assets.andgroupco.com';
+        this.baseUrl = process.env.ASSETS_BASE_URL || 'https://www.assets.andgroupco.com';
 
         // Project Configuration
         this.clientId = process.env.ASSET_CLIENT_ID || 'ekddigital';
         this.projectName = process.env.ASSET_PROJECT_NAME || 'portfolio';
 
-        // Authentication
+        // Authentication - support both Bearer token and API Key/Secret
         this.apiKey = process.env.ASSETS_API_KEY || '';
         this.apiSecret = process.env.ASSETS_API_SECRET || '';
     }
@@ -60,10 +60,21 @@ class AssetUploader {
                 ...formData.getHeaders()
             };
 
-            // Add authentication headers
+            // Add authentication - support both methods
+            // Method 1: Bearer token (standard per guide)
+            if (this.apiKey) {
+                headers['Authorization'] = `Bearer ${this.apiKey}`;
+            }
+
+            // Method 2: Also include API Key/Secret headers if secret is provided
+            // (Some APIs use both Bearer token and additional headers for enhanced security)
             if (this.apiKey && this.apiSecret) {
-                headers['x-api-key'] = this.apiKey;
-                headers['x-api-secret'] = this.apiSecret;
+                headers['X-API-Key'] = this.apiKey;
+                headers['X-API-Secret'] = this.apiSecret;
+            }
+
+            if (!this.apiKey) {
+                throw new Error('ASSETS_API_KEY is required for authentication');
             }
 
             console.log(`Uploading ${filename} to EKD Digital Assets...`);
@@ -86,20 +97,25 @@ class AssetUploader {
             const result = await response.json();
 
             // According to EKD Digital Assets documentation, 
-            // the correct way to access assets is via the download URL with asset ID
-            // Format: https://www.assets.andgroupco.com/api/v1/assets/{asset_id}/download
+            // use the public_url for unauthenticated access (for displaying images in frontend)
+            // Format: /assets/{client_id}/{project_name}/{asset_type}/{filename}
             const assetId = result.id;
-            const publicUrl = `${this.apiUrl}/${assetId}/download`;
+            const publicUrl = result.public_url;
+            const fullPublicUrl = `${this.baseUrl}${publicUrl}`;
+            const downloadUrl = result.download_url;
 
             console.log(`✅ Upload successful - Asset ID: ${assetId}`);
-            console.log(`✅ Download URL: ${publicUrl}`);
+            console.log(`✅ Public URL (for display): ${fullPublicUrl}`);
+            console.log(`✅ Download URL (authenticated): ${downloadUrl}`);
 
             return {
                 success: true,
                 assetId: assetId,
                 filename: result.filename || result.name || filename,
                 filePath: result.filePath || result.file_path,
-                fileUrl: publicUrl,
+                fileUrl: fullPublicUrl, // Use full public URL for frontend display
+                publicUrl: publicUrl, // Relative public URL
+                downloadUrl: downloadUrl, // Authenticated download URL
                 size: result.size || fileBuffer.length,
                 mimeType: result.mimeType || result.mime_type || mimeType,
                 uploadedAt: new Date().toISOString(),
