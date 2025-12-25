@@ -33,6 +33,7 @@ import AwardsManager from './ContentManagers/AwardsManager';
 import WorksManager from './ContentManagers/WorksManager';
 import ResumeManager from './ContentManagers/ResumeManager';
 import GithubSyncManager from './ContentManagers/GithubSyncManager';
+import JourneyManager from './ContentManagers/JourneyManager';
 
 // Tab configuration with icons - using brand colors
 const tabs = [
@@ -41,6 +42,7 @@ const tabs = [
     { id: 'works', label: 'Works', icon: '💼', color: '#8E0E00' },
     { id: 'experiences', label: 'Experience', icon: '🎯', color: '#8E0E00' },
     { id: 'awards', label: 'Awards', icon: '🏆', color: '#1F1C18' },
+    { id: 'journey', label: 'Journey', icon: '🛤️', color: '#8b5cf6' },
     { id: 'resume', label: 'Resume', icon: '📄', color: '#1F1C18' },
     { id: 'github', label: 'GitHub Sync', icon: '🔄', color: '#0366d6' },
 ];
@@ -327,6 +329,7 @@ const Dashboard = () => {
                 {activeTab === 'experiences' && <ExperiencesManager />}
                 {activeTab === 'awards' && <AwardsManager />}
                 {activeTab === 'works' && <WorksManager />}
+                {activeTab === 'journey' && <JourneyManager />}
                 {activeTab === 'resume' && <ResumeManager />}
                 {activeTab === 'github' && <GithubSyncManager />}
             </motion.div> </AnimatePresence> </div> </div>);

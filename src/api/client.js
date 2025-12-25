@@ -230,6 +230,28 @@ export const api = {
         // Update a GitHub project
         updateProject: (id, data) => apiClient.put(`/api/github-sync/projects/${id}`, data),
     },
+
+    // Journey (Professional Summary Sections)
+    journey: {
+        getAll: (params = {}) => {
+            const queryParams = new URLSearchParams();
+            if (params.includeUnpublished) queryParams.append('includeUnpublished', 'true');
+            if (params.featured) queryParams.append('featured', 'true');
+            if (params.category) queryParams.append('category', params.category);
+            if (params.partNumber) queryParams.append('partNumber', params.partNumber);
+            const queryString = queryParams.toString();
+            return apiClient.get(`/api/journey${queryString ? `?${queryString}` : ''}`);
+        },
+        getById: (id) => apiClient.get(`/api/journey/${id}`),
+        getCategories: () => apiClient.get('/api/journey/meta/categories'),
+        create: (data) => apiClient.post('/api/journey', data),
+        update: (id, data) => apiClient.put(`/api/journey/${id}`, data),
+        delete: (id) => apiClient.delete(`/api/journey/${id}`),
+        togglePublished: (id) => apiClient.post(`/api/journey/${id}/toggle-published`),
+        toggleFeatured: (id) => apiClient.post(`/api/journey/${id}/toggle-featured`),
+        bulkImport: (sections, clearExisting = false) => 
+            apiClient.post('/api/journey/bulk-import', { sections, clearExisting }),
+    },
 };
 
 export default api;

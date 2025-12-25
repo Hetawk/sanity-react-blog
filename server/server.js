@@ -17,6 +17,7 @@ const resumeRoutes = require('./routes/resume.routes');
 const researchRoutes = require('./routes/research.routes'); // Includes publications & research statement
 const testimonialRoutes = require('./routes/testimonial.routes');
 const leadershipRoutes = require('./routes/leadership.routes');
+const journeyRoutes = require('./routes/journey.routes'); // Professional journey sections
 const githubSyncRoutes = require('./routes/github-sync.routes');
 const homepageRoutes = require('./routes/homepage.routes'); // Combined homepage data
 
@@ -88,6 +89,7 @@ app.use('/api/resumes', resumeRoutes);
 app.use('/api/research', researchRoutes); // Handles /statement, /publications, /stats, /featured
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/leadership', leadershipRoutes);
+app.use('/api/journey', journeyRoutes);
 app.use('/api/github-sync', githubSyncRoutes);
 
 // Welcome endpoint

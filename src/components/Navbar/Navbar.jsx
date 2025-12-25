@@ -21,6 +21,7 @@ const Navbar = () => {
     { id: 'skills', label: 'Skills', icon: '⚡' },
     { id: 'publications', label: 'Publications', icon: '📚' },
     { id: 'award', label: 'Awards', icon: '🏆' },
+    { id: 'journey', label: 'Journey', icon: '🛤️', isPage: true },
     { id: 'contact', label: 'Contact', icon: '✉️' }
   ];
 
@@ -79,9 +80,9 @@ const Navbar = () => {
               onMouseEnter={() => setHoveredSection(item.id)}
               onMouseLeave={() => setHoveredSection(null)}
             >
-              {item.id === 'contact' ? (
+              {item.isPage || item.id === 'contact' ? (
                 <Link
-                  to="/contact"
+                  to={item.id === 'contact' ? '/contact' : `/${item.id}`}
                   className="nav-link"
                   onClick={() => setActiveSection(item.id)}
                 >
@@ -158,9 +159,9 @@ const Navbar = () => {
                         transition={{ delay: index * 0.1 }}
                         className={activeSection === item.id ? 'active' : ''}
                       >
-                        {item.id === 'contact' ? (
+                        {item.isPage || item.id === 'contact' ? (
                           <Link
-                            to="/contact"
+                            to={item.id === 'contact' ? '/contact' : `/${item.id}`}
                             onClick={() => {
                               setToggle(false);
                               setActiveSection(item.id);

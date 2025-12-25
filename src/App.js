@@ -14,6 +14,7 @@ const AwardsPage = lazy(() => import('./pages/Awards/AwardsPage'));
 const ExperiencesPage = lazy(() => import('./pages/Experiences/ExperiencesPage'));
 const WorksPage = lazy(() => import('./pages/Works/WorksPage'));
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'));
+const JourneyPage = lazy(() => import('./pages/Journey/JourneyPage'));
 
 // Loading fallback for lazy-loaded pages
 const PageLoader = () => (
@@ -52,6 +53,7 @@ const App = () => (
               <Route path="/works/:id" element={<WorksPage />} />
               <Route path="/experiences" element={<ExperiencesPage />} />
               <Route path="/experiences/:id" element={<ExperiencesPage />} />
+              <Route path="/journey" element={<JourneyPage />} />
             </Routes>
           </Suspense>
         </div>
