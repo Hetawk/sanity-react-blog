@@ -16,6 +16,269 @@
   }
 }
 
+// Section Subtitle
+.section-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+// ==========================================
+// SKILLS SECTION - Full Width Grid
+// ==========================================
+.skills-section {
+  width: 100%;
+  margin-bottom: 4rem;
+  
+  .head-text {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+
+  @media screen and (max-width: 600px) {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 1rem;
+  }
+}
+
+.skill-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.3s ease;
+
+  &__icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #fef4f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    transition: box-shadow 0.3s ease;
+
+    img {
+      width: 50%;
+      height: 50%;
+      object-fit: contain;
+    }
+
+    &:hover {
+      box-shadow: 0 0 25px rgba(254, 244, 245, 0.5);
+    }
+
+    @media screen and (max-width: 600px) {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  &__name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: white;
+
+    @media screen and (max-width: 600px) {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+// ==========================================
+// EXPERIENCES SECTION - Grid Layout
+// ==========================================
+.experiences-section {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  .head-text {
+    margin-bottom: 0.5rem;
+  }
+
+  &__cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+  }
+
+  @media screen and (max-width: 600px) {
+    padding: 0 1rem;
+  }
+}
+
+// 2-Column Grid for Experiences
+.experiences-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  
+  @media screen and (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+// Individual Experience Item
+.experience-item {
+  display: flex;
+  flex-direction: column;
+  
+  &__year {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// Experience Card - Professional Design
+.exp-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  &__badge {
+    margin-bottom: 0.5rem;
+  }
+
+  &__role {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1.3;
+  }
+
+  &__org {
+    font-size: 0.95rem;
+    color: var(--gray-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__desc {
+    flex: 1;
+    
+    .markdown-renderer {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.8);
+
+      p {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 0.5rem;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      ul, ol {
+        color: rgba(255, 255, 255, 0.8);
+        padding-left: 1.25rem;
+        margin: 0.5rem 0;
+      }
+
+      li {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 0.25rem;
+        line-height: 1.5;
+      }
+
+      strong {
+        color: var(--secondary-color);
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__toggle {
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.75rem 0 0;
+    margin-top: auto;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    text-align: left;
+    width: fit-content;
+
+    &:hover {
+      color: white;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    padding: 1.25rem;
+
+    &__role {
+      font-size: 1rem;
+    }
+
+    &__org {
+      font-size: 0.9rem;
+    }
+
+    &__desc .markdown-renderer {
+      font-size: 0.85rem;
+    }
+  }
+}
+
+// Legacy Timeline styles (keep for compatibility)
+.experiences-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.timeline-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+// ==========================================
+// LEGACY STYLES (kept for compatibility)
+// ==========================================
 .app__skills-container {
   width: 80%;
   margin-top: 3rem;
@@ -102,7 +365,6 @@
 
   @media screen and (max-width: 900px) {
     margin-top: 2rem;
-
   }
 }
 
@@ -112,8 +374,13 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
-  margin: 1rem 0;
+  margin: 1.5rem 0;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
 .app__skills-exp-works {
@@ -124,10 +391,108 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    margin-bottom: 1rem;
-    cursor: pointer;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: all 0.3s ease;
 
+    &:last-child {
+      margin-bottom: 0;
+    }
 
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    &-header {
+      margin-bottom: 0.75rem;
+
+      h4 {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .company {
+        font-weight: 400;
+        color: var(--gray-color);
+        font-size: 0.95rem;
+      }
+    }
+
+    &-description {
+      width: 100%;
+      
+      .markdown-renderer {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.85);
+
+        p {
+          color: rgba(255, 255, 255, 0.85);
+          margin-bottom: 0.5rem;
+        }
+
+        ul, ol {
+          color: rgba(255, 255, 255, 0.85);
+          padding-left: 1.25rem;
+          margin: 0.5rem 0;
+        }
+
+        li {
+          color: rgba(255, 255, 255, 0.85);
+          margin-bottom: 0.25rem;
+        }
+
+        strong {
+          color: var(--secondary-color);
+          font-weight: 600;
+        }
+
+        h4, h5, h6 {
+          color: white;
+          margin: 0.75rem 0 0.5rem;
+          font-size: 1rem;
+        }
+
+        &__more {
+          color: var(--secondary-color);
+          font-style: italic;
+        }
+      }
+    }
+
+    &-toggle {
+      background: none;
+      border: none;
+      color: var(--secondary-color);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0.5rem 0;
+      margin-top: 0.5rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+
+      &:hover {
+        color: white;
+        text-decoration: underline;
+      }
+
+      &::after {
+        content: '→';
+        transition: transform 0.2s ease;
+      }
+
+      &:hover::after {
+        transform: translateX(3px);
+      }
+    }
+
+    // Legacy styles for backward compatibility
     h4 {
       font-weight: 500;
     }
@@ -136,38 +501,99 @@
       font-weight: 400;
       color: var(--gray-color);
       margin-top: 5px;
-
     }
   }
 }
 
 .app__skills-exp-year {
   margin-right: 3rem;
+  min-width: 100px;
 
   p {
     font-weight: 800;
     color: var(--secondary-color);
+    font-size: 1rem;
   }
 
   @media screen and (max-width: 450px) {
     margin-right: 1rem;
+    min-width: 80px;
+    
+    p {
+      font-size: 0.85rem;
+    }
   }
 }
 
 .skills-tooltip {
-  max-width: 300px !important;
+  max-width: 400px !important;
   background-color: var(--white-color) !important;
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.1) !important;
-  border-radius: 5px !important;
+  border-radius: 8px !important;
   padding: 1rem !important;
   color: var(--gray-color) !important;
-  text-align: center !important;
-  line-height: 1.5 !important;
+  text-align: left !important;
+  line-height: 1.6 !important;
   opacity: 1 !important;
+  z-index: 10000 !important;
+
+  // Markdown content styling within tooltip
+  .markdown-renderer {
+    font-size: 0.9rem;
+    color: var(--gray-color);
+    
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--secondary-color);
+      margin: 0.5rem 0 0.25rem;
+      font-size: 1rem;
+    }
+    
+    p {
+      margin-bottom: 0.5rem;
+      color: var(--gray-color);
+    }
+    
+    ul, ol {
+      padding-left: 1.25rem;
+      margin: 0.5rem 0;
+    }
+    
+    li {
+      margin-bottom: 0.25rem;
+      color: var(--gray-color);
+    }
+    
+    strong {
+      color: var(--secondary-color);
+    }
+    
+    &__more {
+      display: block;
+      margin-top: 0.5rem;
+      color: var(--secondary-color);
+      font-style: italic;
+    }
+  }
 
   @media screen and (min-width: 2000px) {
-    font-size: 1.75rem !important;
-    max-width: 500px !important;
-    line-height: 2 !important;
+    font-size: 1.5rem !important;
+    max-width: 600px !important;
+    line-height: 1.8 !important;
+    
+    .markdown-renderer {
+      font-size: 1.25rem;
+    }
   }
+  
+  @media screen and (max-width: 600px) {
+    max-width: 280px !important;
+  }
+}
+
+// View All Button container
+.app__skills-view-all {
+  display: flex;
+  justify-content: center;
+  margin: 3rem 0 1rem;
+  width: 100%;
 }

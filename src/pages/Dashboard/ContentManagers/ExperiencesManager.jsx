@@ -31,7 +31,7 @@ const ExperiencesManager = () => {
         const fetchExperiences = async () => {
             try {
                 // Fetch all experiences including unpublished for dashboard
-                const response = await api.experiences.getAll(true);
+                const response = await api.experiences.getAll({ includeUnpublished: true });
                 const data = response.data || [];
                 setExperiences(data);
             } catch (error) {
@@ -101,7 +101,7 @@ const ExperiencesManager = () => {
         try {
             await api.experiences.togglePublished(experience.id || experience._id);
             // Refetch all experiences including unpublished
-            const response = await api.experiences.getAll(true);
+            const response = await api.experiences.getAll({ includeUnpublished: true });
             setExperiences(response.data || []);
         } catch (error) {
             console.error('Error toggling publish status:', error);

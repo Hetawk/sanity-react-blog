@@ -1,0 +1,139 @@
+.markdown-renderer {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--secondary-color);
+
+  // Headings
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--secondary-color);
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.3rem; }
+  h3 { font-size: 1.15rem; }
+  h4 { font-size: 1.05rem; }
+
+  // Paragraphs
+  p {
+    margin-bottom: 0.75rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Lists
+  ul, ol {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 0.35rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  ul {
+    list-style-type: disc;
+    
+    ul {
+      list-style-type: circle;
+    }
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  // Bold and italic
+  strong {
+    font-weight: 600;
+    color: var(--secondary-color);
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  // Links
+  a {
+    color: var(--secondary-color);
+    text-decoration: underline;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  // Code
+  &__inline-code {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 0.15rem 0.35rem;
+    border-radius: 3px;
+    font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+    font-size: 0.85em;
+  }
+
+  &__code-block {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 0.75rem 0;
+
+    code {
+      font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+      font-size: 0.85em;
+    }
+  }
+
+  // Blockquotes
+  blockquote {
+    border-left: 3px solid var(--secondary-color);
+    margin: 0.75rem 0;
+    padding-left: 1rem;
+    font-style: italic;
+    opacity: 0.85;
+  }
+
+  // Horizontal rule
+  hr {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 1rem 0;
+  }
+
+  // Read more indicator
+  &__more {
+    color: var(--secondary-color);
+    font-weight: 500;
+    opacity: 0.7;
+    font-size: 0.9em;
+  }
+
+  // Inline variant
+  &--inline {
+    display: inline;
+    
+    p, span {
+      display: inline;
+    }
+  }
+}
+
+// Dark mode adjustments
+@media (prefers-color-scheme: dark) {
+  .markdown-renderer {
+    &__inline-code,
+    &__code-block {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+}

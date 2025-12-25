@@ -1,0 +1,220 @@
+.item-card {
+  background: var(--white-color);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+
+    .item-card__overlay {
+      opacity: 1;
+    }
+
+    .item-card__image-container img {
+      transform: scale(1.05);
+    }
+  }
+
+  &__image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+
+    &.experience {
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+
+      img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border-radius: 12px;
+        background: white;
+        padding: 10px;
+      }
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+  }
+
+  &__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    span {
+      font-size: 3rem;
+    }
+
+    &.work {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    &.experience {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+  }
+
+  &__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(2px);
+  }
+
+  &__view-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    border-radius: 50px;
+    color: var(--secondary-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      background: var(--secondary-color);
+      color: white;
+    }
+  }
+
+  &__content {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__badge {
+    display: inline-block;
+    width: fit-content;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, var(--secondary-color), #7c3aed);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  &__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--black-color);
+    line-height: 1.4;
+    margin: 0;
+    
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__subtitle {
+    font-size: 0.9rem;
+    color: var(--gray-color);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  &__description {
+    font-size: 0.85rem;
+    color: var(--gray-color);
+    line-height: 1.6;
+    margin: 0.5rem 0;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  &__tag {
+    padding: 0.25rem 0.6rem;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--secondary-color);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+
+    &.more {
+      background: var(--gray-color);
+      color: white;
+    }
+  }
+}
+
+// Type-specific styles
+.item-card.award {
+  .item-card__badge {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+  }
+}
+
+.item-card.work {
+  .item-card__badge {
+    background: linear-gradient(135deg, #10b981, #059669);
+  }
+}
+
+.item-card.experience {
+  .item-card__badge {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  }
+}
+
+// Responsive
+@media screen and (max-width: 768px) {
+  .item-card {
+    &__image-container {
+      height: 180px;
+    }
+
+    &__title {
+      font-size: 1rem;
+    }
+
+    &__view-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+    }
+  }
+}

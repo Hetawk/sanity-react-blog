@@ -335,6 +335,34 @@
       transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    // Hover overlay for clickable indication
+    .award-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, 
+        rgba(255, 76, 41, 0.8) 0%, 
+        rgba(142, 14, 0, 0.85) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+
+      span {
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid white;
+        border-radius: 25px;
+        transform: translateY(10px);
+        transition: transform 0.3s ease;
+      }
+    }
+
     // Image overlay for better text contrast
     &::after {
       content: '';
@@ -345,6 +373,14 @@
       height: 40%;
       background: linear-gradient(to top, rgba(0, 0, 0, 0.1) 0%, transparent 100%);
       pointer-events: none;
+    }
+  }
+
+  &:hover .award-overlay {
+    opacity: 1;
+
+    span {
+      transform: translateY(0);
     }
   }
 
@@ -526,4 +562,12 @@
     grid-template-columns: 1fr;
     width: 95%;
   }
+}
+
+// View All Button container
+.app__award-view-all {
+  display: flex;
+  justify-content: center;
+  margin: 3rem 0 1rem;
+  width: 100%;
 }

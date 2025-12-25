@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
         // Build where clause
         const where = {
             ...queryBuilder.buildWhereClause({
-                featured,
+                featuredOnly: featured,
                 includeUnpublished,
                 includeDrafts
             }),

@@ -6,6 +6,7 @@ import ResumeDownload from './ResumeDownload/ResumeDownload';
 
 // New reusable components
 import Card from './Card/Card';
+import MarkdownRenderer from './MarkdownRenderer/MarkdownRenderer';
 import Grid from './Grid/Grid';
 import FilterBar from './FilterBar/FilterBar';
 import Loading from './Loading/Loading';
@@ -15,6 +16,12 @@ import Timeline from './Timeline/Timeline';
 import Badge from './Badge/Badge';
 import Button from './Button/Button';
 import Pagination from './Pagination/Pagination';
+
+// Detail page components
+import DetailModal from './DetailModal/DetailModal';
+import ViewAllButton from './ViewAllButton/ViewAllButton';
+import ItemCard from './ItemCard/ItemCard';
+import SectionPage from './SectionPage/SectionPage';
 
 export {
   // Existing
@@ -34,4 +41,11 @@ export {
   Badge,
   Button,
   Pagination,
+
+  // Detail page components
+  DetailModal,
+  ViewAllButton,
+  ItemCard,
+  SectionPage,
+  MarkdownRenderer,
 };

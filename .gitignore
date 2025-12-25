@@ -34,6 +34,8 @@ server/.env
 server/.env.local
 server/.env.production
 
+data-exports/
+
 # misc
 .DS_Store
 npm-debug.log*

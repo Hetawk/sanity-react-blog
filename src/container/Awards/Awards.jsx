@@ -1,22 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
-import { BsGrid3X3Gap, BsSliders } from 'react-icons/bs'; // Import icons for view toggle
+import { BsGrid3X3Gap, BsSliders } from 'react-icons/bs';
 import { motion } from 'framer-motion';
 
 import { AppWrap, MotionWrap } from '../../wrapper';
 import api from '../../api/client';
+import { ViewAllButton, DetailModal } from '../../components';
 import './Awards.scss';
 
 const Awards = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [awards, setAwards] = useState([]);
   const [brands, setBrands] = useState([]);
-  const [viewMode, setViewMode] = useState('grid'); // Changed default to grid view
-  const [visibleItems, setVisibleItems] = useState(6); // For pagination in grid view
+  const [viewMode, setViewMode] = useState('grid');
+  const [visibleItems, setVisibleItems] = useState(6);
+  
+  // Modal state
+  const [selectedAward, setSelectedAward] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleClick = (index) => {
     setCurrentIndex(index);
   };
+
+  // Open modal to show award detail
+  const openAwardModal = useCallback((award) => {
+    setSelectedAward(award);
+    setIsModalOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedAward(null);
+  }, []);
+
+  // Navigation within modal
+  const currentModalIndex = selectedAward ? awards.findIndex(a => a.id === selectedAward.id) : -1;
+  const hasPrevious = currentModalIndex > 0;
+  const hasNext = currentModalIndex < awards.length - 1;
+
+  const goToPrevious = useCallback(() => {
+    if (hasPrevious) {
+      setSelectedAward(awards[currentModalIndex - 1]);
+    }
+  }, [hasPrevious, currentModalIndex, awards]);
+
+  const goToNext = useCallback(() => {
+    if (hasNext) {
+      setSelectedAward(awards[currentModalIndex + 1]);
+    }
+  }, [hasNext, currentModalIndex, awards]);
 
   // Format date for display
   const formatAwardDate = (award) => {
@@ -145,9 +178,14 @@ const Awards = () => {
                   viewport={{ once: true, amount: 0.3 }}
                   className="app__award-grid-item"
                   key={`award-${index}`}
+                  onClick={() => openAwardModal(award)}
+                  style={{ cursor: 'pointer' }}
                 >
                   <div className="award-image-container">
                     <img src={award.imgUrl} alt={award.title} />
+                    <div className="award-overlay">
+                      <span>Click to view</span>
+                    </div>
                   </div>
                   <div className="award-details">
                     {(award.date || award.year) && (
@@ -206,6 +244,30 @@ const Awards = () => {
           </motion.div>
         ))}
       </div>
+
+      {/* View All Button */}
+      {awards.length > 0 && (
+        <div className="app__award-view-all">
+          <ViewAllButton
+            to="/awards"
+            label="View All Awards"
+            count={awards.length}
+            variant="primary"
+          />
+        </div>
+      )}
+
+      {/* Detail Modal */}
+      <DetailModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        item={selectedAward}
+        type="award"
+        onPrevious={goToPrevious}
+        onNext={goToNext}
+        hasPrevious={hasPrevious}
+        hasNext={hasNext}
+      />
     </>
   );
 };

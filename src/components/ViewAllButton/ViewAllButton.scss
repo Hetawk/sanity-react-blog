@@ -1,0 +1,131 @@
+.view-all-btn-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+
+    // Override any link defaults
+    &,
+    &:link,
+    &:visited,
+    &:active {
+        text-decoration: none !important;
+    }
+
+    &__text {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    &__count {
+        font-weight: 400;
+        opacity: 0.8;
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+
+        svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+    }
+
+    // Primary variant
+    &.primary {
+        background: #FF4C29 !important;
+        background-color: #FF4C29 !important;
+        color: #FFFFFF !important;
+        border: 2px solid #FF4C29 !important;
+        border-color: #FF4C29 !important;
+        box-shadow: 0 4px 15px rgba(255, 76, 41, 0.3);
+
+        &,
+        &:link,
+        &:visited,
+        &:active {
+            color: #FFFFFF !important;
+            background: #FF4C29 !important;
+            background-color: #FF4C29 !important;
+        }
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 76, 41, 0.5);
+            background: linear-gradient(135deg, #FF4C29 0%, #8E0E00 100%) !important;
+        }
+    }
+
+    // Secondary variant
+    &.secondary {
+        background: rgba(255, 76, 41, 0.1);
+        color: var(--secondary-color);
+        border: 2px solid var(--secondary-color);
+
+        &:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 76, 41, 0.3);
+        }
+    }
+
+    // Outline variant
+    &.outline {
+        background: transparent;
+        border: 2px solid var(--secondary-color);
+        color: var(--secondary-color);
+
+        &:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 76, 41, 0.3);
+        }
+    }
+
+    // Hover state for icon
+    &:hover {
+        .view-all-btn__icon svg {
+            transform: translateX(4px);
+        }
+    }
+}
+
+// Dark background variant
+.app__primarybg .view-all-btn {
+    &.secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    }
+
+    &.outline {
+        border-color: white;
+        color: white;
+
+        &:hover {
+            background: white;
+            color: var(--secondary-color);
+        }
+    }
+}

@@ -22,27 +22,15 @@ class APIClient {
         };
 
         try {
-            console.log('🌐 API Request:', url);
             const response = await fetch(url, config);
-
-            // Log response status
-            console.log('📊 Response status:', response.status, response.statusText);
-
-            // Check content type
-            const contentType = response.headers.get('content-type');
-            console.log('📄 Content-Type:', contentType);
-
-            // Try to get response text first
             const text = await response.text();
-            console.log('📝 Response preview:', text.substring(0, 200));
 
             // Try to parse as JSON
             let data;
             try {
                 data = JSON.parse(text);
             } catch (parseError) {
-                console.error('❌ JSON Parse Error:', parseError.message);
-                console.error('📄 Raw response:', text);
+                console.error('API Parse Error:', parseError.message);
                 throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}`);
             }
 
@@ -52,7 +40,7 @@ class APIClient {
 
             return data;
         } catch (error) {
-            console.error('❌ API Error:', error);
+            console.error('API Error:', error.message);
             throw error;
         }
     }
@@ -148,18 +136,33 @@ export const api = {
         togglePublished: (id) => apiClient.post(`/api/skills/${id}/toggle-published`),
     },
 
-    // Experiences
+    // Experiences (Timeline)
     experiences: {
-        getAll: (includeUnpublished = false) => apiClient.get(`/api/experiences${includeUnpublished ? '?includeUnpublished=true' : ''}`),
+        getAll: (params = {}) => {
+            const queryParams = new URLSearchParams();
+            if (params.includeUnpublished) queryParams.append('includeUnpublished', 'true');
+            if (params.featured) queryParams.append('featured', 'true');
+            const queryString = queryParams.toString();
+            return apiClient.get(`/api/experiences${queryString ? `?${queryString}` : ''}`);
+        },
         getById: (id) => apiClient.get(`/api/experiences/${id}`),
         togglePublished: (id) => apiClient.post(`/api/experiences/${id}/toggle-published`),
+        toggleFeatured: (id) => apiClient.post(`/api/experiences/${id}/toggle-featured`),
     },
 
-    // Work Experiences
+    // Work Experiences (Professional Summary)
     workExperiences: {
-        getAll: (includeUnpublished = false) => apiClient.get(`/api/work-experiences${includeUnpublished ? '?includeUnpublished=true' : ''}`),
+        getAll: (params = {}) => {
+            const queryParams = new URLSearchParams();
+            if (params.includeUnpublished) queryParams.append('includeUnpublished', 'true');
+            if (params.featured) queryParams.append('featured', 'true');
+            const queryString = queryParams.toString();
+            return apiClient.get(`/api/work-experiences${queryString ? `?${queryString}` : ''}`);
+        },
+        getFeatured: () => apiClient.get('/api/work-experiences?featured=true'),
         getById: (id) => apiClient.get(`/api/work-experiences/${id}`),
         togglePublished: (id) => apiClient.post(`/api/work-experiences/${id}/toggle-published`),
+        toggleFeatured: (id) => apiClient.post(`/api/work-experiences/${id}/toggle-featured`),
     },
 
     // Brands
