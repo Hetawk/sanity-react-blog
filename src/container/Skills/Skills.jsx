@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { AppWrap, MotionWrap } from '../../wrapper';
-import api from '../../api/client';
+import { useHomepageData } from '../../context/HomepageDataContext';
 import { ViewAllButton, MarkdownRenderer } from '../../components';
 import './Skills.scss';
 
@@ -74,29 +74,12 @@ const ExperienceWorkCard = ({ work, idx }) => {
 };
 
 const Skills = () => {
-  const [experiences, setExperiences] = useState([]);
-  const [skills, setSkills] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [experiencesResponse, skillsResponse] = await Promise.all([
-          api.experiences.getAll({ featured: true }),
-          api.skills.getAll()
-        ]);
-        setExperiences(experiencesResponse.data || []);
-        setSkills(skillsResponse.data || []);
-      } catch (error) {
-        console.error('Error fetching skills and experiences:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  // Use shared homepage data instead of separate fetch
+  const { experiences, skills } = useHomepageData();
 
   // Sort experiences by year (newest first)
   const sortedExperiences = useMemo(() => {
-    return [...experiences].sort((a, b) => {
+    return [...(experiences || [])].sort((a, b) => {
       const yearA = parseYearForSort(a.year);
       const yearB = parseYearForSort(b.year);
       return yearB - yearA;

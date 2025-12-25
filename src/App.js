@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { About, Footer, Header, Skills, Awards, Work, OrcidWorks } from './container';
 import { Navbar } from './components';
 import { AuthProvider } from './context/AuthContext';
+import { HomepageDataProvider } from './context/HomepageDataContext';
 import { ToastProvider } from './components/Toast/Toast';
 import './App.scss';
 
@@ -22,7 +23,7 @@ const PageLoader = () => (
 );
 
 const HomePage = () => (
-  <>
+  <HomepageDataProvider>
     <Navbar />
     <Header />
     <About />
@@ -31,7 +32,7 @@ const HomePage = () => (
     <OrcidWorks />
     <Awards />
     <Footer />
-  </>
+  </HomepageDataProvider>
 );
 
 const App = () => (

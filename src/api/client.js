@@ -85,6 +85,12 @@ const apiClient = new APIClient();
 
 // API Endpoints
 export const api = {
+    // Homepage - Combined endpoint for faster initial load
+    homepage: {
+        getAll: () => apiClient.get('/api/homepage'),
+        invalidateCache: () => apiClient.post('/api/homepage/invalidate'),
+    },
+
     // Works
     works: {
         getAll: (params = {}) => {

@@ -1,23 +1,24 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { HiChevronLeft, HiChevronRight } from 'react-icons/hi';
 import { BsGrid3X3Gap, BsSliders } from 'react-icons/bs';
 import { motion } from 'framer-motion';
 
 import { AppWrap, MotionWrap } from '../../wrapper';
-import api from '../../api/client';
+import { useHomepageData } from '../../context/HomepageDataContext';
 import { ViewAllButton, DetailModal } from '../../components';
 import './Awards.scss';
 
 const Awards = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [awards, setAwards] = useState([]);
-  const [brands, setBrands] = useState([]);
   const [viewMode, setViewMode] = useState('grid');
   const [visibleItems, setVisibleItems] = useState(6);
-  
+
   // Modal state
   const [selectedAward, setSelectedAward] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Use shared homepage data instead of separate fetch
+  const { awards = [], brands = [] } = useHomepageData();
 
   const handleClick = (index) => {
     setCurrentIndex(index);
@@ -86,23 +87,6 @@ const Awards = () => {
   const handleReset = () => {
     setVisibleItems(6);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [awardsResponse, brandsResponse] = await Promise.all([
-          api.awards.getAll(),
-          api.brands.getAll()
-        ]);
-        setAwards(awardsResponse.data || []);
-        setBrands(brandsResponse.data || []);
-      } catch (error) {
-        console.error('Error fetching awards and brands:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   return (
     <>

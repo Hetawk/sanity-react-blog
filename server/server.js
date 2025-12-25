@@ -18,6 +18,7 @@ const researchRoutes = require('./routes/research.routes'); // Includes publicat
 const testimonialRoutes = require('./routes/testimonial.routes');
 const leadershipRoutes = require('./routes/leadership.routes');
 const githubSyncRoutes = require('./routes/github-sync.routes');
+const homepageRoutes = require('./routes/homepage.routes'); // Combined homepage data
 
 // Services
 const { startScheduler } = require('./services/schedulerService');
@@ -74,6 +75,7 @@ app.get('/health', (req, res) => {
 });
 
 // API Routes
+app.use('/api/homepage', homepageRoutes); // Combined homepage data (fastest)
 app.use('/api/works', workRoutes);
 app.use('/api/abouts', aboutRoutes);
 app.use('/api/skills', skillRoutes);
