@@ -2,364 +2,638 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider="prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider="mysql"
-  url=env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Work {
-  id String @id @default(uuid()) title String description String? @db.Text projectLink String? codeLink String? imgUrl String? @db.Text tags String? @db.Text // JSON array as string
+  id          String  @id @default(uuid())
+  title       String
+  description String? @db.Text
+  projectLink String?
+  codeLink    String?
+  imgUrl      String? @db.Text
+  tags        String? @db.Text
 
   // Content Management
-  isPublished Boolean @default(false) isDraft Boolean @default(true) isFeatured Boolean @default(false) displayOrder Int @default(0) // Enhanced Metadata
-  category String? // e.g., "Research", "Professional", "Personal"
-  techStack String? @db.Text // JSON array of technologies
-  impact String? @db.Text // Metrics, outcomes, achievements
-  duration String? // e.g., "6 months", "2023-2024"
-  role String? // Your role in the project
+  isPublished  Boolean @default(false)
+  isDraft      Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Enhanced Metadata
+  category  String?
+  techStack String? @db.Text
+  impact    String? @db.Text
+  duration  String?
+  role      String?
 
   // SEO & Discovery
-  slug String? @unique metaTitle String? metaDesc String? @db.Text keywords String? @db.Text // JSON array
+  slug      String? @unique
+  metaTitle String?
+  metaDesc  String? @db.Text
+  keywords  String? @db.Text
 
   // Engagement
-  views Int @default(0) likes Int @default(0) // === GitHub Integration Fields ===
+  views Int @default(0)
+  likes Int @default(0)
 
+  // === GitHub Integration Fields ===
   // Repository Information
-  githubUrl String? // Full GitHub repository URL
-  githubOwner String? // Repository owner (username/org)
-  githubRepo String? // Repository name
-  isPrivateRepo Boolean @default(false) // Is this a private repository
-  isGithubProject Boolean @default(false) // Is this a GitHub-sourced project
+  githubUrl       String?
+  githubOwner     String?
+  githubRepo      String?
+  isPrivateRepo   Boolean @default(false)
+  isGithubProject Boolean @default(false)
 
   // Repository Metrics
-  githubStars Int? // Number of stars
-  githubForks Int? // Number of forks
-  githubWatchers Int? // Number of watchers
-  githubIssues Int? // Open issues count
+  githubStars    Int?
+  githubForks    Int?
+  githubWatchers Int?
+  githubIssues   Int?
 
   // Project Analysis
-  projectCategory String? // "Web Application", "Mobile", "Data Science", etc.
-  projectSubCategory String? // "Frontend", "Backend", "Full-Stack", etc.
-  totalFiles Int? // Total files in project
-  totalFolders Int? // Total folders
-  maxDepth Int? // Maximum folder depth
+  projectCategory    String?
+  projectSubCategory String?
+  totalFiles         Int?
+  totalFolders       Int?
+  maxDepth           Int?
 
   // Technology Stack (Enhanced - structured)
-  languages String? @db.Text // JSON array: ["JavaScript", "TypeScript"]
-  frameworks String? @db.Text // JSON array: ["React", "Next.js"]
-  uiLibraries String? @db.Text // JSON array: ["Tailwind CSS"]
-  databases String? @db.Text // JSON array: ["PostgreSQL", "MongoDB"]
-  testingTools String? @db.Text // JSON array: ["Jest", "Cypress"]
-  buildTools String? @db.Text // JSON array: ["Webpack", "Vite"]
-  deploymentTools String? @db.Text // JSON array: ["Docker", "Kubernetes"]
+  languages       String? @db.Text
+  frameworks      String? @db.Text
+  uiLibraries     String? @db.Text
+  databases       String? @db.Text
+  testingTools    String? @db.Text
+  buildTools      String? @db.Text
+  deploymentTools String? @db.Text
 
   // Project Features
-  hasTests Boolean @default(false) // Has automated tests
-  hasDocs Boolean @default(false) // Has documentation
-  hasCI Boolean @default(false) // Has CI/CD pipeline
-  hasDocker Boolean @default(false) // Is Dockerized
+  hasTests  Boolean @default(false)
+  hasDocs   Boolean @default(false)
+  hasCI     Boolean @default(false)
+  hasDocker Boolean @default(false)
 
   // Project Structure
-  topLevelFolders String? @db.Text // JSON array of main folders
-  keyFiles String? @db.Text // JSON array of important files
-  filesByType String? @db.Text // JSON object: {".js": 150, ".ts": 200}
+  topLevelFolders String? @db.Text
+  keyFiles        String? @db.Text
+  filesByType     String? @db.Text
 
   // Insights & Analysis
-  insights String? @db.Text // JSON array of generated insights
-  complexity String? // "Simple", "Medium", "Complex", "Very Complex"
-  codeQuality String? // "Excellent", "Good", "Fair", "Needs Improvement"
+  insights    String? @db.Text
+  complexity  String?
+  codeQuality String?
 
   // Content (Enhanced)
-  readmePreview String? @db.LongText // First 1000 chars of README
-  fullReadme String? @db.LongText // Complete README content
+  readmePreview String? @db.LongText
+  fullReadme    String? @db.LongText
 
   // Licensing
-  license String? // License name (MIT, Apache, etc.)
-  licenseUrl String? // URL to license file
+  license    String?
+  licenseUrl String?
 
   // Project Timeline
-  githubCreatedAt DateTime? // When repo was created on GitHub
-  githubUpdatedAt DateTime? // Last update on GitHub
-  lastPushedAt DateTime? // Last push to repository
+  githubCreatedAt DateTime?
+  githubUpdatedAt DateTime?
+  lastPushedAt    DateTime?
 
   // Repository Status
-  isArchived Boolean @default(false) // Is repository archived
-  isTemplate Boolean @default(false) // Is it a template repo
-  defaultBranch String? // Default branch name
+  isArchived    Boolean @default(false)
+  isTemplate    Boolean @default(false)
+  defaultBranch String?
 
   // Collaboration
-  contributors String? @db.Text // JSON array of contributor info
-  topics String? @db.Text // JSON array of GitHub topics/tags
+  contributors String? @db.Text
+  topics       String? @db.Text
 
   // External Links
-  homepage String? // Project homepage/demo URL
-  documentation String? // Documentation URL
+  homepage      String?
+  documentation String?
 
   // Timestamps
-  publishedAt DateTime? // Track when work was published
-  featuredAt DateTime? // Track when work was featured
-  deletedAt DateTime? // Track when work was soft deleted
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt // === Indexes ===
-  @@index([isPublished, isFeatured, displayOrder]) @@index([slug]) @@index([deletedAt]) @@index([isPrivateRepo]) @@index([isGithubProject]) @@index([projectCategory]) @@index([githubStars]) @@index([hasTests, hasDocs, hasCI]) @@index([isArchived]) @@map("works")
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // === Indexes ===
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([slug])
+  @@index([deletedAt])
+  @@index([isPrivateRepo])
+  @@index([isGithubProject])
+  @@index([projectCategory])
+  @@index([githubStars])
+  @@index([hasTests, hasDocs, hasCI])
+  @@index([isArchived])
+  @@map("works")
 }
 
 model About {
-  id String @id @default(uuid()) title String description String? @db.Text imgUrl String? @db.Text // Content Management
-  isPublished Boolean @default(true) isFeatured Boolean @default(false) displayOrder Int @default(0) // Professional Profile Enhancement
-  sectionType String? // "research", "leadership", "teaching", "innovation"
-  icon String? // Icon identifier
-  metrics String? @db.Text // JSON: {"publications": 15, "projects": 30}
-  tags String? @db.Text // JSON: Research interests, expertise areas
-  competencies String? @db.Text // JSON array of key competencies
+  id          String  @id @default(uuid())
+  title       String
+  description String? @db.Text
+  imgUrl      String? @db.Text
 
-  // Rich Content
-  detailedDesc String? @db.LongText // Extended description
-  achievements String? @db.Text // JSON array of achievements
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Professional Profile Enhancement
+  sectionType  String?
+  headline     String?
+  expertise    String? @db.Text
+  achievements String? @db.Text
+  philosophy   String? @db.Text
+  languages    String? @db.Text
 
   // Timestamps
-  deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isPublished, isFeatured, displayOrder]) @@index([sectionType]) @@index([deletedAt]) @@map("abouts")
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([sectionType])
+  @@index([deletedAt])
+  @@map("abouts")
 }
 
 model Skill {
-  id String @id @default(uuid()) name String bgColor String? icon String? @db.Text // Content Management
-  isPublished Boolean @default(true) isFeatured Boolean @default(false) displayOrder Int @default(0) // Expertise Enhancement
-  category String? // "Programming", "Framework", "Database", "Cloud", "Tool"
-  proficiencyLevel Int @default(0) // 0-100 percentage
-  yearsExperience Decimal? @db.Decimal(3, 1) // e.g., 5.5 years
+  id      String  @id @default(uuid())
+  name    String
+  bgColor String?
+  icon    String? @db.Text
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Expertise Enhancement
+  category         String?
+  proficiencyLevel Int?
+  yearsExperience  Float?
 
   // Context & Usage
-  description String? @db.Text projectsUsed String? @db.Text // JSON array of project IDs/names
-  certifications String? @db.Text // JSON array of related certs
-  lastUsed DateTime? // When you last used this skill
+  description    String? @db.Text
+  projectsUsed   String? @db.Text
+  certifications String? @db.Text
 
-  // Learning Path
-  learningSource String? // How you learned it
-  endorsements Int @default(0) // Timestamps
-  deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isPublished, isFeatured, displayOrder]) @@index([category]) @@index([proficiencyLevel]) @@index([deletedAt]) @@map("skills")
+  // Learning & Growth
+  lastUsed     DateTime?
+  learningPath String?   @db.Text
+
+  // Timestamps
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([category])
+  @@index([proficiencyLevel])
+  @@index([deletedAt])
+  @@map("skills")
 }
 
 model Experience {
-  id String @id @default(uuid()) year String works String? @db.Text // JSON array as string
+  id    String  @id @default(uuid())
+  year  String
+  works String? @db.Text
 
   // Content Management
-  isPublished Boolean @default(true) isFeatured Boolean @default(false) displayOrder Int @default(0) // Timeline Enhancement
-  startDate DateTime? endDate DateTime? isCurrent Boolean @default(false) // Rich Context
-  period String? // "2023-2024", "Spring 2023"
-  category String? // "professional", "academic", "research"
-  summary String? @db.Text achievements String? @db.Text // JSON array
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Timeline Enhancement
+  startDate DateTime?
+  endDate   DateTime?
+  isCurrent Boolean   @default(false)
+
+  // Rich Context
+  period       String?
+  category     String?
+  summary      String? @db.Text
+  achievements String? @db.Text
 
   // Timestamps
-  deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isPublished, isFeatured, displayOrder]) @@index([year]) @@index([startDate, endDate]) @@index([deletedAt]) @@map("experiences")
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([year])
+  @@index([startDate, endDate])
+  @@index([deletedAt])
+  @@map("experiences")
 }
 
 model WorkExperience {
-  id String @id @default(uuid()) name String company String? desc String? @db.Text // Content Management
-  isPublished Boolean @default(true) isFeatured Boolean @default(false) displayOrder Int @default(0) // Professional Details
-  position String? // Job title/role
-  location String? // City, Country or "Remote"
-  employmentType String? // "Full-time", "Contract", "Internship"
+  id      String  @id @default(uuid())
+  name    String
+  company String?
+  desc    String? @db.Text
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Professional Details
+  position       String?
+  location       String?
+  locationType   String?
+  employmentType String?
 
   // Timeline
-  startDate DateTime? endDate DateTime? isCurrent Boolean @default(false) duration String? // "2 years 3 months"
+  startDate DateTime?
+  endDate   DateTime?
+  isCurrent Boolean   @default(false)
+  duration  String?
 
   // Rich Content
-  responsibilities String? @db.Text // JSON array
-  achievements String? @db.Text // JSON array
-  technologies String? @db.Text // JSON array
-  teamSize Int? // Links & Media
-  companyUrl String? companyLogo String? @db.Text // Timestamps
-  deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isPublished, isFeatured, displayOrder]) @@index([company]) @@index([startDate, endDate]) @@index([deletedAt]) @@map("workExperiences")
+  responsibilities String? @db.Text
+  achievements     String? @db.Text
+  skills           String? @db.Text
+  teamSize         Int?
+
+  // Links & Media
+  companyUrl  String?
+  companyLogo String? @db.Text
+
+  // Timestamps
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([company])
+  @@index([startDate, endDate])
+  @@index([deletedAt])
+  @@map("workExperiences")
 }
 
 model Brand {
-  id String @id @default(uuid()) name String imgUrl String? @db.Text // Content Management
-  isPublished Boolean @default(true) isFeatured Boolean @default(false) displayOrder Int @default(0) // Brand Details
-  category String? // "Partner", "Client", "Collaboration", "Certification"
-  description String? @db.Text website String? // Relationship
-  relationship String? // Nature of partnership
-  startDate DateTime? endDate DateTime? // Timestamps
-  deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isPublished, isFeatured, displayOrder]) @@index([category]) @@index([deletedAt]) @@map("brands")
+  id     String  @id @default(uuid())
+  name   String
+  imgUrl String? @db.Text
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Brand Details
+  category    String?
+  description String? @db.Text
+  website     String?
+
+  // Relationship
+  relationship String?
+  startDate    DateTime?
+  endDate      DateTime?
+
+  // Timestamps
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([category])
+  @@index([deletedAt])
+  @@map("brands")
 }
 
 model Award {
-  id String @id @default(uuid()) title String description String? @db.Text date String? imgUrl String? @db.Text // Content Management
-  isPublished Boolean @default(true) isFeatured Boolean @default(false) displayOrder Int @default(0) // Award Details
-  category String? // "Academic", "Professional", "Research", "Leadership"
-  issuer String? // Organization that issued the award
-  issuerLogo String? @db.Text // Recognition Level
-  level String? // "International", "National", "Regional", "Institutional"
-  year Int? awardDate DateTime? // Rich Content
-  criteria String? @db.Text // What it was for
-  significance String? @db.Text // Why it matters
-  link String? // Verification link
+  id          String  @id @default(uuid())
+  title       String
+  description String? @db.Text
+  date        String?
+  imgUrl      String? @db.Text
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Award Details
+  category  String?
+  issuer    String?
+  level     String?
+  year      Int?
+  awardDate DateTime?
+
+  // Rich Content
+  criteria String? @db.Text
+  impact   String? @db.Text
+  link     String?
 
   // Timestamps
-  deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isPublished, isFeatured, displayOrder]) @@index([category]) @@index([year]) @@index([deletedAt]) @@map("awards")
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([category])
+  @@index([year])
+  @@index([deletedAt])
+  @@map("awards")
 }
 
 model Contact {
-  id String @id @default(uuid()) name String email String message String @db.Text // Status Management
-  isRead Boolean @default(false) isReplied Boolean @default(false) status String? @default("new") // "new", "in-progress", "resolved"
+  id      String @id @default(uuid())
+  name    String
+  email   String
+  message String @db.Text
 
-  // Categorization
-  category String? // "job", "collaboration", "inquiry", "feedback"
-  priority String? @default("normal") // "low", "normal", "high", "urgent"
+  // Status Management
+  isRead    Boolean @default(false)
+  isReplied Boolean @default(false)
+  status    String? @default("new")
+
+  // Contact Details
+  phone    String?
+  company  String?
+  subject  String?
+  category String?
 
   // Response
-  reply String? @db.Text repliedAt DateTime? notes String? @db.Text // Internal notes
+  reply     String?   @db.Text
+  repliedAt DateTime?
+  notes     String?   @db.Text
 
   // Timestamps
-  createdAt DateTime @default(now()) @@index([isRead, status]) @@index([category]) @@index([createdAt]) @@map("contacts")
+  createdAt DateTime @default(now())
+
+  @@index([isRead, status])
+  @@index([category])
+  @@index([createdAt])
+  @@map("contacts")
 }
 
 model Resume {
-  id String @id @default(uuid()) title String // Resume title/name
-  description String? @db.Text fileUrl String? // URL to the uploaded PDF file
-  fileName String? // Original filename
+  id          String  @id @default(uuid())
+  title       String
+  description String? @db.Text
+  fileUrl     String?
+  fileName    String?
+  fileSize    Int?
 
-  // Content Management
-  isActive Boolean @default(false) // Mark which resume is currently active
-  isPublished Boolean @default(false) isFeatured Boolean @default(false) displayOrder Int @default(0) // Resume Targeting
-  targetType String? // "Academic", "Industry", "Research", "General"
-  keywords String? @db.Text // JSON array
+  // Status
+  isActive     Boolean @default(false)
+  isPublished  Boolean @default(false)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
 
-  // Versions & Tracking
-  version String? // "v1.0", "v2.0"
-  downloads Int @default(0) views Int @default(0) // Timestamps
-  uploadedAt DateTime @default(now()) deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isActive, isPublished]) @@index([targetType]) @@index([deletedAt]) @@map("resumes")
+  // Resume Targeting
+  targetType     String?
+  targetIndustry String?
+  targetRole     String?
+
+  // Version Control
+  version   String?
+  downloads Int     @default(0)
+  views     Int     @default(0)
+
+  // Timestamps
+  uploadedAt DateTime  @default(now())
+  deletedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([isActive, isPublished])
+  @@index([targetType])
+  @@index([deletedAt])
+  @@map("resumes")
 }
 
 model ResearchStatement {
-  id String @id @default(uuid()) title String elevatorPitch String? @db.Text // 2-3 sentence summary
+  id            String  @id @default(uuid())
+  title         String
+  elevatorPitch String? @db.Text
 
   // Content Management
-  isPublished Boolean @default(false) isFeatured Boolean @default(false) displayOrder Int @default(0) // Research Content
-  currentFocus String? @db.Text // JSON array of current research areas
-  phdInterests String? @db.Text // JSON array of PhD research interests
-  longStatement String? @db.LongText // Full research statement
-  researchGoals String? @db.Text // JSON array
+  isPublished  Boolean @default(false)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Research Content
+  currentFocus   String? @db.Text
+  pastResearch   String? @db.Text
+  collaborations String? @db.Text
+  fundingSources String? @db.Text
 
   // Methodology & Approach
-  methodology String? @db.Text futureDirections String? @db.Text // JSON array
+  methodology      String? @db.Text
+  futureDirections String? @db.Text
 
-  // Documents & Links
-  pdfUrl String? // Link to full research statement PDF
-  publications String? @db.Text // JSON array of key publications
-  collaborations String? @db.Text // JSON array
+  // Impact
+  publications String? @db.Text
+  keyFindings  String? @db.Text
+  impact       String? @db.Text
 
   // Engagement
-  views Int @default(0) downloads Int @default(0) // Timestamps
-  publishedAt DateTime? deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isPublished, isFeatured]) @@index([deletedAt]) @@map("research_statements")
+  views     Int @default(0)
+  downloads Int @default(0)
+
+  // Timestamps
+  publishedAt DateTime?
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured])
+  @@index([deletedAt])
+  @@map("research_statements")
 }
 
 model Testimonial {
-  id String @id @default(uuid()) name String position String? // Job title
-  company String? // Organization
-  relationship String? // "Supervisor", "Colleague", "Client", "Collaborator"
+  id       String  @id @default(uuid())
+  name     String
+  position String?
+  company  String?
 
   // Content Management
-  isPublished Boolean @default(false) isFeatured Boolean @default(false) displayOrder Int @default(0) // Testimonial Content
-  testimonial String @db.Text // The actual testimonial
-  shortVersion String? @db.Text // Condensed version for cards
-  context String? @db.Text // When/where you worked together
+  isPublished  Boolean @default(false)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
 
-  // Media & Verification
-  avatar String? @db.Text // Profile photo
-  companyLogo String? @db.Text linkedinUrl String? verificationUrl String? // Link to LinkedIn recommendation, etc.
+  // Testimonial Content
+  testimonial  String  @db.Text
+  rating       Int?
+  category     String?
+  relationship String?
 
-  // Rating & Category
-  rating Int? // 1-5 stars (optional)
-  category String? // "Technical", "Leadership", "Research", "Collaboration"
+  // Visuals
+  avatar          String? @db.Text
+  companyLogo     String? @db.Text
+  linkedinUrl     String?
+  verificationUrl String?
 
-  // Metadata
-  date DateTime? // When the testimonial was given
-  project String? // Related project/context
+  // Context
+  projectWorkedOn String?
+  dateGiven       DateTime?
+  isVerified      Boolean   @default(false)
 
   // Timestamps
-  deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isPublished, isFeatured, displayOrder]) @@index([category]) @@index([relationship]) @@index([deletedAt]) @@map("testimonials")
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([category])
+  @@index([relationship])
+  @@index([deletedAt])
+  @@map("testimonials")
 }
 
 model Publication {
-  id String @id @default(uuid()) title String abstract String? @db.Text // Content Management
-  isPublished Boolean @default(true) isFeatured Boolean @default(false) displayOrder Int @default(0) // Publication Details
-  authors String @db.Text // JSON array
-  venue String? // Journal/Conference name
-  year Int? publicationDate DateTime? // Type & Category
-  type String? // "Journal", "Conference", "Workshop", "Preprint"
-  category String? // Research area
+  id       String  @id @default(uuid())
+  title    String
+  abstract String? @db.Text
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Publication Details
+  authors         String    @db.Text
+  venue           String?
+  year            Int?
+  publicationDate DateTime?
+
+  // Type & Category
+  type     String?
+  category String?
 
   // Links & DOI
-  doi String? pdfUrl String? projectUrl String? arxivUrl String? // Metrics
-  citations Int @default(0) views Int @default(0) downloads Int @default(0) // Rich Content
-  keywords String? @db.Text // JSON array
-  bibtex String? @db.Text notes String? @db.Text // Timestamps
-  deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isPublished, isFeatured, displayOrder]) @@index([type, year]) @@index([deletedAt]) @@map("publications")
+  doi        String?
+  pdfUrl     String?
+  projectUrl String?
+  arxivUrl   String?
+
+  // Metrics
+  citations Int @default(0)
+  views     Int @default(0)
+  downloads Int @default(0)
+
+  // Rich Content
+  keywords String? @db.Text
+  bibtex   String? @db.Text
+  notes    String? @db.Text
+
+  // Timestamps
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([type, year])
+  @@index([deletedAt])
+  @@map("publications")
 }
 
 model Leadership {
-  id String @id @default(uuid()) title String organization String? description String? @db.Text // Content Management
-  isPublished Boolean @default(true) isFeatured Boolean @default(false) displayOrder Int @default(0) // Leadership Details
-  role String? // "Founder", "President", "Lead", "Mentor"
-  category String? // "Entrepreneurship", "Community", "Academic", "Professional"
-
-  // Timeline
-  startDate DateTime? endDate DateTime? isCurrent Boolean @default(false) duration String? // Impact & Metrics
-  impact String? @db.Text // JSON array of impact metrics
-  teamSize Int? achievements String? @db.Text // JSON array
-
-  // Media
-  imgUrl String? @db.Text logoUrl String? @db.Text websiteUrl String? // Rich Content
-  story String? @db.LongText // Full leadership story
-  challenges String? @db.Text // JSON array
-  learnings String? @db.Text // JSON array
-
-  // Timestamps
-  deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isPublished, isFeatured, displayOrder]) @@index([category]) @@index([startDate, endDate]) @@index([deletedAt]) @@map("leadership")
-}
-
-// Journey - Professional Summary with multiple sections
-// Stores the narrative journey/story for easy database updates
-model JourneySection {
-  id String @id @default(uuid()) partNumber Int // 1-7 for organizing parts (I, II, III, etc.)
-  title String // "Academic Foundation", "The University Years", etc.
-  subtitle String? // Additional context like role or institution
+  id           String  @id @default(uuid())
+  title        String
+  organization String?
+  description  String? @db.Text
 
   // Content Management
-  isPublished Boolean @default(true) isFeatured Boolean @default(false) displayOrder Int @default(0) // Main Content
-  content String @db.LongText // Main narrative content (markdown supported)
-  summary String? @db.Text // Brief summary for preview cards
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
 
-  // Context & Metadata
-  organization String? // Institution/Organization name (JICF, FOM, etc.)
-  role String? // Role/Position held
-  location String? // Jinan, China / Remote, etc.
-  duration String? // "2019-2021", "2023-Present", etc.
+  // Leadership Details
+  role     String?
+  category String?
 
-  // Category for filtering
-  category String? // "Education", "Church", "Leadership", "Technical", "Entrepreneurship"
+  // Timeline
+  startDate DateTime?
+  endDate   DateTime?
+  isCurrent Boolean   @default(false)
+  duration  String?
 
-  // Visual
-  icon String? // Icon class or emoji for the section
-  imgUrl String? @db.Text // Optional image
+  // Impact & Metrics
+  impact       String? @db.Text
+  teamSize     Int?
+  achievements String? @db.Text
 
-  // Related Links
-  websiteUrl String? // Related website
+  // Media
+  imgUrl     String? @db.Text
+  logoUrl    String? @db.Text
+  websiteUrl String?
+
+  // Rich Content
+  story      String? @db.LongText
+  highlights String? @db.Text
+  skills     String? @db.Text
 
   // Timestamps
-  deletedAt DateTime? // Soft delete
-  createdAt DateTime @default(now()) updatedAt DateTime @updatedAt @@index([isPublished, displayOrder]) @@index([partNumber]) @@index([category]) @@index([deletedAt]) @@map("journey_sections")
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([category])
+  @@index([startDate, endDate])
+  @@index([deletedAt])
+  @@map("leadership")
+}
+
+model JourneySection {
+  id         String  @id @default(uuid())
+  partNumber Int
+  title      String
+  subtitle   String?
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Main Content
+  content String  @db.LongText
+  summary String? @db.Text
+
+  // Timeline
+  startYear Int?
+  endYear   Int?
+  period    String?
+
+  // Categorization
+  category String?
+  icon     String?
+
+  // Media
+  coverImage   String? @db.Text
+  images       String? @db.Text
+  mediaGallery String? @db.Text
+
+  // Rich Content
+  highlights   String? @db.Text
+  achievements String? @db.Text
+  lessons      String? @db.Text
+  keyPeople    String? @db.Text
+
+  // Role Context
+  role        String?
+  institution String?
+  location    String?
+
+  // Timestamps
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, displayOrder])
+  @@index([partNumber])
+  @@index([category])
+  @@index([deletedAt])
+  @@map("journey_sections")
 }
