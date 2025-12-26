@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 import { AppWrap, MotionWrap } from '../../wrapper';
 import { useHomepageData } from '../../context/HomepageDataContext';
@@ -323,7 +324,22 @@ const About = () => {
 
       > "I envision EKD Digital as more than a technology company—we are KINGDOM citizens
           exercising dominion in the digital space."
-        </p> </motion.div> </>);
+        </p>
+        
+        <Link to="/journey" className="about-journey-link">
+          <motion.button
+            className="journey-btn"
+            whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(255, 76, 41, 0.3)" }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            <span>Explore My Journey</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </motion.button>
+        </Link>
+      </motion.div> </>);
 }
 
   ;

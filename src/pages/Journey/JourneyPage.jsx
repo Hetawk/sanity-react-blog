@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { 
   HiAcademicCap, 
   HiOfficeBuilding, 
@@ -12,7 +13,9 @@ import {
   HiClock,
   HiFilter,
   HiChevronLeft,
-  HiChevronRight
+  HiChevronRight,
+  HiHome,
+  HiArrowLeft
 } from 'react-icons/hi';
 import { FaChurch, FaPray, FaGraduationCap, FaBriefcase, FaHandsHelping } from 'react-icons/fa';
 
@@ -334,6 +337,21 @@ const JourneyPage = () => {
 
   return (
     <div className="journey-page">
+      {/* Back to Home Button */}
+      <Link to="/" className="back-to-home">
+        <motion.button
+          className="back-btn"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          whileHover={{ scale: 1.05, x: -5 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <HiArrowLeft />
+          <span>Back to Home</span>
+        </motion.button>
+      </Link>
+
       {/* Hero Section with Cover Photo */}
       <motion.div 
         className="journey-hero"

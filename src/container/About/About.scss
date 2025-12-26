@@ -400,3 +400,58 @@
     border: 1px solid #fcc;
   }
 }
+
+// Journey Button Link
+.about-journey-link {
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 2rem;
+}
+
+.journey-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #FF4C29 0%, #8E0E00 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 76, 41, 0.3);
+  
+  span {
+    letter-spacing: 0.5px;
+  }
+  
+  svg {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover {
+    svg {
+      transform: translateX(5px);
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    padding: 0.875rem 1.75rem;
+    font-size: 1rem;
+    gap: 0.5rem;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.about-cta {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

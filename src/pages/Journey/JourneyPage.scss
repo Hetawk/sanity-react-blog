@@ -5,6 +5,65 @@
     background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
 }
 
+// Back to Home Button
+.back-to-home {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+    text-decoration: none;
+
+    .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        color: white;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+        svg {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        &:hover {
+            background: rgba(255, 76, 41, 0.9);
+            border-color: rgba(255, 76, 41, 0.5);
+            box-shadow: 0 6px 25px rgba(255, 76, 41, 0.4);
+
+            svg {
+                transform: translateX(-3px);
+            }
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        top: 15px;
+        left: 15px;
+
+        .back-btn {
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+
+            span {
+                display: none;
+            }
+
+            svg {
+                font-size: 1.3rem;
+            }
+        }
+    }
+}
+
 // Loading State
 .loading-container {
     display: flex;
