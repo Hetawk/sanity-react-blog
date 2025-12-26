@@ -33,12 +33,12 @@
     padding: 1.5rem 1.75rem;
     border-radius: 20px;
     cursor: pointer;
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.95) 0%, 
-      rgba(255, 255, 255, 0.9) 100%);
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 255, 255, 0.9) 100%);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 
+    box-shadow:
       0 8px 32px rgba(31, 28, 24, 0.08),
       0 2px 8px rgba(0, 0, 0, 0.05),
       inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -71,9 +71,9 @@
       height: 50px;
       margin-right: 1rem;
       padding: 0.75rem;
-      background: linear-gradient(135deg, 
-        rgba(255, 76, 41, 0.1) 0%, 
-        rgba(142, 14, 0, 0.08) 100%);
+      background: linear-gradient(135deg,
+          rgba(255, 76, 41, 0.1) 0%,
+          rgba(142, 14, 0, 0.08) 100%);
       border-radius: 15px;
       box-shadow: 0 4px 12px rgba(255, 76, 41, 0.15);
       transition: all 0.3s ease;
@@ -82,9 +82,9 @@
     }
 
     &:last-child img {
-      background: linear-gradient(135deg, 
-        rgba(66, 135, 245, 0.1) 0%, 
-        rgba(33, 150, 243, 0.08) 100%);
+      background: linear-gradient(135deg,
+          rgba(66, 135, 245, 0.1) 0%,
+          rgba(33, 150, 243, 0.08) 100%);
       box-shadow: 0 4px 12px rgba(66, 135, 245, 0.15);
     }
 
@@ -110,7 +110,7 @@
 
     &:hover {
       transform: translateY(-8px) scale(1.02);
-      box-shadow: 
+      box-shadow:
         0 20px 60px rgba(255, 76, 41, 0.15),
         0 8px 16px rgba(0, 0, 0, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -128,7 +128,7 @@
     }
 
     &:last-child:hover {
-      box-shadow: 
+      box-shadow:
         0 20px 60px rgba(66, 135, 245, 0.15),
         0 8px 16px rgba(0, 0, 0, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -138,11 +138,36 @@
     @media screen and (max-width: 450px) {
       width: 100%;
       max-width: 100%;
+      padding: 1.25rem 1rem;
+      border-radius: 16px;
+
+      img {
+        width: 44px;
+        height: 44px;
+        padding: 0.6rem;
+        margin-right: 0.75rem;
+      }
+
+      p {
+        font-size: 0.85rem;
+      }
+
+      a {
+        font-size: 0.9rem;
+      }
     }
   }
 
   @media screen and (max-width: 768px) {
     width: 90%;
+    margin: 3rem 1rem 1.5rem;
+  }
+
+  @media screen and (max-width: 480px) {
+    width: 95%;
+    gap: 1rem;
+    margin: 2rem 0.5rem 1rem;
+    padding: 0;
   }
 }
 
@@ -158,7 +183,7 @@
 
   .contact-message {
     margin-bottom: 2rem;
-    
+
     .p-text {
       font-size: 1.05rem;
       color: rgba(255, 255, 255, 0.9);
@@ -179,7 +204,7 @@
     font-weight: 600;
     font-size: 1.05rem;
     font-family: var(--font-base);
-    box-shadow: 
+    box-shadow:
       0 12px 32px rgba(255, 76, 41, 0.35),
       0 4px 12px rgba(0, 0, 0, 0.15);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -196,10 +221,10 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, 
-        transparent 0%, 
-        rgba(255, 255, 255, 0.3) 50%, 
-        transparent 100%);
+      background: linear-gradient(90deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.3) 50%,
+          transparent 100%);
       transition: left 0.6s ease;
     }
 
@@ -220,7 +245,7 @@
 
     &:hover {
       transform: translateY(-6px) scale(1.02);
-      box-shadow: 
+      box-shadow:
         0 20px 50px rgba(255, 76, 41, 0.45),
         0 8px 20px rgba(0, 0, 0, 0.2);
       border-color: rgba(255, 255, 255, 0.4);
@@ -240,7 +265,7 @@
 
     &:active {
       transform: translateY(-3px) scale(1);
-      box-shadow: 
+      box-shadow:
         0 10px 30px rgba(255, 76, 41, 0.35),
         0 4px 12px rgba(0, 0, 0, 0.15);
     }
@@ -341,16 +366,16 @@
   backface-visibility: hidden;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(31, 28, 24, 0.15),
     0 4px 12px rgba(0, 0, 0, 0.1);
   transform-style: preserve-3d; // Ensure 3D rendering
 }
 
 .flip-card-front {
-  background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.98) 0%, 
-    rgba(255, 255, 255, 0.95) 100%);
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.95) 100%);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.4);
   display: flex;
@@ -390,9 +415,9 @@
     right: 1.2rem;
     width: 42px;
     height: 42px;
-    background: linear-gradient(135deg, 
-      rgba(255, 76, 41, 0.15) 0%, 
-      rgba(142, 14, 0, 0.1) 100%);
+    background: linear-gradient(135deg,
+        rgba(255, 76, 41, 0.15) 0%,
+        rgba(142, 14, 0, 0.1) 100%);
     backdrop-filter: blur(10px);
     border-radius: 12px;
     display: flex;
@@ -406,10 +431,10 @@
 }
 
 .flip-card-back {
-  background: linear-gradient(135deg, 
-    var(--secondary-color) 0%, 
-    #8E0E00 50%,
-    #1F1C18 100%);
+  background: linear-gradient(135deg,
+      var(--secondary-color) 0%,
+      #8E0E00 50%,
+      #1F1C18 100%);
   color: white;
   transform: rotateY(180deg); // Pre-rotated to back position
   display: flex;
