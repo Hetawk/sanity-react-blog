@@ -1,6 +1,8 @@
 import React,
 {
-    useState
+    useState,
+    useEffect,
+    useCallback
 }
 
     from 'react';
@@ -32,6 +34,7 @@ import ExperiencesManager from './ContentManagers/ExperiencesManager';
 import AwardsManager from './ContentManagers/AwardsManager';
 import WorksManager from './ContentManagers/WorksManager';
 import ResumeManager from './ContentManagers/ResumeManager';
+import ResumeManagerV2 from './ContentManagers/ResumeManagerV2';
 import GithubSyncManager from './ContentManagers/GithubSyncManager';
 import JourneyManager from './ContentManagers/JourneyManager';
 
@@ -43,9 +46,17 @@ const tabs = [
     { id: 'experiences', label: 'Experience', icon: '🎯', color: '#8E0E00' },
     { id: 'awards', label: 'Awards', icon: '🏆', color: '#1F1C18' },
     { id: 'journey', label: 'Journey', icon: '🛤️', color: '#8b5cf6' },
-    { id: 'resume', label: 'Resume', icon: '📄', color: '#1F1C18' },
+    { id: 'resume', label: 'Resume (Legacy)', icon: '📄', color: '#1F1C18' },
+    { id: 'resumeV2', label: 'Resume Manager', icon: '📋', color: '#0066cc' },
     { id: 'github', label: 'GitHub Sync', icon: '🔄', color: '#0366d6' },
 ];
+
+// Helper to get initial tab from URL hash
+const getTabFromHash = () => {
+    const hash = window.location.hash.replace('#', '');
+    const validTab = tabs.find(tab => tab.id === hash);
+    return validTab ? hash : 'abouts';
+};
 
 const Dashboard = () => {
     const [password,
@@ -53,7 +64,7 @@ const Dashboard = () => {
     const [error,
         setError] = useState('');
     const [activeTab,
-        setActiveTab] = useState('abouts');
+        setActiveTab] = useState(getTabFromHash);
 
     const {
         isAuthenticated,
@@ -67,6 +78,30 @@ const Dashboard = () => {
         setShowHelp] = useState(false);
     const [sidebarCollapsed,
         setSidebarCollapsed] = useState(false);
+
+    // Sync URL hash with active tab
+    const handleTabChange = useCallback((tabId) => {
+        setActiveTab(tabId);
+        window.location.hash = tabId;
+    }, []);
+
+    // Listen for hash changes (back/forward browser buttons)
+    useEffect(() => {
+        const handleHashChange = () => {
+            const newTab = getTabFromHash();
+            setActiveTab(newTab);
+        };
+
+        window.addEventListener('hashchange', handleHashChange);
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
+
+    // Set initial hash if not present
+    useEffect(() => {
+        if (!window.location.hash) {
+            window.location.hash = activeTab;
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -226,7 +261,7 @@ const Dashboard = () => {
                     }
 
                     onClick={
-                        () => setActiveTab(tab.id)
+                        () => handleTabChange(tab.id)
                     }
 
                     initial={
@@ -331,6 +366,7 @@ const Dashboard = () => {
                 {activeTab === 'works' && <WorksManager />}
                 {activeTab === 'journey' && <JourneyManager />}
                 {activeTab === 'resume' && <ResumeManager />}
+                {activeTab === 'resumeV2' && <ResumeManagerV2 />}
                 {activeTab === 'github' && <GithubSyncManager />}
             </motion.div> </AnimatePresence> </div> </div>);
 }

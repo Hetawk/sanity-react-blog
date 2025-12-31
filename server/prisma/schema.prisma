@@ -32,6 +32,9 @@ model Work {
   duration  String?
   role      String?
 
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
+
   // SEO & Discovery
   slug      String? @unique
   metaTitle String?
@@ -187,6 +190,9 @@ model Skill {
   lastUsed     DateTime?
   learningPath String?   @db.Text
 
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
+
   // Timestamps
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -219,6 +225,9 @@ model Experience {
   category     String?
   summary      String? @db.Text
   achievements String? @db.Text
+
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
 
   // Timestamps
   deletedAt DateTime?
@@ -264,6 +273,9 @@ model WorkExperience {
   // Links & Media
   companyUrl  String?
   companyLogo String? @db.Text
+
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
 
   // Timestamps
   deletedAt DateTime?
@@ -332,6 +344,9 @@ model Award {
   impact   String? @db.Text
   link     String?
 
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
+
   // Timestamps
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -342,6 +357,209 @@ model Award {
   @@index([year])
   @@index([deletedAt])
   @@map("awards")
+}
+
+// Certification Model
+model Certification {
+  id          String  @id @default(uuid())
+  name        String
+  description String? @db.Text
+  issuer      String // Issuing organization
+  issuerLogo  String? @db.Text
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Certification Details
+  credentialId  String?
+  credentialUrl String?
+  category      String?
+
+  // Timeline
+  issueDate      DateTime?
+  expirationDate DateTime?
+  isNonExpiring  Boolean   @default(false)
+
+  // Skills & Context
+  skills     String? @db.Text // JSON array of skills
+  level      String? // e.g., "Associate", "Professional", "Expert"
+  technology String? // Primary technology
+
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
+
+  // Timestamps
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([issuer])
+  @@index([category])
+  @@index([issueDate])
+  @@index([deletedAt])
+  @@map("certifications")
+}
+
+// Education Model
+model Education {
+  id          String  @id @default(uuid())
+  degree      String // e.g., "Bachelor of Science", "Master of Arts"
+  field       String // e.g., "Computer Science", "Business Administration"
+  institution String
+  location    String?
+  description String? @db.Text
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Timeline
+  startDate DateTime?
+  endDate   DateTime?
+  isCurrent Boolean   @default(false)
+
+  // Academic Details
+  gpa          String? // e.g., "3.8/4.0"
+  honors       String? @db.Text // e.g., "Magna Cum Laude"
+  thesis       String? @db.Text
+  coursework   String? @db.Text // JSON array of relevant courses
+  activities   String? @db.Text // JSON array of activities
+  achievements String? @db.Text
+
+  // Media
+  logoUrl    String? @db.Text
+  websiteUrl String?
+
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
+
+  // Timestamps
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([institution])
+  @@index([startDate, endDate])
+  @@index([deletedAt])
+  @@map("education")
+}
+
+// Volunteer/Community Work Model
+model VolunteerWork {
+  id           String  @id @default(uuid())
+  role         String
+  organization String
+  location     String?
+  description  String? @db.Text
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Timeline
+  startDate DateTime?
+  endDate   DateTime?
+  isCurrent Boolean   @default(false)
+
+  // Details
+  category     String? // e.g., "Education", "Environment", "Health"
+  impact       String? @db.Text
+  achievements String? @db.Text
+  skills       String? @db.Text // JSON array
+
+  // Media
+  logoUrl    String? @db.Text
+  websiteUrl String?
+
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
+
+  // Timestamps
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([organization])
+  @@index([category])
+  @@index([startDate, endDate])
+  @@index([deletedAt])
+  @@map("volunteer_work")
+}
+
+// Professional Reference Model
+model Reference {
+  id       String  @id @default(uuid())
+  name     String
+  title    String? // e.g., "Senior Manager", "Professor"
+  company  String? // Company/Organization
+  email    String?
+  phone    String?
+  linkedin String?
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Relationship Details
+  relationship     String? // e.g., "Former Manager", "Colleague", "Academic Advisor"
+  relationshipType String? // e.g., "professional", "academic", "personal"
+  knownSince       DateTime?
+  yearsKnown       Int?
+
+  // Context
+  company_context String? @db.Text // What company/role did you work together
+  description     String? @db.Text // Additional context about the relationship
+
+  // Consent & Privacy
+  hasConsent     Boolean   @default(false) // Has given permission to be contacted
+  consentDate    DateTime?
+  isConfidential Boolean   @default(false) // Only share with specific employers
+
+  // Timestamps
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([relationship])
+  @@index([deletedAt])
+  @@map("references")
+}
+
+// Language Proficiency Model
+model LanguageProficiency {
+  id       String @id @default(uuid())
+  language String // e.g., "English", "German", "Mandarin"
+  level    String // e.g., "Native", "Fluent", "Professional", "Intermediate"
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  displayOrder Int     @default(0)
+
+  // Proficiency Details
+  reading   String? // e.g., "Native", "Fluent", "Intermediate"
+  writing   String?
+  speaking  String?
+  listening String?
+
+  // Certifications
+  certifications String? @db.Text // JSON array of language certifications
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([language])
+  @@index([isPublished, displayOrder])
+  @@map("language_proficiencies")
 }
 
 model Contact {
@@ -375,6 +593,230 @@ model Contact {
   @@map("contacts")
 }
 
+// Resume Country Configuration
+model ResumeCountry {
+  id          String  @id @default(uuid())
+  code        String  @unique // e.g., "US", "UK", "DE", "CA", "AU"
+  name        String  @unique // e.g., "United States", "United Kingdom"
+  description String? @db.Text
+
+  // Best practices for this country
+  guidelines      String? @db.LongText // Markdown with resume best practices
+  dateFormat      String? // e.g., "MM/DD/YYYY" or "DD/MM/YYYY"
+  preferredLength Int? // Preferred page count (e.g., 1, 2, 3)
+  keyHighlights   String? @db.Text // JSON array of important elements
+
+  // Status
+  isActive     Boolean @default(true)
+  displayOrder Int     @default(0)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  templates      ResumeTemplate[]
+  resumes        Resume[]
+  resumeContents ResumeContent[]
+
+  @@index([isActive, displayOrder])
+  @@map("resume_countries")
+}
+
+// Resume Type (Work, Education/Study)
+model ResumeType {
+  id          String  @id @default(uuid())
+  name        String  @unique // e.g., "Professional", "Academic", "Hybrid"
+  description String? @db.Text
+
+  // Type Configuration
+  sections   String? @db.Text // JSON array of sections used in this type
+  guidelines String? @db.LongText
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  templates      ResumeTemplate[]
+  resumes        Resume[]
+  resumeContents ResumeContent[]
+
+  @@map("resume_types")
+}
+
+// Resume Template (Country-specific, type-specific formats)
+model ResumeTemplate {
+  id          String  @id @default(uuid())
+  name        String // e.g., "Modern Tech UK", "Academic Germany"
+  description String? @db.Text
+
+  // Template Configuration
+  countryId String
+  country   ResumeCountry @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  typeId String
+  type   ResumeType @relation(fields: [typeId], references: [id], onDelete: Cascade)
+
+  // Template Design
+  layout      String? @db.Text // JSON object with layout configuration
+  colorScheme String? // JSON object with colors
+  fontFamily  String? // Primary font family
+  typography  String? @db.Text // JSON object with typography settings
+
+  // Template Content Structure
+  sections  String? @db.Text // JSON array defining sections and their order
+  customCSS String? @db.LongText // Custom CSS for this template
+
+  // Template Metadata
+  thumbnail  String? @db.Text // Image URL for template preview
+  difficulty String? // "simple", "moderate", "advanced"
+
+  // Status
+  isActive     Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Usage Tracking
+  usageCount Int @default(0)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  resumes ResumeContent[]
+
+  @@index([countryId, typeId])
+  @@index([isActive, isFeatured])
+  @@map("resume_templates")
+}
+
+// Resume Content (Actual resume data)
+model ResumeContent {
+  id          String  @id @default(uuid())
+  title       String // e.g., "Senior Developer Resume"
+  description String? @db.Text
+  slug        String? @unique // URL-friendly slug for public access
+
+  // Template & Configuration
+  templateId String
+  template   ResumeTemplate @relation(fields: [templateId], references: [id], onDelete: Restrict)
+
+  countryId String
+  country   ResumeCountry @relation(fields: [countryId], references: [id], onDelete: Restrict)
+
+  typeId String
+  type   ResumeType @relation(fields: [typeId], references: [id], onDelete: Restrict)
+
+  // Personal Information
+  fullName          String?
+  email             String?
+  phone             String?
+  location          String?
+  summary           String? @db.Text
+  linkedinUrl       String?
+  portfolioUrl      String?
+  githubUrl         String?
+  githubPersonalUrl String?
+
+  // Experience & Education
+  experience     String? @db.LongText // JSON array of experiences
+  education      String? @db.LongText // JSON array of education
+  skills         String? @db.Text // JSON array of skills
+  certifications String? @db.Text // JSON array
+  languages      String? @db.Text // JSON array
+
+  // Additional Content
+  projects      String? @db.LongText // JSON array
+  publications  String? @db.LongText // JSON array
+  awards        String? @db.Text // JSON array
+  volunteerWork String? @db.Text // JSON array
+  references    String? @db.Text // JSON array of references
+
+  // Custom Sections
+  customSections String? @db.LongText // JSON array for user-defined sections
+
+  // Status
+  isDraft      Boolean @default(true)
+  isPublished  Boolean @default(false)
+  isFeatured   Boolean @default(false)
+  isActive     Boolean @default(false) // Active resume shown on profile
+  displayOrder Int     @default(0)
+
+  // Visibility & Sharing
+  isPublic      Boolean @default(false) // Publicly accessible
+  shareableLink String? @unique // Public share link
+  allowDownload Boolean @default(true) // Allow PDF download
+  allowShare    Boolean @default(true) // Allow sharing
+  viewPassword  String? // Optional password for viewing
+
+  // Version Control
+  version  Int     @default(1)
+  parentId String? // For tracking version history
+
+  // Analytics
+  downloads Int @default(0)
+  views     Int @default(0)
+  shares    Int @default(0)
+
+  // File Storage
+  pdfUrl      String?   @db.Text // Generated PDF URL
+  pdfFileName String?
+  generatedAt DateTime?
+
+  // Linked Portfolio Content (references to existing portfolio items)
+  linkedExperiences    String? @db.Text // JSON array of WorkExperience IDs
+  linkedEducation      String? @db.Text // JSON array of Education IDs
+  linkedProjects       String? @db.Text // JSON array of Work IDs
+  linkedAwards         String? @db.Text // JSON array of Award IDs
+  linkedPublications   String? @db.Text // JSON array of Publication IDs
+  linkedLeadership     String? @db.Text // JSON array of Leadership IDs
+  linkedSkills         String? @db.Text // JSON array of Skill IDs
+  linkedCertifications String? @db.Text // JSON array of Certification IDs
+  linkedReferences     String? @db.Text // JSON array of Reference IDs
+  linkedVolunteer      String? @db.Text // JSON array of VolunteerWork IDs
+  linkedLanguages      String? @db.Text // JSON array of LanguageProficiency IDs
+
+  // Metadata
+  keywords  String? @db.Text // SEO keywords
+  metaTitle String?
+  metaDesc  String? @db.Text
+
+  // Timestamps
+  publishedAt DateTime?
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([templateId, countryId, typeId])
+  @@index([isPublished, isFeatured, isActive])
+  @@index([slug])
+  @@index([shareableLink])
+  @@index([deletedAt])
+  @@index([createdAt])
+  @@map("resume_contents")
+}
+
+// Resume Template Category (for better organization)
+model ResumeCategory {
+  id          String  @id @default(uuid())
+  name        String  @unique // e.g., "Tech", "Finance", "Creative"
+  description String? @db.Text
+  icon        String? // Icon name or emoji
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("resume_categories")
+}
+
+// Legacy Resume Model (for backward compatibility)
 model Resume {
   id          String  @id @default(uuid())
   title       String
@@ -400,15 +842,19 @@ model Resume {
   views     Int     @default(0)
 
   // Timestamps
-  uploadedAt DateTime  @default(now())
-  deletedAt  DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  uploadedAt      DateTime       @default(now())
+  deletedAt       DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  resumeCountry   ResumeCountry? @relation(fields: [resumeCountryId], references: [id])
+  resumeCountryId String?
+  resumeType      ResumeType?    @relation(fields: [resumeTypeId], references: [id])
+  resumeTypeId    String?
 
   @@index([isActive, isPublished])
   @@index([targetType])
   @@index([deletedAt])
-  @@map("resumes")
+  @@map("resumes_legacy")
 }
 
 model ResearchStatement {
@@ -527,6 +973,9 @@ model Publication {
   bibtex   String? @db.Text
   notes    String? @db.Text
 
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
+
   // Timestamps
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -552,6 +1001,7 @@ model Leadership {
   // Leadership Details
   role     String?
   category String?
+  type     String  @default("leadership") // "leadership", "volunteer", "work"
 
   // Timeline
   startDate DateTime?
@@ -573,6 +1023,9 @@ model Leadership {
   story      String? @db.LongText
   highlights String? @db.Text
   skills     String? @db.Text
+
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
 
   // Timestamps
   deletedAt DateTime?
@@ -626,6 +1079,9 @@ model JourneySection {
   institution String?
   location    String?
 
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
+
   // Timestamps
   deletedAt DateTime?
   createdAt DateTime  @default(now())
@@ -636,4 +1092,54 @@ model JourneySection {
   @@index([category])
   @@index([deletedAt])
   @@map("journey_sections")
+}
+
+model PeerReview {
+  id    String @id @default(uuid())
+  title String
+
+  // Content Management
+  isPublished  Boolean @default(true)
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  // Review Details
+  journalName    String?
+  reviewType     String? // "Anonymous", "Invited", "Editorial"
+  role           String? // "Reviewer", "Associate Editor", etc.
+  completionDate DateTime?
+  year           Int?
+
+  // Verification
+  orcidPutCode String? // ORCID put-code for verification
+  issn         String?
+  verified     Boolean @default(false)
+  verifiedBy   String? // e.g., "Web of Science", "Elsevier"
+
+  // Links
+  reviewUrl String?
+
+  // Organization
+  organization String?
+  publisher    String?
+
+  // Metrics
+  reviewCount Int @default(1) // Number of reviews for this journal
+
+  // Resume/CV Summary (short description for resume use)
+  resumeSummary String? @db.Text
+
+  // Additional Notes
+  notes String? @db.Text
+
+  // Timestamps
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isPublished, isFeatured, displayOrder])
+  @@index([year])
+  @@index([journalName])
+  @@index([deletedAt])
+  @@map("peer_reviews")
 }

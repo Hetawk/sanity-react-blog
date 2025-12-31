@@ -14,6 +14,8 @@ const brandRoutes = require('./routes/brand.routes');
 const awardRoutes = require('./routes/award.routes');
 const contactRoutes = require('./routes/contact.routes');
 const resumeRoutes = require('./routes/resume.routes');
+const resumeV2Routes = require('./routes/resume-v2.routes'); // New resume system with templates
+const portfolioContentRoutes = require('./routes/portfolioContent.routes'); // Portfolio content search for resume
 const researchRoutes = require('./routes/research.routes'); // Includes publications & research statement
 const testimonialRoutes = require('./routes/testimonial.routes');
 const leadershipRoutes = require('./routes/leadership.routes');
@@ -85,7 +87,9 @@ app.use('/api/work-experiences', workExperienceRoutes);
 app.use('/api/brands', brandRoutes);
 app.use('/api/awards', awardRoutes);
 app.use('/api/contacts', contactRoutes);
-app.use('/api/resumes', resumeRoutes);
+app.use('/api/resumes', resumeRoutes); // Legacy resume system (keeping for backwards compatibility)
+app.use('/api/resumes-v2', resumeV2Routes); // New resume system with templates and countries
+app.use('/api/portfolio-content', portfolioContentRoutes); // Portfolio content search for resume
 app.use('/api/research', researchRoutes); // Handles /statement, /publications, /stats, /featured
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/leadership', leadershipRoutes);

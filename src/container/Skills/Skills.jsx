@@ -7,26 +7,49 @@ import { ViewAllButton, MarkdownRenderer } from '../../components';
 import './Skills.scss';
 
 /**
- * Parse year string to get the starting year for sorting
- * Handles formats like "2022 - 2023", "2022", "2022 - Present"
+ * Format date range for display
  */
-const parseYearForSort = (yearStr) => {
-  if (!yearStr) return 0;
-  const match = yearStr.match(/(\d{4})/);
-  return match ? parseInt(match[1], 10) : 0;
+const formatDateRange = (startDate, endDate, isCurrent) => {
+  if (!startDate) return '';
+  const start = new Date(startDate);
+  const startYear = start.getFullYear();
+
+  if (isCurrent) return `${startYear} - Present`;
+  if (!endDate) return `${startYear}`;
+
+  const end = new Date(endDate);
+  const endYear = end.getFullYear();
+
+  return startYear === endYear ? `${startYear}` : `${startYear} - ${endYear}`;
+};
+
+/**
+ * Get type badge label and color
+ */
+const getTypeBadge = (type) => {
+  switch (type) {
+    case 'work':
+      return { label: 'Work', className: 'badge--work' };
+    case 'volunteer':
+      return { label: 'Volunteer', className: 'badge--volunteer' };
+    case 'leadership':
+    default:
+      return { label: 'Leadership', className: 'badge--leadership' };
+  }
 };
 
 // Maximum experiences to show on homepage
-const MAX_EXPERIENCES_DISPLAYED = 3;
+const MAX_LEADERSHIP_DISPLAYED = 6;
 const MAX_PREVIEW_LENGTH = 250;
-const MAX_WORKS_PER_EXPERIENCE = 2;
 
 /**
- * Experience Work Card with expandable description
+ * Leadership Card with expandable description
  */
-const ExperienceWorkCard = ({ work, idx }) => {
+const LeadershipCard = ({ item, idx }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const hasLongDescription = work.desc && work.desc.length > MAX_PREVIEW_LENGTH;
+  const hasLongDescription = item.description && item.description.length > MAX_PREVIEW_LENGTH;
+  const typeBadge = getTypeBadge(item.type);
+  const dateRange = formatDateRange(item.startDate, item.endDate, item.isCurrent);
 
   return (
     <motion.div
@@ -36,12 +59,18 @@ const ExperienceWorkCard = ({ work, idx }) => {
       transition={{ duration: 0.3, delay: idx * 0.1 }}
       viewport={{ once: true }}
     >
-      <div className="exp-card__badge">
-        <span className="exp-card__role">{work.name}</span>
+      <div className="exp-card__header">
+        <span className={`exp-card__type-badge ${typeBadge.className}`}>
+          {typeBadge.label}
+        </span>
+        {dateRange && <span className="exp-card__date">{dateRange}</span>}
       </div>
-      <div className="exp-card__org">{work.company}</div>
+      <div className="exp-card__badge">
+        <span className="exp-card__role">{item.title}</span>
+      </div>
+      <div className="exp-card__org">{item.organization}</div>
 
-      {work.desc && (
+      {item.description && (
         <div className="exp-card__content">
           <AnimatePresence mode="wait">
             <motion.div
@@ -53,7 +82,7 @@ const ExperienceWorkCard = ({ work, idx }) => {
               className="exp-card__desc"
             >
               <MarkdownRenderer
-                content={work.desc}
+                content={item.description}
                 maxLength={isExpanded ? null : MAX_PREVIEW_LENGTH}
               />
             </motion.div>
@@ -75,29 +104,27 @@ const ExperienceWorkCard = ({ work, idx }) => {
 
 const Skills = () => {
   // Use shared homepage data instead of separate fetch
-  const { experiences, skills } = useHomepageData();
+  const { leadership, skills } = useHomepageData();
 
-  // Sort experiences by year (newest first)
-  const sortedExperiences = useMemo(() => {
-    return [...(experiences || [])].sort((a, b) => {
-      const yearA = parseYearForSort(a.year);
-      const yearB = parseYearForSort(b.year);
-      return yearB - yearA;
+  // Sort leadership by start date (newest first)
+  const sortedLeadership = useMemo(() => {
+    return [...(leadership || [])].sort((a, b) => {
+      const dateA = a.startDate ? new Date(a.startDate) : new Date(0);
+      const dateB = b.startDate ? new Date(b.startDate) : new Date(0);
+      return dateB - dateA;
     });
-  }, [experiences]);
+  }, [leadership]);
 
-  // Limit displayed experiences
-  const displayedExperiences = sortedExperiences.slice(0, MAX_EXPERIENCES_DISPLAYED);
-  const hasMoreExperiences = sortedExperiences.length > MAX_EXPERIENCES_DISPLAYED;
-
-  // Count total works
-  const totalWorks = experiences.reduce((acc, exp) => acc + (exp.works?.length || 0), 0);
+  // Limit displayed leadership
+  const displayedLeadership = sortedLeadership.slice(0, MAX_LEADERSHIP_DISPLAYED);
+  const hasMoreLeadership = sortedLeadership.length > MAX_LEADERSHIP_DISPLAYED;
+  const totalLeadership = leadership?.length || 0;
 
   return (
     <>
-      {/* Skills Section */}
-      <div className="skills-section">
-        <h2 className="head-text">Technical Skills</h2>
+      {/* Technical Expertise Section */}
+      <div className="expertise-section">
+        <h2 className="head-text">Technical Expertise</h2>
         <p className="section-subtitle">Technologies and tools I work with</p>
 
         <motion.div
@@ -126,31 +153,26 @@ const Skills = () => {
         </motion.div>
       </div>
 
-      {/* Experiences Section */}
+      {/* Leadership & Service Section */}
       <div className="experiences-section">
-        <h2 className="head-text">Experience Highlights</h2>
-        <p className="section-subtitle">Leadership, professional, and volunteer experiences</p>
+        <h2 className="head-text">Leadership & Service</h2>
+        <p className="section-subtitle">Professional roles, leadership positions, and community service</p>
 
         <div className="experiences-grid">
-          {displayedExperiences.map((experience, expIdx) => (
-            <React.Fragment key={experience.id || experience.year}>
-              {experience.works?.slice(0, MAX_WORKS_PER_EXPERIENCE).map((work, idx) => (
-                <div className="experience-item" key={`${work.name}-${idx}`}>
-                  <div className="experience-item__year">{experience.year}</div>
-                  <ExperienceWorkCard work={work} idx={expIdx * 2 + idx} />
-                </div>
-              ))}
-            </React.Fragment>
+          {displayedLeadership.map((item, idx) => (
+            <div className="experience-item" key={item.id || idx}>
+              <LeadershipCard item={item} idx={idx} />
+            </div>
           ))}
         </div>
 
         {/* View All Button */}
-        {(hasMoreExperiences || totalWorks > 0) && (
+        {(hasMoreLeadership || totalLeadership > 0) && (
           <div className="experiences-section__cta">
             <ViewAllButton
               to="/experiences"
-              label="View All Experiences"
-              count={totalWorks}
+              label="View All Roles"
+              count={totalLeadership}
               variant="secondary"
             />
           </div>
@@ -161,7 +183,7 @@ const Skills = () => {
 };
 
 export default AppWrap(
-  MotionWrap(Skills, 'app__skills'),
-  'skills',
+  MotionWrap(Skills, 'app__expertise'),
+  'expertise',
   'app__mybg'
 );

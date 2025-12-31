@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
         }
 
         // Fetch all homepage data in parallel
-        const [abouts, works, skills, experiences, awards, brands] = await Promise.all([
+        const [abouts, works, skills, experiences, leadership, awards, brands] = await Promise.all([
             // About section
             prisma.about.findMany({
                 where: { published: true },
@@ -55,17 +55,20 @@ router.get('/', async (req, res) => {
                 orderBy: { order: 'asc' }
             }),
 
-            // Featured experiences with works
+            // Featured experiences with works (works is a JSON field, not a relation)
             prisma.experience.findMany({
                 where: {
                     published: true,
                     featured: true
                 },
                 orderBy: { year: 'desc' },
-                take: 4,
-                include: {
-                    works: true
-                }
+                take: 4
+            }),
+
+            // Leadership/Volunteer roles (all published, sorted by date)
+            prisma.leadership.findMany({
+                where: { isPublished: true },
+                orderBy: { startDate: 'desc' }
             }),
 
             // Featured awards
@@ -92,6 +95,7 @@ router.get('/', async (req, res) => {
                 works,
                 skills,
                 experiences,
+                leadership, // Add leadership to response
                 awards,
                 brands
             },
@@ -102,6 +106,7 @@ router.get('/', async (req, res) => {
                     works: works.length,
                     skills: skills.length,
                     experiences: experiences.length,
+                    leadership: leadership.length,
                     awards: awards.length,
                     brands: brands.length
                 }

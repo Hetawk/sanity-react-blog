@@ -17,6 +17,7 @@ export const HomepageDataProvider = ({ children }) => {
         works: [],
         skills: [],
         experiences: [],
+        leadership: [],
         awards: [],
         brands: []
     });
@@ -40,11 +41,12 @@ export const HomepageDataProvider = ({ children }) => {
 
             // Fallback: fetch data individually if combined endpoint fails
             try {
-                const [aboutsRes, worksRes, skillsRes, experiencesRes, awardsRes, brandsRes] = await Promise.all([
+                const [aboutsRes, worksRes, skillsRes, experiencesRes, leadershipRes, awardsRes, brandsRes] = await Promise.all([
                     api.abouts.getAll(),
                     api.works.getAll(),
                     api.skills.getAll(),
                     api.experiences.getAll({ featured: true }),
+                    api.leadership.getAll(),
                     api.awards.getAll(),
                     api.brands.getAll()
                 ]);
@@ -54,6 +56,7 @@ export const HomepageDataProvider = ({ children }) => {
                     works: worksRes.data || [],
                     skills: skillsRes.data || [],
                     experiences: experiencesRes.data || [],
+                    leadership: leadershipRes.data || [],
                     awards: awardsRes.data || [],
                     brands: brandsRes.data || []
                 });

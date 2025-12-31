@@ -89,6 +89,182 @@ router.get('/', async (req, res) => {
     }
 });
 
+// View resume as HTML/PDF in browser
+router.get('/:id/view-pdf', async (req, res) => {
+    try {
+        const resume = await prisma.resume.findUnique({
+            where: { id: req.params.id }
+        });
+
+        if (!resume) {
+            return res.status(404).json({
+                success: false,
+                error: 'Resume not found'
+            });
+        }
+
+        // Create HTML version of resume for viewing
+        const htmlContent = createLegacyResumeHtml(resume);
+
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.send(htmlContent);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Download resume as PDF
+router.get('/:id/download-pdf', async (req, res) => {
+    try {
+        const resume = await prisma.resume.findUnique({
+            where: { id: req.params.id }
+        });
+
+        if (!resume) {
+            return res.status(404).json({
+                success: false,
+                error: 'Resume not found'
+            });
+        }
+
+        // Increment downloads count
+        await prisma.resume.update({
+            where: { id: req.params.id },
+            data: { downloads: { increment: 1 } }
+        });
+
+        // Create HTML version and serve
+        const htmlContent = createLegacyResumeHtml(resume);
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${resume.title.replace(/\s+/g, '-')}.pdf"`);
+        res.send(htmlContent);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Helper function to create HTML for legacy resumes
+function createLegacyResumeHtml(resume) {
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${resume.title} - Enoch Kwateh Dongbo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 8.5in;
+            margin: 0 auto;
+            background: white;
+            padding: 0.75in;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            line-height: 1.5;
+        }
+        
+        h1 {
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+            color: #1a1a1a;
+        }
+        
+        .info {
+            text-align: center;
+            font-size: 11px;
+            margin-bottom: 15px;
+            line-height: 1.3;
+            color: #555;
+        }
+        
+        h2 {
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 12px;
+            margin-bottom: 8px;
+            padding-bottom: 3px;
+            border-bottom: 2px solid #333;
+            color: #1a1a1a;
+        }
+        
+        p {
+            font-size: 10px;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        
+        .entry {
+            margin-bottom: 8px;
+        }
+        
+        .meta {
+            font-size: 9px;
+            text-align: right;
+            margin-top: 20px;
+            color: #999;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Enoch Kwateh Dongbo</h1>
+        <div class="info">
+            📧 ekd@ekddigital.com | 📍 China | 🔗 ekdportfolio.ekddigital.com
+            <br/>
+            🐙 github.com/ekddigital | github.com/hetawk
+        </div>
+        
+        <h2>${resume.targetType || 'Professional'} Resume</h2>
+        <p class="entry">${resume.description || ''}</p>
+        
+        ${resume.targetRole ? `<p><strong>Target Role:</strong> ${resume.targetRole}</p>` : ''}
+        ${resume.targetIndustry ? `<p><strong>Target Industry:</strong> ${resume.targetIndustry}</p>` : ''}
+        
+        <div class="meta">
+            Generated resume template: <strong>${resume.title}</strong>
+            <br/>View more at ekdportfolio.ekddigital.com
+        </div>
+    </div>
+</body>
+</html>
+    `;
+}
+
 // Get single resume by ID
 router.get('/:id', async (req, res) => {
     try {

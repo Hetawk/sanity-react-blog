@@ -15,6 +15,7 @@ const ExperiencesPage = lazy(() => import('./pages/Experiences/ExperiencesPage')
 const WorksPage = lazy(() => import('./pages/Works/WorksPage'));
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'));
 const JourneyPage = lazy(() => import('./pages/Journey/JourneyPage'));
+const PublicResumeViewer = lazy(() => import('./pages/PublicResumeViewer'));
 
 // Loading fallback for lazy-loaded pages
 const PageLoader = () => (
@@ -54,6 +55,9 @@ const App = () => (
               <Route path="/experiences" element={<ExperiencesPage />} />
               <Route path="/experiences/:id" element={<ExperiencesPage />} />
               <Route path="/journey" element={<JourneyPage />} />
+              {/* Public Resume Routes */}
+              <Route path="/resume/:resumeSlug" element={<PublicResumeViewer />} />
+              <Route path="/resume/share/:shareableLink" element={<PublicResumeViewer />} />
             </Routes>
           </Suspense>
         </div>

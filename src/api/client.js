@@ -83,6 +83,9 @@ class APIClient {
 // Create API client instance
 const apiClient = new APIClient();
 
+// Export the apiClient for direct usage
+export { apiClient };
+
 // API Endpoints
 export const api = {
     // Homepage - Combined endpoint for faster initial load
@@ -155,7 +158,21 @@ export const api = {
         togglePublished: (id) => apiClient.post(`/api/experiences/${id}/toggle-published`),
         toggleFeatured: (id) => apiClient.post(`/api/experiences/${id}/toggle-featured`),
     },
-
+    // Leadership (Leadership, Volunteer, and Organizational roles)
+    leadership: {
+        getAll: (params = {}) => {
+            const queryParams = new URLSearchParams();
+            if (params.includeUnpublished) queryParams.append('includeUnpublished', 'true');
+            if (params.type) queryParams.append('type', params.type); // 'leadership', 'volunteer', 'work'
+            if (params.category) queryParams.append('category', params.category);
+            if (params.featured) queryParams.append('featured', 'true');
+            const queryString = queryParams.toString();
+            return apiClient.get(`/api/leadership${queryString ? `?${queryString}` : ''}`);
+        },
+        getById: (id) => apiClient.get(`/api/leadership/${id}`),
+        togglePublished: (id) => apiClient.post(`/api/leadership/${id}/toggle-published`),
+        toggleFeatured: (id) => apiClient.post(`/api/leadership/${id}/toggle-featured`),
+    },
     // Work Experiences (Professional Summary)
     workExperiences: {
         getAll: (params = {}) => {
@@ -210,6 +227,86 @@ export const api = {
         togglePublished: (id) => apiClient.post(`/api/resumes/${id}/toggle-published`),
     },
 
+    // Resumes V2 (New system with templates and countries)
+    resumesV2: {
+        // Countries
+        countries: {
+            getAll: (activeOnly = false) => apiClient.get(`/api/resumes-v2/countries${activeOnly ? '?activeOnly=true' : ''}`),
+            getByCode: (code) => apiClient.get(`/api/resumes-v2/countries/${code}`),
+            create: (data) => apiClient.post('/api/resumes-v2/countries', data),
+            update: (id, data) => apiClient.put(`/api/resumes-v2/countries/${id}`, data),
+        },
+
+        // Resume Types
+        types: {
+            getAll: () => apiClient.get('/api/resumes-v2/types'),
+            create: (data) => apiClient.post('/api/resumes-v2/types', data),
+        },
+
+        // Templates
+        templates: {
+            getAll: (params = {}) => {
+                const queryParams = new URLSearchParams();
+                if (params.countryId) queryParams.append('countryId', params.countryId);
+                if (params.typeId) queryParams.append('typeId', params.typeId);
+                if (params.featured) queryParams.append('featured', 'true');
+                if (params.activeOnly !== undefined) queryParams.append('activeOnly', params.activeOnly);
+                if (params.skip) queryParams.append('skip', params.skip);
+                if (params.take) queryParams.append('take', params.take);
+                const queryString = queryParams.toString();
+                return apiClient.get(`/api/resumes-v2/templates${queryString ? `?${queryString}` : ''}`);
+            },
+            getById: (id) => apiClient.get(`/api/resumes-v2/templates/${id}`),
+            create: (data) => apiClient.post('/api/resumes-v2/templates', data),
+            update: (id, data) => apiClient.patch(`/api/resumes-v2/templates/${id}`, data),
+            delete: (id) => apiClient.delete(`/api/resumes-v2/templates/${id}`),
+        },
+
+        // Resume Content
+        getAll: (params = {}) => {
+            const queryParams = new URLSearchParams();
+            if (params.countryId) queryParams.append('countryId', params.countryId);
+            if (params.typeId) queryParams.append('typeId', params.typeId);
+            if (params.templateId) queryParams.append('templateId', params.templateId);
+            if (params.isPublished) queryParams.append('isPublished', 'true');
+            if (params.isPublic) queryParams.append('isPublic', 'true');
+            if (params.skip) queryParams.append('skip', params.skip);
+            if (params.take) queryParams.append('take', params.take);
+            const queryString = queryParams.toString();
+            return apiClient.get(`/api/resumes-v2${queryString ? `?${queryString}` : ''}`);
+        },
+        getById: (id) => apiClient.get(`/api/resumes-v2/${id}`),
+        viewPdf: (id) => apiClient.get(`/api/resumes-v2/${id}/view-pdf`),
+        downloadPdf: (id) => apiClient.get(`/api/resumes-v2/${id}/download-pdf`),
+        getBySlug: (slug, password = null) => {
+            const queryParams = new URLSearchParams();
+            if (password) queryParams.append('password', password);
+            const queryString = queryParams.toString();
+            return apiClient.get(`/api/resumes-v2/public/${slug}${queryString ? `?${queryString}` : ''}`);
+        },
+        getByShareableLink: (shareableLink, password = null) => {
+            const queryParams = new URLSearchParams();
+            if (password) queryParams.append('password', password);
+            const queryString = queryParams.toString();
+            return apiClient.get(`/api/resumes-v2/share/${shareableLink}${queryString ? `?${queryString}` : ''}`);
+        },
+        create: (data) => apiClient.post('/api/resumes-v2', data),
+        update: (id, data) => apiClient.patch(`/api/resumes-v2/${id}`, data),
+        fullUpdate: (id, data) => apiClient.put(`/api/resumes-v2/${id}`, data),
+        delete: (id) => apiClient.delete(`/api/resumes-v2/${id}`),
+        restore: (id) => apiClient.post(`/api/resumes-v2/${id}/restore`, {}),
+        clone: (id, newTitle = null) => apiClient.post(`/api/resumes-v2/${id}/clone`, { newTitle }),
+        publish: (id) => apiClient.post(`/api/resumes-v2/${id}/publish`, {}),
+        unpublish: (id) => apiClient.post(`/api/resumes-v2/${id}/unpublish`, {}),
+        toggleFeatured: (id) => apiClient.post(`/api/resumes-v2/${id}/toggle-featured`, {}),
+        setActive: (id) => apiClient.post(`/api/resumes-v2/${id}/set-active`, {}),
+        makePublic: (id) => apiClient.post(`/api/resumes-v2/${id}/make-public`, {}),
+        makePrivate: (id) => apiClient.post(`/api/resumes-v2/${id}/make-private`, {}),
+        recordDownload: (id) => apiClient.post(`/api/resumes-v2/${id}/download`, {}),
+        recordShare: (id) => apiClient.post(`/api/resumes-v2/${id}/share`, {}),
+        getStats: () => apiClient.get('/api/resumes-v2/stats/overview'),
+    },
+
     // GitHub Sync
     githubSync: {
         // Trigger full sync of all repositories
@@ -249,7 +346,7 @@ export const api = {
         delete: (id) => apiClient.delete(`/api/journey/${id}`),
         togglePublished: (id) => apiClient.post(`/api/journey/${id}/toggle-published`),
         toggleFeatured: (id) => apiClient.post(`/api/journey/${id}/toggle-featured`),
-        bulkImport: (sections, clearExisting = false) => 
+        bulkImport: (sections, clearExisting = false) =>
             apiClient.post('/api/journey/bulk-import', { sections, clearExisting }),
     },
 };

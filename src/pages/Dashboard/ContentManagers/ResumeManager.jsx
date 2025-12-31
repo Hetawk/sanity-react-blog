@@ -199,6 +199,18 @@ const ResumeManager = () => {
         }
     };
 
+    // View resume as PDF
+    const handleViewPdf = (resumeId) => {
+        try {
+            // Use backend URL directly since window.open bypasses React proxy
+            const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+            window.open(`${backendUrl}/api/resumes/${resumeId}/view-pdf`, '_blank');
+        } catch (error) {
+            console.error("Failed to view PDF:", error);
+            alert("Failed to view resume PDF. Please try again.");
+        }
+    };
+
     if (loading) return <div>Loading resumes...</div>;
 
     return (
@@ -329,6 +341,14 @@ const ResumeManager = () => {
                                                 View
                                             </button>
                                         )}
+
+                                        <button
+                                            className="publish-btn"
+                                            onClick={() => handleViewPdf(resume.id)}
+                                            title="View as PDF"
+                                        >
+                                            📄 PDF
+                                        </button>
 
                                         <button
                                             className={`publish-btn ${resume.isPublished ? 'unpublish' : ''}`}

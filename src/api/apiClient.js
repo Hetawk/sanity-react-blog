@@ -341,6 +341,8 @@ export const api = {
         setActive: (id) => new APIClient().post(`/api/resumes/${id}/set-active`),
         trackDownload: (id) => new APIClient().post(`/api/resumes/${id}/download`),
         getActive: () => new APIClient().get('/api/resumes/active/current'),
+        viewPdf: (id) => new APIClient().get(`/api/resumes/${id}/view-pdf`),
+        downloadPdf: (id) => new APIClient().get(`/api/resumes/${id}/download-pdf`),
     },
 };
 

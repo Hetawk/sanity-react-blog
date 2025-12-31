@@ -1,8 +1,8 @@
-.app__skills {
+.app__expertise {
   flex: 1;
   width: 100%;
   flex-direction: column;
-  
+
   h2 {
     color: white;
   }
@@ -25,12 +25,12 @@
 }
 
 // ==========================================
-// SKILLS SECTION - Full Width Grid
+// EXPERTISE SECTION - Full Width Grid
 // ==========================================
-.skills-section {
+.expertise-section {
   width: 100%;
   margin-bottom: 4rem;
-  
+
   .head-text {
     margin-bottom: 0.5rem;
   }
@@ -97,9 +97,10 @@
 }
 
 // ==========================================
-// EXPERIENCES SECTION - Grid Layout
+// LEADERSHIP SECTION - Grid Layout
 // ==========================================
-.experiences-section {
+.experiences-section,
+.leadership-section {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
@@ -125,7 +126,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
-  
+
   @media screen and (max-width: 900px) {
     grid-template-columns: 1fr;
     gap: 1.25rem;
@@ -136,7 +137,7 @@
 .experience-item {
   display: flex;
   flex-direction: column;
-  
+
   &__year {
     font-size: 0.85rem;
     font-weight: 600;
@@ -168,6 +169,50 @@
     margin-bottom: 0.5rem;
   }
 
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  &__type-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.badge--leadership {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    &.badge--volunteer {
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    &.badge--work {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+  }
+
+  &__date {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gray-color);
+    text-align: right;
+  }
+
   &__role {
     font-size: 1.1rem;
     font-weight: 700;
@@ -191,7 +236,7 @@
 
   &__desc {
     flex: 1;
-    
+
     .markdown-renderer {
       font-size: 0.9rem;
       line-height: 1.7;
@@ -200,13 +245,14 @@
       p {
         color: rgba(255, 255, 255, 0.8);
         margin-bottom: 0.5rem;
-        
+
         &:last-child {
           margin-bottom: 0;
         }
       }
 
-      ul, ol {
+      ul,
+      ol {
         color: rgba(255, 255, 255, 0.8);
         padding-left: 1.25rem;
         margin: 0.5rem 0;
@@ -423,7 +469,7 @@
 
     &-description {
       width: 100%;
-      
+
       .markdown-renderer {
         font-size: 0.9rem;
         line-height: 1.6;
@@ -434,7 +480,8 @@
           margin-bottom: 0.5rem;
         }
 
-        ul, ol {
+        ul,
+        ol {
           color: rgba(255, 255, 255, 0.85);
           padding-left: 1.25rem;
           margin: 0.5rem 0;
@@ -450,7 +497,9 @@
           font-weight: 600;
         }
 
-        h4, h5, h6 {
+        h4,
+        h5,
+        h6 {
           color: white;
           margin: 0.75rem 0 0.5rem;
           font-size: 1rem;
@@ -518,7 +567,7 @@
   @media screen and (max-width: 450px) {
     margin-right: 1rem;
     min-width: 80px;
-    
+
     p {
       font-size: 0.85rem;
     }
@@ -541,32 +590,38 @@
   .markdown-renderer {
     font-size: 0.9rem;
     color: var(--gray-color);
-    
-    h1, h2, h3, h4, h5, h6 {
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       color: var(--secondary-color);
       margin: 0.5rem 0 0.25rem;
       font-size: 1rem;
     }
-    
+
     p {
       margin-bottom: 0.5rem;
       color: var(--gray-color);
     }
-    
-    ul, ol {
+
+    ul,
+    ol {
       padding-left: 1.25rem;
       margin: 0.5rem 0;
     }
-    
+
     li {
       margin-bottom: 0.25rem;
       color: var(--gray-color);
     }
-    
+
     strong {
       color: var(--secondary-color);
     }
-    
+
     &__more {
       display: block;
       margin-top: 0.5rem;
@@ -579,12 +634,12 @@
     font-size: 1.5rem !important;
     max-width: 600px !important;
     line-height: 1.8 !important;
-    
+
     .markdown-renderer {
       font-size: 1.25rem;
     }
   }
-  
+
   @media screen and (max-width: 600px) {
     max-width: 280px !important;
   }
