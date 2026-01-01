@@ -306,6 +306,7 @@ const resumeService = {
                     linkedinUrl: data.linkedinUrl,
                     portfolioUrl: data.portfolioUrl,
                     githubUrl: data.githubUrl,
+                    githubPersonalUrl: data.githubPersonalUrl,
                     orcidUrl: data.orcidUrl,
                     experience: data.experience ? JSON.stringify(data.experience) : null,
                     education: data.education ? JSON.stringify(data.education) : null,
@@ -316,8 +317,23 @@ const resumeService = {
                     publications: data.publications ? JSON.stringify(data.publications) : null,
                     awards: data.awards ? JSON.stringify(data.awards) : null,
                     volunteerWork: data.volunteerWork ? JSON.stringify(data.volunteerWork) : null,
+                    references: data.references ? JSON.stringify(data.references) : null,
                     customSections: data.customSections ? JSON.stringify(data.customSections) : null,
                     sectionOrder: data.sectionOrder ? JSON.stringify(data.sectionOrder) : null,
+
+                    // Linked Portfolio Content (optional)
+                    linkedExperiences: data.linkedExperiences ? JSON.stringify(data.linkedExperiences) : null,
+                    linkedEducation: data.linkedEducation ? JSON.stringify(data.linkedEducation) : null,
+                    linkedProjects: data.linkedProjects ? JSON.stringify(data.linkedProjects) : null,
+                    linkedAwards: data.linkedAwards ? JSON.stringify(data.linkedAwards) : null,
+                    linkedPublications: data.linkedPublications ? JSON.stringify(data.linkedPublications) : null,
+                    linkedLeadership: data.linkedLeadership ? JSON.stringify(data.linkedLeadership) : null,
+                    linkedSkills: data.linkedSkills ? JSON.stringify(data.linkedSkills) : null,
+                    linkedCertifications: data.linkedCertifications ? JSON.stringify(data.linkedCertifications) : null,
+                    linkedReferences: data.linkedReferences ? JSON.stringify(data.linkedReferences) : null,
+                    linkedVolunteer: data.linkedVolunteer ? JSON.stringify(data.linkedVolunteer) : null,
+                    linkedLanguages: data.linkedLanguages ? JSON.stringify(data.linkedLanguages) : null,
+
                     isDraft: data.isDraft !== false,
                     isPublic: data.isPublic || false,
                     allowDownload: data.allowDownload !== false,
@@ -509,8 +525,13 @@ const resumeService = {
             // JSON fields
             const jsonFields = [
                 'experience', 'education', 'skills', 'certifications', 'languages',
-                'projects', 'publications', 'awards', 'volunteerWork', 'customSections',
-                'keywords', 'sectionOrder'
+                'projects', 'publications', 'awards', 'volunteerWork', 'references',
+                'customSections', 'keywords', 'sectionOrder',
+
+                // Linked Portfolio Content
+                'linkedExperiences', 'linkedEducation', 'linkedProjects', 'linkedAwards',
+                'linkedPublications', 'linkedLeadership', 'linkedSkills', 'linkedCertifications',
+                'linkedReferences', 'linkedVolunteer', 'linkedLanguages'
             ];
 
             jsonFields.forEach(field => {
@@ -808,8 +829,13 @@ const resumeService = {
         const parsed = { ...resume };
         const jsonFields = [
             'experience', 'education', 'skills', 'certifications', 'languages',
-            'projects', 'publications', 'awards', 'volunteerWork', 'customSections',
-            'keywords', 'visibility', 'sectionOrder'
+            'projects', 'publications', 'awards', 'volunteerWork', 'references',
+            'customSections', 'keywords', 'visibility', 'sectionOrder',
+
+            // Linked Portfolio Content
+            'linkedExperiences', 'linkedEducation', 'linkedProjects', 'linkedAwards',
+            'linkedPublications', 'linkedLeadership', 'linkedSkills', 'linkedCertifications',
+            'linkedReferences', 'linkedVolunteer', 'linkedLanguages'
         ];
 
         jsonFields.forEach(field => {
