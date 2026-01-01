@@ -256,13 +256,7 @@ const Work = () => {
         () => handleWorkFilter(item)
       }
 
-      className={
-        `app__work-filter-item app__flex p-text $ {
-              activeFilter===item ? 'item-active' : ''
-            }
-
-            `
-      }
+      className={`app__work-filter-item app__flex p-text ${activeFilter===item ? 'item-active' : ''}`}
 
     > {
         item

@@ -141,12 +141,12 @@ if (process.env.VERCEL !== '1') {
         console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║   🚀 Portfolio API Server                                ║
+║   🚀 Portfolio API Server                                 ║
 ║                                                           ║
 ║   Status:    Running                                      ║
-║   Port:      ${PORT}                                            ║
-║   Env:       ${process.env.NODE_ENV || 'development'}                           ║
-║   URL:       http://localhost:${PORT}                        ║
+║   Port:      ${PORT}                                      ║
+║   Env:       ${process.env.NODE_ENV || 'development'}     ║
+║   URL:       http://localhost:${PORT}                     ║
 ║                                                           ║
 ║   Endpoints:                                              ║
 ║   - GET  /api/works                                       ║
@@ -159,7 +159,7 @@ if (process.env.VERCEL !== '1') {
 ╚═══════════════════════════════════════════════════════════╝
     `);
 
-        // Start GitHub Auto-Sync Scheduler (syncs every 1 hour)
+        // Start GitHub Auto-Sync Scheduler (syncs weekly, manual sync available anytime)
         console.log('🔄 Initializing GitHub Auto-Sync Scheduler...');
         startScheduler();
     });

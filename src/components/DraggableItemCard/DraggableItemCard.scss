@@ -1,0 +1,213 @@
+// Brand color variables
+$brand-primary: #FF4C29;
+$brand-maroon: #8E0E00;
+$brand-dark: #1F1C18;
+$brand-light: #fff5f3;
+
+.draggable-item-card {
+    display: flex;
+    align-items: stretch;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+    cursor: default;
+
+    &:hover {
+        border-color: $brand-primary;
+        box-shadow: 0 2px 8px rgba($brand-primary, 0.1);
+
+        .drag-handle {
+            opacity: 1;
+        }
+
+        .card-actions {
+            opacity: 1;
+        }
+    }
+
+    &.dragging {
+        opacity: 0.5;
+        transform: scale(0.98);
+        border-style: dashed;
+    }
+
+    &.drag-over {
+        border-color: $brand-primary;
+        background: rgba($brand-primary, 0.05);
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: $brand-primary;
+            border-radius: 2px;
+        }
+    }
+
+    &.from-portfolio {
+        border-left: 3px solid $brand-primary;
+    }
+
+    .drag-handle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        background: #f8f8f8;
+        border-right: 1px solid #e5e5e5;
+        cursor: grab;
+        opacity: 0.5;
+        transition: opacity 0.2s;
+        border-radius: 7px 0 0 7px;
+
+        &:active {
+            cursor: grabbing;
+        }
+
+        svg {
+            width: 16px;
+            height: 16px;
+            color: #666;
+        }
+    }
+
+    .card-content {
+        flex: 1;
+        padding: 12px 16px;
+        min-width: 0;
+        position: relative;
+
+        .portfolio-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba($brand-primary, 0.1);
+            color: $brand-primary;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .default-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+
+            strong {
+                font-size: 0.95rem;
+                color: $brand-dark;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .subtitle {
+                font-size: 0.85rem;
+                color: #666;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+
+    .card-actions {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 12px;
+        opacity: 0;
+        transition: opacity 0.2s;
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: #f0f0f0;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+
+            svg {
+                width: 14px;
+                height: 14px;
+                color: #666;
+            }
+
+            &.btn-edit:hover {
+                background: rgba($brand-primary, 0.1);
+                border-color: $brand-primary;
+                
+                svg {
+                    color: $brand-primary;
+                }
+            }
+
+            &.btn-delete:hover {
+                background: #fee2e2;
+                border-color: #fecaca;
+                
+                svg {
+                    color: #dc2626;
+                }
+            }
+        }
+    }
+}
+
+// Dark mode
+@media (prefers-color-scheme: dark) {
+    .draggable-item-card {
+        background: #1e293b;
+        border-color: #334155;
+
+        &:hover {
+            border-color: $brand-primary;
+        }
+
+        &.drag-over {
+            background: rgba($brand-primary, 0.1);
+        }
+
+        .drag-handle {
+            background: #0f172a;
+            border-color: #334155;
+
+            svg {
+                color: #94a3b8;
+            }
+        }
+
+        .card-content {
+            .default-content {
+                strong {
+                    color: #f1f5f9;
+                }
+
+                .subtitle {
+                    color: #94a3b8;
+                }
+            }
+        }
+
+        .card-actions {
+            .btn-action {
+                background: #0f172a;
+                border-color: #334155;
+
+                svg {
+                    color: #94a3b8;
+                }
+            }
+        }
+    }
+}

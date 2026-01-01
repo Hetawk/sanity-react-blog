@@ -521,6 +521,7 @@ function createResumeHtmlFromData(resume) {
             ${resume.portfolioUrl ? `🔗 <a href="https://${resume.portfolioUrl}">${resume.portfolioUrl}</a>` : ''}
             ${resume.githubUrl ? `| 🐙 <a href="https://${resume.githubUrl}">${resume.githubUrl}</a>` : ''}
             ${resume.githubPersonalUrl ? `| 🐙 <a href="https://${resume.githubPersonalUrl}">${resume.githubPersonalUrl}</a>` : ''}
+            ${resume.orcidUrl ? `| 🔬 <a href="https://${resume.orcidUrl}">ORCID: ${resume.orcidUrl.replace('orcid.org/', '')}</a>` : ''}
         </div>
         
         ${resume.summary ? `

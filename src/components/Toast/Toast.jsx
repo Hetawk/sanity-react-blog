@@ -141,13 +141,7 @@ const Toast=( {
 
     ;
 
-    return (<div className= {
-            `toast toast-$ {
-                type
-            }
-
-            `
-        }
+    return (<div className={`toast toast-${type}`}
 
         > <div className="toast-icon"> {
             getIcon()

@@ -353,6 +353,40 @@ $brand-light: #fff5f3;
             }
         }
 
+        // References list
+        .references-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            .resume-entry.compact {
+                padding: 8px 0;
+                border-bottom: 1px solid #e2e8f0;
+
+                &:last-child {
+                    border-bottom: none;
+                }
+            }
+
+            .entry-relationship {
+                font-size: 8pt;
+                color: $brand-primary;
+                font-weight: 500;
+                margin-left: 8px;
+            }
+
+            .reference-contact {
+                display: flex;
+                gap: 16px;
+                margin-top: 4px;
+
+                .ref-email, .ref-phone {
+                    font-size: 8pt;
+                    color: #64748b;
+                }
+            }
+        }
+
         // Empty state
         .empty-preview {
             text-align: center;

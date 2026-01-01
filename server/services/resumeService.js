@@ -299,10 +299,14 @@ const resumeService = {
                     email: data.email,
                     phone: data.phone,
                     location: data.location,
+                    city: data.city,
+                    countryText: data.country || data.countryText,
                     summary: data.summary,
+                    visibility: data.visibility ? JSON.stringify(data.visibility) : null,
                     linkedinUrl: data.linkedinUrl,
                     portfolioUrl: data.portfolioUrl,
                     githubUrl: data.githubUrl,
+                    orcidUrl: data.orcidUrl,
                     experience: data.experience ? JSON.stringify(data.experience) : null,
                     education: data.education ? JSON.stringify(data.education) : null,
                     skills: data.skills ? JSON.stringify(data.skills) : null,
@@ -313,6 +317,7 @@ const resumeService = {
                     awards: data.awards ? JSON.stringify(data.awards) : null,
                     volunteerWork: data.volunteerWork ? JSON.stringify(data.volunteerWork) : null,
                     customSections: data.customSections ? JSON.stringify(data.customSections) : null,
+                    sectionOrder: data.sectionOrder ? JSON.stringify(data.sectionOrder) : null,
                     isDraft: data.isDraft !== false,
                     isPublic: data.isPublic || false,
                     allowDownload: data.allowDownload !== false,
@@ -488,19 +493,24 @@ const resumeService = {
             // Text fields
             const textFields = [
                 'title', 'description', 'fullName', 'email', 'phone', 'location',
-                'summary', 'linkedinUrl', 'portfolioUrl', 'githubUrl', 'metaTitle',
-                'metaDesc', 'viewPassword'
+                'city', 'countryText', 'summary', 'linkedinUrl', 'portfolioUrl', 'githubUrl',
+                'githubPersonalUrl', 'orcidUrl', 'metaTitle', 'metaDesc', 'viewPassword'
             ];
 
             textFields.forEach(field => {
                 if (data[field] !== undefined) updateData[field] = data[field];
             });
 
+            // Map 'country' field to 'countryText' in database
+            if (data.country !== undefined) {
+                updateData.countryText = data.country;
+            }
+
             // JSON fields
             const jsonFields = [
                 'experience', 'education', 'skills', 'certifications', 'languages',
                 'projects', 'publications', 'awards', 'volunteerWork', 'customSections',
-                'keywords'
+                'keywords', 'sectionOrder'
             ];
 
             jsonFields.forEach(field => {
@@ -510,6 +520,13 @@ const resumeService = {
                         : JSON.stringify(data[field]);
                 }
             });
+
+            // Visibility settings (JSON object)
+            if (data.visibility !== undefined) {
+                updateData.visibility = typeof data.visibility === 'string'
+                    ? data.visibility
+                    : JSON.stringify(data.visibility);
+            }
 
             // Boolean fields
             ['isDraft', 'isPublished', 'isFeatured', 'isActive', 'isPublic', 'allowDownload', 'allowShare'].forEach(field => {
@@ -608,10 +625,14 @@ const resumeService = {
                     email: original.email,
                     phone: original.phone,
                     location: original.location,
+                    city: original.city,
+                    countryText: original.countryText,
                     summary: original.summary,
+                    visibility: original.visibility,
                     linkedinUrl: original.linkedinUrl,
                     portfolioUrl: original.portfolioUrl,
                     githubUrl: original.githubUrl,
+                    orcidUrl: original.orcidUrl,
                     experience: original.experience,
                     education: original.education,
                     skills: original.skills,
@@ -622,6 +643,7 @@ const resumeService = {
                     awards: original.awards,
                     volunteerWork: original.volunteerWork,
                     customSections: original.customSections,
+                    sectionOrder: original.sectionOrder,
                     isDraft: true,
                     isPublished: false,
                     isFeatured: false,
@@ -787,7 +809,7 @@ const resumeService = {
         const jsonFields = [
             'experience', 'education', 'skills', 'certifications', 'languages',
             'projects', 'publications', 'awards', 'volunteerWork', 'customSections',
-            'keywords'
+            'keywords', 'visibility', 'sectionOrder'
         ];
 
         jsonFields.forEach(field => {
@@ -812,6 +834,14 @@ const resumeService = {
                     }
                 }
             });
+        }
+
+        // Map countryText back to country for frontend compatibility
+        // Note: parsed.country is a relation object, countryText is the string field
+        if (parsed.countryText) {
+            parsed.countryDisplay = parsed.countryText;
+        } else if (parsed.country && typeof parsed.country === 'object' && parsed.country.name) {
+            parsed.countryDisplay = parsed.country.name;
         }
 
         return parsed;

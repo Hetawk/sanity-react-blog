@@ -252,13 +252,7 @@ const Dashboard = () => {
                     tab.id
                 }
 
-                    className={
-                        `tab-btn-modern $ {
-                            activeTab===tab.id ? 'active' : ''
-                        }
-
-                        `
-                    }
+                    className={`tab-btn-modern ${activeTab===tab.id ? 'active' : ''}`}
 
                     onClick={
                         () => handleTabChange(tab.id)

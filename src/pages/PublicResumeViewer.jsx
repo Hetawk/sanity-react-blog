@@ -120,15 +120,7 @@ const PublicResumeViewer = () => {
             await api.resumesV2.recordShare(resume.id);
 
             // Copy link to clipboard
-            const shareUrl = `$ {
-                window.location.origin
-            }
-
-            /resume/$ {
-                resume.shareableLink
-            }
-
-            `;
+            const shareUrl = `${window.location.origin}/resume/${resume.shareableLink}`;
             await navigator.clipboard.writeText(shareUrl);
             alert('Share link copied to clipboard!');
         }

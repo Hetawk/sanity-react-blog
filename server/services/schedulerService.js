@@ -17,8 +17,8 @@ let syncStatus = {
     failedSyncs: 0
 };
 
-// Sync interval: 24 hours / 1 day (in milliseconds)
-const SYNC_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours (daily)
+// Sync interval: 7 days / 1 week (in milliseconds)
+const SYNC_INTERVAL = 7 * 24 * 60 * 60 * 1000; // 7 days (weekly)
 
 let syncIntervalId = null;
 
@@ -89,13 +89,14 @@ function startScheduler() {
     }
 
     console.log('\n🚀 Starting GitHub Auto-Sync Scheduler');
-    console.log(`⏰ Sync interval: Every ${SYNC_INTERVAL / 1000 / 60 / 60} hours (daily)`);
-    console.log(`🔄 First sync will run immediately...\n`);
+    console.log(`⏰ Sync interval: Every ${SYNC_INTERVAL / 1000 / 60 / 60 / 24} days (weekly)`);
+    console.log(`📋 Manual sync available via API at any time`);
+    console.log(`⏭️  First auto-sync will run in ${SYNC_INTERVAL / 1000 / 60 / 60 / 24} days\n`);
 
-    // Run initial sync immediately
-    performSync();
+    // Set next sync time (don't run immediately on server start)
+    syncStatus.nextSyncTime = new Date(Date.now() + SYNC_INTERVAL);
 
-    // Schedule periodic syncs
+    // Schedule periodic syncs (weekly, starting after SYNC_INTERVAL)
     syncIntervalId = setInterval(performSync, SYNC_INTERVAL);
 
     console.log('✅ Scheduler started successfully!\n');
@@ -120,6 +121,7 @@ function getSyncStatus() {
         ...syncStatus,
         isSchedulerRunning: syncIntervalId !== null,
         syncInterval: SYNC_INTERVAL,
+        syncIntervalDays: SYNC_INTERVAL / 1000 / 60 / 60 / 24,
         syncIntervalHours: SYNC_INTERVAL / 1000 / 60 / 60
     };
 }

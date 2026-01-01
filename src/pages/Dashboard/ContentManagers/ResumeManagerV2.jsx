@@ -119,11 +119,7 @@ const ResumeManagerV2=()=> {
         catch (error) {
             console.error('Failed to load data:', error);
 
-            toast.error(`Failed to load resume data: $ {
-                    error.message || 'Unknown error'
-                }
-
-                . Please make sure the server is running.`);
+            toast.error(`Failed to load resume data: ${error.message || 'Unknown error'}. Please make sure the server is running.`);
         }
 
         finally {
@@ -233,11 +229,7 @@ const ResumeManagerV2=()=> {
         catch (error) {
             console.error('Failed to create resume:', error);
 
-            toast.error(`Failed to create resume: $ {
-                    error.message || 'Please try again'
-                }
-
-                `);
+            toast.error(`Failed to create resume: ${error.message || 'Please try again'}`);
         }
     }
 
@@ -287,34 +279,26 @@ const ResumeManagerV2=()=> {
         catch (error) {
             console.error('Failed to update resume:', error);
 
-            toast.error(`Failed to save resume: $ {
-                    error.message || 'Please try again'
-                }
-
-                `);
+            toast.error(`Failed to save resume: ${error.message || 'Please try again'}`);
         }
     }
 
     ;
 
     // Edit Resume - Fetch full data and open editor
-    const handleEditResume=async (resume)=> {
+    const handleEditResume = async (resume) => {
         try {
-            // Fetch full resume data if needed
-            const fullResume=await api.resumesV2.getBySlug(resume.slug);
-            setEditingResume(fullResume.data);
+            // Fetch full resume data by ID (not slug which uses public endpoint)
+            const fullResume = await api.resumesV2.getById(resume.id);
+            setEditingResume(fullResume.data || fullResume);
             setViewMode('editor');
-        }
-
-        catch (error) {
+        } catch (error) {
             console.error('Failed to load resume for editing:', error);
             // Fallback to using the resume from list
             setEditingResume(resume);
             setViewMode('editor');
         }
-    }
-
-    ;
+    };
 
     // Cancel editing
     const handleCancelEdit=()=> {
@@ -325,52 +309,26 @@ const ResumeManagerV2=()=> {
     ;
 
     // Copy shareable link
-    const handleCopyShareableLink=(resume)=> {
-        const shareUrl=resume.shareableLink ? `$ {
-            window.location.origin
-        }
+    const handleCopyShareableLink = (resume) => {
+        const shareUrl = resume.shareableLink 
+            ? `${window.location.origin}/share/${resume.shareableLink}` 
+            : `${window.location.origin}/resume/${resume.slug}`;
 
-        /share/$ {
-            resume.shareableLink
-        }
-
-        ` : `$ {
-            window.location.origin
-        }
-
-        /resume/$ {
-            resume.slug
-        }
-
-        `;
-
-        navigator.clipboard.writeText(shareUrl).then(()=> toast.success('Link copied to clipboard!')).catch(()=> toast.error('Failed to copy link'));
+        navigator.clipboard.writeText(shareUrl).then(() => toast.success('Link copied to clipboard!')).catch(() => toast.error('Failed to copy link'));
     }
 
     ;
 
     // Open resume in new tab
-    const handleViewResume=(resume)=> {
+    const handleViewResume = (resume) => {
         // Use the slug for public resumes, otherwise use the ID with view-pdf endpoint
-        const backendUrl=process.env.REACT_APP_API_URL || 'http://localhost:5001';
+        const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
-        const url=resume.slug && resume.isPublic ? `/resume/$ {
-            resume.slug
-        }
-
-        ` : `$ {
-            backendUrl
-        }
-
-        /api/resumes-v2/$ {
-            resume.id
-        }
-
-        /view-pdf`;
+        const url = resume.slug && resume.isPublic 
+            ? `/resume/${resume.slug}` 
+            : `${backendUrl}/api/resumes-v2/${resume.id}/view-pdf`;
         window.open(url, '_blank');
-    }
-
-    ;
+    };
 
     // Delete Resume
     const handleDeleteResume=async (id)=> {
@@ -384,11 +342,7 @@ const ResumeManagerV2=()=> {
             catch (error) {
                 console.error('Failed to delete resume:', error);
 
-                toast.error(`Failed to delete resume: $ {
-                        error.message || 'Please try again'
-                    }
-
-                    `);
+                toast.error(`Failed to delete resume: ${error.message || 'Please try again'}`);
             }
         }
     }
@@ -406,11 +360,7 @@ const ResumeManagerV2=()=> {
         catch (error) {
             console.error('Failed to publish resume:', error);
 
-            toast.error(`Failed to publish resume: $ {
-                    error.message || 'Please try again'
-                }
-
-                `);
+            toast.error(`Failed to publish resume: ${error.message || 'Please try again'}`);
         }
     }
 
@@ -427,11 +377,7 @@ const ResumeManagerV2=()=> {
         catch (error) {
             console.error('Failed to make resume public:', error);
 
-            toast.error(`Failed to make resume public: $ {
-                    error.message || 'Please try again'
-                }
-
-                `);
+            toast.error(`Failed to make resume public: ${error.message || 'Please try again'}`);
         }
     }
 
@@ -451,11 +397,7 @@ const ResumeManagerV2=()=> {
         catch (error) {
             console.error('Failed to clone resume:', error);
 
-            toast.error(`Failed to clone resume: $ {
-                    error.message || 'Please try again'
-                }
-
-                `);
+            toast.error(`Failed to clone resume: ${error.message || 'Please try again'}`);
         }
     }
 
@@ -467,25 +409,13 @@ const ResumeManagerV2=()=> {
             // Use backend URL directly since window.open bypasses React proxy
             const backendUrl=process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
-            window.open(`$ {
-                    backendUrl
-                }
-
-                /api/resumes-v2/$ {
-                    resumeId
-                }
-
-                /view-pdf`, '_blank');
+            window.open(`${backendUrl}/api/resumes-v2/${resumeId}/view-pdf`, '_blank');
         }
 
         catch (error) {
             console.error('Failed to view PDF:', error);
 
-            toast.error(`Failed to view PDF: $ {
-                    error.message || 'Please try again'
-                }
-
-                `);
+            toast.error(`Failed to view PDF: ${error.message || 'Please try again'}`);
         }
     }
 
@@ -516,13 +446,7 @@ const ResumeManagerV2=()=> {
             /* Tab Navigation */
         }
 
-        <div className="tabs"> <button className= {
-            `tab-btn $ {
-                activeTab==='resumes'? 'active' : ''
-            }
-
-            `
-        }
+        <div className="tabs"> <button className={`tab-btn ${activeTab==='resumes'? 'active' : ''}`}
 
         onClick= {
             ()=> setActiveTab('resumes')
@@ -532,13 +456,7 @@ const ResumeManagerV2=()=> {
                 resumes.length
             }
 
-        ) </button> <button className= {
-            `tab-btn $ {
-                activeTab==='templates'? 'active' : ''
-            }
-
-            `
-        }
+        ) </button> <button className={`tab-btn ${activeTab==='templates'? 'active' : ''}`}
 
         onClick= {
             ()=> setActiveTab('templates')
@@ -548,13 +466,7 @@ const ResumeManagerV2=()=> {
                 templates.length
             }
 
-        ) </button> <button className= {
-            `tab-btn $ {
-                activeTab==='countries'? 'active' : ''
-            }
-
-            `
-        }
+        ) </button> <button className={`tab-btn ${activeTab==='countries'? 'active' : ''}`}
 
         onClick= {
             ()=> setActiveTab('countries')
@@ -847,13 +759,7 @@ const ResumeManagerV2=()=> {
                                         resume.title
                                     }
 
-                                    </h3> <span className= {
-                                        `badge $ {
-                                            resume.isPublished ? 'published' : 'draft'
-                                        }
-
-                                        `
-                                    }
+                                    </h3> <span className={`badge ${resume.isPublished ? 'published' : 'draft'}`}
 
                                     > {
                                         resume.isPublished ? 'Published' : 'Draft'

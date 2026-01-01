@@ -890,3 +890,121 @@ $brand-light: #fff5f3;
         }
     }
 }
+
+// Section Order Styling
+.section-order-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: $brand-dark;
+
+    svg {
+        color: $brand-primary;
+    }
+}
+
+.section-order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba($brand-light, 0.5);
+    border-radius: 8px;
+    border: 1px solid rgba($brand-dark, 0.1);
+}
+
+.section-order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid rgba($brand-dark, 0.1);
+    transition: all 0.2s ease;
+
+    &:hover {
+        border-color: $brand-primary;
+        box-shadow: 0 2px 8px rgba($brand-primary, 0.1);
+    }
+
+    .section-order-label {
+        font-weight: 500;
+        color: $brand-dark;
+    }
+
+    .section-order-controls {
+        display: flex;
+        gap: 4px;
+
+        .btn-icon {
+            padding: 6px 8px;
+            background: rgba($brand-dark, 0.05);
+            border: 1px solid rgba($brand-dark, 0.1);
+            border-radius: 4px;
+            color: $brand-dark;
+            cursor: pointer;
+            transition: all 0.15s ease;
+
+            &:hover:not(:disabled) {
+                background: $brand-primary;
+                color: white;
+                border-color: $brand-primary;
+            }
+
+            &:disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
+            }
+
+            svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+    }
+}
+
+// Dark theme adjustments
+@media (prefers-color-scheme: dark) {
+    .section-order-title {
+        color: #f1f5f9;
+    }
+
+    .section-order-list {
+        background: #0f172a;
+        border-color: #334155;
+    }
+
+    .section-order-item {
+        background: #1e293b;
+        border-color: #334155;
+
+        &:hover {
+            border-color: $brand-primary;
+        }
+
+        .section-order-label {
+            color: #f1f5f9;
+        }
+
+        .section-order-controls {
+            .btn-icon {
+                background: #0f172a;
+                border-color: #334155;
+                color: #94a3b8;
+
+                &:hover:not(:disabled) {
+                    background: $brand-primary;
+                    color: white;
+                    border-color: $brand-primary;
+                }
+            }
+        }
+    }
+}

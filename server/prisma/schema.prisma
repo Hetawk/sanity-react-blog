@@ -717,11 +717,15 @@ model ResumeContent {
   email             String?
   phone             String?
   location          String?
+  city              String?
+  countryText       String? // Text field for display (separate from countryId relation)
   summary           String? @db.Text
   linkedinUrl       String?
   portfolioUrl      String?
   githubUrl         String?
   githubPersonalUrl String?
+  orcidUrl          String?
+  visibility        String? @db.Text // JSON object for field visibility settings
 
   // Experience & Education
   experience     String? @db.LongText // JSON array of experiences
@@ -739,6 +743,7 @@ model ResumeContent {
 
   // Custom Sections
   customSections String? @db.LongText // JSON array for user-defined sections
+  sectionOrder   String? @db.Text // JSON array for section ordering
 
   // Status
   isDraft      Boolean @default(true)

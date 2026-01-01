@@ -82,13 +82,7 @@ const SectionPage=( {
 
     ;
 
-    return (<div className= {
-            `section-page $ {
-                backgroundClass
-            }
-
-            `
-        }
+    return (<div className={`section-page ${backgroundClass}`}
 
         > <Navbar /> <div className="section-page__container"> {
             /* Header */
