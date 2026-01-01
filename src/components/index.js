@@ -23,6 +23,9 @@ import ViewAllButton from './ViewAllButton/ViewAllButton';
 import ItemCard from './ItemCard/ItemCard';
 import SectionPage from './SectionPage/SectionPage';
 
+// Resume components
+import LiveResumePreview from './LiveResumePreview/LiveResumePreview';
+
 export {
   // Existing
   NavigationDots,
@@ -48,4 +51,9 @@ export {
   ItemCard,
   SectionPage,
   MarkdownRenderer,
-};
+
+  // Resume components
+  LiveResumePreview,
+}
+
+  ;

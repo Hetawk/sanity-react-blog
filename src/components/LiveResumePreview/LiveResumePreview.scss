@@ -1,0 +1,416 @@
+// Brand color variables
+$brand-primary: #FF4C29;
+$brand-maroon: #8E0E00;
+$brand-dark: #1F1C18;
+$brand-dark-alt: #2a2520;
+$brand-light: #fff5f3;
+
+.live-resume-preview-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: $brand-dark;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
+    .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 20px;
+        background: linear-gradient(135deg, $brand-dark 0%, darken($brand-dark, 5%) 100%);
+        border-bottom: 1px solid rgba($brand-primary, 0.2);
+
+        .preview-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preview-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .zoom-label {
+                font-size: 0.8rem;
+                color: rgba(255, 255, 255, 0.6);
+            }
+        }
+    }
+
+    .preview-scroll-area {
+        flex: 1;
+        overflow: auto;
+        padding: 32px;
+        background:
+            linear-gradient(90deg, $brand-dark 21px, transparent 1%) center,
+            linear-gradient($brand-dark 21px, transparent 1%) center,
+            $brand-dark-alt;
+        background-size: 22px 22px;
+
+        &::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: $brand-dark;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba($brand-primary, 0.3);
+            border-radius: 5px;
+            border: 2px solid $brand-dark;
+
+            &:hover {
+                background: rgba($brand-primary, 0.5);
+            }
+        }
+    }
+
+    .resume-paper {
+        width: 210mm; // A4 width
+        min-height: 297mm; // A4 height
+        margin: 0 auto;
+        padding: 20mm 25mm; // Standard professional resume margins
+        background: #fff;
+        box-shadow:
+            0 15px 50px rgba(0, 0, 0, 0.4),
+            0 0 0 1px rgba($brand-primary, 0.1);
+        font-family: 'Georgia', 'Times New Roman', serif;
+        font-size: 10pt;
+        line-height: 1.4;
+        color: #1a1a2e;
+        transform-origin: top center;
+        transition: transform 0.2s ease;
+        // Allow content to flow naturally and break to new pages
+        overflow: visible;
+        page-break-inside: auto;
+
+        // Header
+        .resume-header {
+            text-align: center;
+            padding-bottom: 14px;
+            margin-bottom: 14px;
+            border-bottom: 2px solid $brand-maroon;
+
+            .name {
+                font-size: 22pt;
+                font-weight: 700;
+                margin: 0 0 6px;
+                color: $brand-maroon;
+                letter-spacing: 1px;
+            }
+
+            .contact-info {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 14px;
+                margin-bottom: 6px;
+                font-size: 9pt;
+
+                .contact-item {
+                    color: #475569;
+                }
+            }
+
+            .links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+                font-size: 8pt;
+                margin-top: 4px;
+
+                .link-item {
+                    color: $brand-maroon;
+                    font-weight: 500;
+                    
+                    // Add separator between links
+                    &:not(:last-child)::after {
+                        content: '•';
+                        margin-left: 10px;
+                        color: #94a3b8;
+                    }
+                }
+            }
+        }
+
+        // Sections
+        .resume-section {
+            margin-bottom: 16px;
+
+            .section-title {
+                font-size: 11pt;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: $brand-maroon;
+                margin: 0 0 8px;
+                padding-bottom: 3px;
+                border-bottom: 1px solid rgba($brand-maroon, 0.3);
+            }
+
+            .summary-text {
+                font-size: 10pt;
+                line-height: 1.5;
+                color: #334155;
+                margin: 0;
+            }
+        }
+
+        // Entry items
+        .resume-entry {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #e2e8f0;
+            position: relative;
+
+            &:last-child {
+                margin-bottom: 0;
+                padding-bottom: 0;
+                border-bottom: none;
+            }
+
+            &.compact {
+                margin-bottom: 8px;
+                padding-bottom: 8px;
+            }
+
+            .entry-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 4px;
+
+                .entry-main {
+                    flex: 1;
+                }
+
+                .entry-meta {
+                    text-align: right;
+                    flex-shrink: 0;
+                }
+            }
+
+            .entry-title {
+                font-size: 11pt;
+                font-weight: 600;
+                color: #1e293b;
+                margin: 0;
+
+                .entry-field {
+                    font-weight: 400;
+                    font-style: italic;
+                }
+            }
+
+            .entry-company,
+            .entry-issuer {
+                font-size: 10pt;
+                color: #475569;
+                font-style: italic;
+            }
+
+            .entry-role {
+                font-size: 9pt;
+                color: #64748b;
+                font-style: italic;
+            }
+
+            .entry-period,
+            .entry-year {
+                font-size: 9pt;
+                color: #64748b;
+            }
+
+            .entry-location {
+                display: block;
+                font-size: 8pt;
+                color: #94a3b8;
+            }
+
+            .entry-dates {
+                font-size: 8pt;
+                color: #64748b;
+                display: block;
+                margin-top: 2px;
+            }
+
+            .entry-gpa {
+                font-size: 9pt;
+                color: #64748b;
+                margin: 4px 0;
+            }
+
+            .entry-description {
+                font-size: 9pt;
+                line-height: 1.4;
+                color: #475569;
+                margin: 6px 0 0;
+            }
+
+            .entry-tech {
+                font-size: 8pt;
+                color: #64748b;
+                margin: 4px 0;
+            }
+
+            .entry-link {
+                font-size: 8pt;
+                color: $brand-maroon;
+                margin: 4px 0 0;
+            }
+
+            .entry-meta-line {
+                font-size: 9pt;
+                color: #64748b;
+                margin: 2px 0;
+            }
+
+            .entry-responsibilities {
+                margin: 6px 0 0;
+                padding-left: 18px;
+                font-size: 9pt;
+                line-height: 1.4;
+                color: #475569;
+
+                li {
+                    margin-bottom: 2px;
+                }
+            }
+
+            .credential-id {
+                font-size: 8pt;
+                color: #94a3b8;
+                font-family: monospace;
+            }
+
+            .portfolio-indicator {
+                position: absolute;
+                top: 0;
+                right: 0;
+                padding: 2px 6px;
+                background: linear-gradient(135deg, $brand-primary 0%, $brand-maroon 100%);
+                color: #fff;
+                font-size: 6pt;
+                font-weight: 600;
+                border-radius: 3px;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+
+                // Personal portfolio source
+                &.personal {
+                    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+                }
+
+                // Company portfolio source
+                &.company {
+                    background: linear-gradient(135deg, $brand-primary 0%, $brand-maroon 100%);
+                }
+            }
+        }
+
+        // Skills grid
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+
+            .skill-tag {
+                padding: 4px 10px;
+                background: #f1f5f9;
+                color: #334155;
+                font-size: 9pt;
+                border-radius: 4px;
+                border: 1px solid #e2e8f0;
+            }
+        }
+
+        // Languages list
+        .languages-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+
+            .language-item {
+                font-size: 9pt;
+                color: #475569;
+
+                &::after {
+                    content: '•';
+                    margin-left: 12px;
+                    color: #cbd5e1;
+                }
+
+                &:last-child::after {
+                    content: none;
+                }
+            }
+        }
+
+        // Empty state
+        .empty-preview {
+            text-align: center;
+            padding: 48px 24px;
+            color: #64748b;
+
+            p {
+                font-size: 14pt;
+                margin-bottom: 16px;
+                color: $brand-maroon;
+            }
+
+            ul {
+                list-style: none;
+                padding: 0;
+                font-size: 10pt;
+
+                li {
+                    margin-bottom: 8px;
+
+                    &::before {
+                        content: '→ ';
+                        color: $brand-primary;
+                    }
+                }
+            }
+        }
+
+        // Footer
+        .resume-footer {
+            margin-top: 24px;
+            text-align: center;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+
+            .generated-note {
+                font-size: 7pt;
+                color: #94a3b8;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+        }
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 1400px) {
+    .live-resume-preview-container {
+        .resume-paper {
+            width: 7in;
+            min-height: 9in;
+            padding: 0.5in;
+        }
+    }
+}
+
+@media (max-width: 1200px) {
+    .live-resume-preview-container {
+        display: none; // Hide preview on smaller screens
+    }
+}

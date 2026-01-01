@@ -2,6 +2,18 @@
   width: 100%;
   padding: 2rem;
 
+  // When showing the editor with preview, allow full width
+  &:has(.resume-editor-wrapper) {
+    padding: 0.5rem;
+    max-width: 100%;
+
+    .resume-editor-wrapper {
+      margin: 0;
+      width: 100%;
+      height: calc(100vh - 60px);
+    }
+  }
+
   .tabs {
     display: flex;
     gap: 1rem;
@@ -22,13 +34,13 @@
       white-space: nowrap;
 
       &:hover {
-        color: #333;
-        background-color: #f5f5f5;
+        color: #1F1C18;
+        background-color: #fff5f3;
       }
 
       &.active {
-        color: #0066cc;
-        border-bottom-color: #0066cc;
+        color: #FF4C29;
+        border-bottom-color: #FF4C29;
       }
     }
   }
@@ -42,6 +54,7 @@
       opacity: 0;
       transform: translateY(10px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -57,7 +70,8 @@
     h2 {
       margin: 0;
       font-size: 1.8rem;
-      color: #333;
+      color: #1F1C18;
+      font-weight: 700;
     }
   }
 
@@ -71,16 +85,16 @@
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-weight: 500;
+    font-weight: 600;
 
     &.btn-primary {
-      background-color: #0066cc;
+      background-color: #FF4C29;
       color: white;
 
       &:hover {
-        background-color: #0052a3;
+        background-color: #8E0E00;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        box-shadow: 0 4px 12px rgba(255, 76, 41, 0.3);
       }
     }
 
@@ -96,8 +110,8 @@
 
   // Form Section
   .form-section {
-    background: #f9f9f9;
-    border: 2px solid #e0e0e0;
+    background: linear-gradient(135deg, #fff5f3 0%, #ffffff 100%);
+    border: 2px solid #ffe5e0;
     border-radius: 0.75rem;
     padding: 2rem;
     margin-bottom: 2rem;
@@ -105,7 +119,8 @@
     h3 {
       margin-top: 0;
       margin-bottom: 1.5rem;
-      color: #333;
+      color: #1F1C18;
+      font-weight: 700;
     }
 
     .form-grid {
@@ -134,16 +149,18 @@
       select,
       textarea {
         padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 0.4rem;
+        border: 2px solid #ddd;
+        border-radius: 0.5rem;
         font-family: inherit;
         font-size: 0.95rem;
-        transition: border-color 0.3s ease;
+        transition: all 0.3s ease;
+        background-color: white;
 
         &:focus {
           outline: none;
-          border-color: #0066cc;
-          box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+          border-color: #FF4C29;
+          box-shadow: 0 0 0 3px rgba(255, 76, 41, 0.1);
+          background-color: #fff5f3;
         }
       }
 
@@ -191,7 +208,7 @@
   .template-card,
   .country-card {
     background: white;
-    border: 1px solid #e0e0e0;
+    border: 2px solid #e0e0e0;
     border-radius: 0.75rem;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -199,8 +216,8 @@
     flex-direction: column;
 
     &:hover {
-      border-color: #0066cc;
-      box-shadow: 0 8px 24px rgba(0, 102, 204, 0.15);
+      border-color: #FF4C29;
+      box-shadow: 0 8px 24px rgba(255, 76, 41, 0.15);
       transform: translateY(-4px);
     }
   }
@@ -208,7 +225,8 @@
   .resume-card {
     .card-header {
       padding: 1.5rem;
-      border-bottom: 1px solid #f0f0f0;
+      background: linear-gradient(135deg, #fff5f3 0%, #ffffff 100%);
+      border-bottom: 2px solid #f0f0f0;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
@@ -216,25 +234,30 @@
 
       h3 {
         margin: 0;
-        font-size: 1.2rem;
-        color: #333;
+        font-size: 1.25rem;
+        color: #1F1C18;
+        font-weight: 700;
       }
 
       .badge {
-        padding: 0.4rem 0.8rem;
-        border-radius: 0.25rem;
+        padding: 0.5rem 1rem;
+        border-radius: 1rem;
         font-size: 0.8rem;
-        font-weight: 600;
+        font-weight: 700;
         white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
 
         &.published {
-          background-color: #e8f5e9;
-          color: #2e7d32;
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+          color: white;
+          box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
         }
 
         &.draft {
-          background-color: #fff3e0;
-          color: #e65100;
+          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+          color: white;
+          box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
         }
       }
     }
@@ -245,17 +268,29 @@
 
       .description {
         color: #666;
-        margin: 0 0 1rem 0;
-        line-height: 1.5;
+        margin: 0 0 1.5rem 0;
+        line-height: 1.6;
+        font-size: 0.95rem;
       }
 
       .meta {
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
         font-size: 0.9rem;
         color: #666;
+        font-weight: 600;
+
+        span {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          padding: 0.4rem 0.8rem;
+          background-color: #fff5f3;
+          border-radius: 0.5rem;
+          border: 1px solid #ffe5e0;
+        }
       }
 
       .stats {
@@ -263,6 +298,7 @@
         gap: 1.5rem;
         font-size: 0.9rem;
         color: #999;
+        font-weight: 600;
 
         span {
           display: flex;
@@ -274,7 +310,8 @@
 
     .card-actions {
       padding: 1.5rem;
-      border-top: 1px solid #f0f0f0;
+      border-top: 2px solid #f0f0f0;
+      background-color: #fafafa;
       display: flex;
       gap: 0.5rem;
       flex-wrap: wrap;
@@ -283,19 +320,22 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 36px;
-        height: 36px;
-        border: 1px solid #ddd;
+        width: 40px;
+        height: 40px;
+        border: 2px solid #e0e0e0;
         background: white;
-        border-radius: 0.4rem;
+        border-radius: 0.5rem;
         cursor: pointer;
         transition: all 0.3s ease;
         color: #666;
+        font-size: 1.1rem;
 
         &:hover {
-          border-color: #0066cc;
-          color: #0066cc;
-          background-color: #f0f7ff;
+          border-color: #FF4C29;
+          color: #FF4C29;
+          background-color: #fff5f3;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(255, 76, 41, 0.2);
         }
 
         &.view {
@@ -308,40 +348,40 @@
 
         &.publish {
           &:hover {
-            border-color: #2e7d32;
-            color: #2e7d32;
-            background-color: #f1f8e9;
+            border-color: #10b981;
+            color: #10b981;
+            background-color: #ecfdf5;
           }
         }
 
         &.public {
           &:hover {
-            border-color: #1976d2;
-            color: #1976d2;
-            background-color: #e3f2fd;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            background-color: #eff6ff;
           }
         }
 
         &.copy {
           &:hover {
-            border-color: #7c3aed;
-            color: #7c3aed;
+            border-color: #8b5cf6;
+            color: #8b5cf6;
             background-color: #f5f3ff;
           }
         }
 
         &.clone {
           &:hover {
-            border-color: #059669;
-            color: #059669;
-            background-color: #ecfdf5;
+            border-color: #14b8a6;
+            color: #14b8a6;
+            background-color: #f0fdfa;
           }
         }
 
         &.delete {
           &:hover {
-            border-color: #d32f2f;
-            color: #d32f2f;
+            border-color: #8E0E00;
+            color: #8E0E00;
             background-color: #ffebee;
           }
         }
