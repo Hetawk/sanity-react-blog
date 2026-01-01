@@ -287,4 +287,309 @@ router.get('/languages', async (req, res) => {
     }
 });
 
+// ============================================
+// UPDATE ROUTES (for syncing resume edits back to portfolio)
+// ============================================
+
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+/**
+ * Update reference
+ * PUT /api/portfolio-content/references/:id
+ */
+router.put('/references/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        const reference = await prisma.reference.update({
+            where: { id },
+            data: {
+                name: data.name,
+                title: data.title,
+                company: data.company,
+                email: data.email,
+                phone: data.phone,
+                relationship: data.relationship,
+                hasConsent: data.hasConsent,
+                updatedAt: new Date(),
+            },
+        });
+
+        res.json({ success: true, data: reference });
+    } catch (error) {
+        console.error('Update reference error:', error);
+        if (error.code === 'P2025') {
+            return res.status(404).json({ success: false, error: 'Reference not found' });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * Update work experience
+ * PUT /api/portfolio-content/experiences/:id
+ */
+router.put('/experiences/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        const experience = await prisma.workExperience.update({
+            where: { id },
+            data: {
+                title: data.title,
+                company: data.company,
+                location: data.location,
+                startDate: data.startDate ? new Date(data.startDate) : undefined,
+                endDate: data.endDate ? new Date(data.endDate) : undefined,
+                isCurrent: data.isCurrent,
+                description: data.description,
+                responsibilities: data.responsibilities,
+                achievements: data.achievements,
+                updatedAt: new Date(),
+            },
+        });
+
+        res.json({ success: true, data: experience });
+    } catch (error) {
+        console.error('Update experience error:', error);
+        if (error.code === 'P2025') {
+            return res.status(404).json({ success: false, error: 'Experience not found' });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * Update education
+ * PUT /api/portfolio-content/education/:id
+ */
+router.put('/education/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        const education = await prisma.education.update({
+            where: { id },
+            data: {
+                institution: data.institution,
+                degree: data.degree,
+                field: data.field,
+                location: data.location,
+                startDate: data.startDate ? new Date(data.startDate) : undefined,
+                endDate: data.endDate ? new Date(data.endDate) : undefined,
+                gpa: data.gpa,
+                honors: data.honors,
+                description: data.description,
+                updatedAt: new Date(),
+            },
+        });
+
+        res.json({ success: true, data: education });
+    } catch (error) {
+        console.error('Update education error:', error);
+        if (error.code === 'P2025') {
+            return res.status(404).json({ success: false, error: 'Education not found' });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * Update certification
+ * PUT /api/portfolio-content/certifications/:id
+ */
+router.put('/certifications/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        const certification = await prisma.certification.update({
+            where: { id },
+            data: {
+                name: data.name,
+                issuer: data.issuer,
+                issueDate: data.issueDate ? new Date(data.issueDate) : undefined,
+                expiryDate: data.expiryDate ? new Date(data.expiryDate) : undefined,
+                credentialId: data.credentialId,
+                credentialUrl: data.credentialUrl,
+                description: data.description,
+                updatedAt: new Date(),
+            },
+        });
+
+        res.json({ success: true, data: certification });
+    } catch (error) {
+        console.error('Update certification error:', error);
+        if (error.code === 'P2025') {
+            return res.status(404).json({ success: false, error: 'Certification not found' });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * Update award
+ * PUT /api/portfolio-content/awards/:id
+ */
+router.put('/awards/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        const award = await prisma.award.update({
+            where: { id },
+            data: {
+                name: data.name || data.title,
+                issuer: data.issuer,
+                date: data.date ? new Date(data.date) : undefined,
+                description: data.description,
+                updatedAt: new Date(),
+            },
+        });
+
+        res.json({ success: true, data: award });
+    } catch (error) {
+        console.error('Update award error:', error);
+        if (error.code === 'P2025') {
+            return res.status(404).json({ success: false, error: 'Award not found' });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * Update project (work)
+ * PUT /api/portfolio-content/projects/:id
+ */
+router.put('/projects/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        const project = await prisma.work.update({
+            where: { id },
+            data: {
+                title: data.title || data.name,
+                description: data.description,
+                projectLink: data.projectLink || data.url,
+                codeLink: data.codeLink,
+                techStack: Array.isArray(data.technologies) ? JSON.stringify(data.technologies) : data.techStack,
+                updatedAt: new Date(),
+            },
+        });
+
+        res.json({ success: true, data: project });
+    } catch (error) {
+        console.error('Update project error:', error);
+        if (error.code === 'P2025') {
+            return res.status(404).json({ success: false, error: 'Project not found' });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * Update publication
+ * PUT /api/portfolio-content/publications/:id
+ */
+router.put('/publications/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        const publication = await prisma.publication.update({
+            where: { id },
+            data: {
+                title: data.title,
+                authors: Array.isArray(data.authors) ? JSON.stringify(data.authors) : data.authors,
+                journal: data.journal || data.venue,
+                year: data.year ? parseInt(data.year) : undefined,
+                doi: data.doi,
+                url: data.url,
+                abstract: data.abstract || data.description,
+                updatedAt: new Date(),
+            },
+        });
+
+        res.json({ success: true, data: publication });
+    } catch (error) {
+        console.error('Update publication error:', error);
+        if (error.code === 'P2025') {
+            return res.status(404).json({ success: false, error: 'Publication not found' });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * Update volunteer work
+ * PUT /api/portfolio-content/volunteer/:id
+ */
+router.put('/volunteer/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        const volunteer = await prisma.volunteerWork.update({
+            where: { id },
+            data: {
+                role: data.role || data.title,
+                organization: data.organization,
+                location: data.location,
+                startDate: data.startDate ? new Date(data.startDate) : undefined,
+                endDate: data.endDate ? new Date(data.endDate) : undefined,
+                isCurrent: data.isCurrent,
+                description: data.description,
+                impact: data.impact,
+                updatedAt: new Date(),
+            },
+        });
+
+        res.json({ success: true, data: volunteer });
+    } catch (error) {
+        console.error('Update volunteer work error:', error);
+        if (error.code === 'P2025') {
+            return res.status(404).json({ success: false, error: 'Volunteer work not found' });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
+ * Update leadership
+ * PUT /api/portfolio-content/leadership/:id
+ */
+router.put('/leadership/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+
+        const leadership = await prisma.leadership.update({
+            where: { id },
+            data: {
+                title: data.title,
+                organization: data.organization || data.company,
+                location: data.location,
+                startDate: data.startDate ? new Date(data.startDate) : undefined,
+                endDate: data.endDate ? new Date(data.endDate) : undefined,
+                isCurrent: data.isCurrent,
+                description: data.description,
+                achievements: data.achievements,
+                updatedAt: new Date(),
+            },
+        });
+
+        res.json({ success: true, data: leadership });
+    } catch (error) {
+        console.error('Update leadership error:', error);
+        if (error.code === 'P2025') {
+            return res.status(404).json({ success: false, error: 'Leadership not found' });
+        }
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 module.exports = router;
