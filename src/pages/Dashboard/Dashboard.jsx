@@ -51,11 +51,26 @@ const tabs = [
     { id: 'github', label: 'GitHub Sync', icon: '🔄', color: '#0366d6' },
 ];
 
+// Helper to parse hash - supports both simple tabs and nested paths like #resumeV2/123
+const parseHash = () => {
+    const hash = window.location.hash.replace('#', '');
+    const parts = hash.split('/');
+    const tabId = parts[0] || 'abouts';
+    const subId = parts[1] || null; // e.g., resume ID
+    return { tabId, subId };
+};
+
 // Helper to get initial tab from URL hash
 const getTabFromHash = () => {
-    const hash = window.location.hash.replace('#', '');
-    const validTab = tabs.find(tab => tab.id === hash);
-    return validTab ? hash : 'abouts';
+    const { tabId } = parseHash();
+    const validTab = tabs.find(tab => tab.id === tabId);
+    return validTab ? tabId : 'abouts';
+};
+
+// Helper to get sub-ID (e.g., resume ID) from hash
+const getSubIdFromHash = () => {
+    const { subId } = parseHash();
+    return subId;
 };
 
 const Dashboard = () => {
@@ -65,6 +80,8 @@ const Dashboard = () => {
         setError] = useState('');
     const [activeTab,
         setActiveTab] = useState(getTabFromHash);
+    const [activeSubId,
+        setActiveSubId] = useState(getSubIdFromHash);
 
     const {
         isAuthenticated,
@@ -79,17 +96,20 @@ const Dashboard = () => {
     const [sidebarCollapsed,
         setSidebarCollapsed] = useState(false);
 
-    // Sync URL hash with active tab
-    const handleTabChange = useCallback((tabId) => {
+    // Sync URL hash with active tab (supports nested IDs)
+    const handleTabChange = useCallback((tabId, subId = null) => {
         setActiveTab(tabId);
-        window.location.hash = tabId;
+        setActiveSubId(subId);
+        window.location.hash = subId ? `${tabId}/${subId}` : tabId;
     }, []);
 
     // Listen for hash changes (back/forward browser buttons)
     useEffect(() => {
         const handleHashChange = () => {
             const newTab = getTabFromHash();
+            const newSubId = getSubIdFromHash();
             setActiveTab(newTab);
+            setActiveSubId(newSubId);
         };
 
         window.addEventListener('hashchange', handleHashChange);
@@ -252,7 +272,7 @@ const Dashboard = () => {
                     tab.id
                 }
 
-                    className={`tab-btn-modern ${activeTab===tab.id ? 'active' : ''}`}
+                    className={`tab-btn-modern ${activeTab === tab.id ? 'active' : ''}`}
 
                     onClick={
                         () => handleTabChange(tab.id)
@@ -360,7 +380,10 @@ const Dashboard = () => {
                 {activeTab === 'works' && <WorksManager />}
                 {activeTab === 'journey' && <JourneyManager />}
                 {activeTab === 'resume' && <ResumeManager />}
-                {activeTab === 'resumeV2' && <ResumeManagerV2 />}
+                {activeTab === 'resumeV2' && <ResumeManagerV2
+                    initialResumeId={activeSubId}
+                    onResumeIdChange={(id) => handleTabChange('resumeV2', id)}
+                />}
                 {activeTab === 'github' && <GithubSyncManager />}
             </motion.div> </AnimatePresence> </div> </div>);
 }

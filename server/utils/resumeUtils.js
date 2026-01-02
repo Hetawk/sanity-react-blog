@@ -391,7 +391,8 @@ const mapReferenceToResume = (ref) => {
 
     return {
         id: ref.id,
-        sourceId: ref.id,
+        sourceId: ref.id, // UUID for database operations
+        sourceSlug: ref.slug, // Human-readable slug for display/fallback
         sourceType: 'Reference',
         name: ref.name,
         title: ref.title,

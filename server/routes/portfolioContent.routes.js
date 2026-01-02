@@ -295,16 +295,37 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 /**
+ * Check if a string is a valid UUID format
+ * @param {string} str - The string to check
+ * @returns {boolean} True if valid UUID
+ */
+const isValidUuid = (str) => {
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    return uuidPattern.test(str);
+};
+
+/**
  * Update reference
  * PUT /api/portfolio-content/references/:id
+ * Supports lookup by UUID (id) or slug
  */
 router.put('/references/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const data = req.body;
 
+        console.log('[PUT /references/:id] Received ID:', id);
+        console.log('[PUT /references/:id] Is UUID:', isValidUuid(id));
+
+        // Support both UUID and slug lookups
+        const whereClause = isValidUuid(id)
+            ? { id }
+            : { slug: id };
+
+        console.log('[PUT /references/:id] Where clause:', whereClause);
+
         const reference = await prisma.reference.update({
-            where: { id },
+            where: whereClause,
             data: {
                 name: data.name,
                 title: data.title,
@@ -317,6 +338,7 @@ router.put('/references/:id', async (req, res) => {
             },
         });
 
+        console.log('[PUT /references/:id] Updated successfully:', reference.id);
         res.json({ success: true, data: reference });
     } catch (error) {
         console.error('Update reference error:', error);
@@ -336,8 +358,10 @@ router.put('/experiences/:id', async (req, res) => {
         const { id } = req.params;
         const data = req.body;
 
+        const whereClause = isValidUuid(id) ? { id } : { slug: id };
+
         const experience = await prisma.workExperience.update({
-            where: { id },
+            where: whereClause,
             data: {
                 title: data.title,
                 company: data.company,
@@ -371,8 +395,10 @@ router.put('/education/:id', async (req, res) => {
         const { id } = req.params;
         const data = req.body;
 
+        const whereClause = isValidUuid(id) ? { id } : { slug: id };
+
         const education = await prisma.education.update({
-            where: { id },
+            where: whereClause,
             data: {
                 institution: data.institution,
                 degree: data.degree,
@@ -406,8 +432,10 @@ router.put('/certifications/:id', async (req, res) => {
         const { id } = req.params;
         const data = req.body;
 
+        const whereClause = isValidUuid(id) ? { id } : { slug: id };
+
         const certification = await prisma.certification.update({
-            where: { id },
+            where: whereClause,
             data: {
                 name: data.name,
                 issuer: data.issuer,
@@ -439,8 +467,10 @@ router.put('/awards/:id', async (req, res) => {
         const { id } = req.params;
         const data = req.body;
 
+        const whereClause = isValidUuid(id) ? { id } : { slug: id };
+
         const award = await prisma.award.update({
-            where: { id },
+            where: whereClause,
             data: {
                 name: data.name || data.title,
                 issuer: data.issuer,
@@ -469,8 +499,10 @@ router.put('/projects/:id', async (req, res) => {
         const { id } = req.params;
         const data = req.body;
 
+        const whereClause = isValidUuid(id) ? { id } : { slug: id };
+
         const project = await prisma.work.update({
-            where: { id },
+            where: whereClause,
             data: {
                 title: data.title || data.name,
                 description: data.description,
@@ -500,8 +532,10 @@ router.put('/publications/:id', async (req, res) => {
         const { id } = req.params;
         const data = req.body;
 
+        const whereClause = isValidUuid(id) ? { id } : { slug: id };
+
         const publication = await prisma.publication.update({
-            where: { id },
+            where: whereClause,
             data: {
                 title: data.title,
                 authors: Array.isArray(data.authors) ? JSON.stringify(data.authors) : data.authors,
@@ -533,8 +567,10 @@ router.put('/volunteer/:id', async (req, res) => {
         const { id } = req.params;
         const data = req.body;
 
+        const whereClause = isValidUuid(id) ? { id } : { slug: id };
+
         const volunteer = await prisma.volunteerWork.update({
-            where: { id },
+            where: whereClause,
             data: {
                 role: data.role || data.title,
                 organization: data.organization,
@@ -567,8 +603,10 @@ router.put('/leadership/:id', async (req, res) => {
         const { id } = req.params;
         const data = req.body;
 
+        const whereClause = isValidUuid(id) ? { id } : { slug: id };
+
         const leadership = await prisma.leadership.update({
-            where: { id },
+            where: whereClause,
             data: {
                 title: data.title,
                 organization: data.organization || data.company,

@@ -117,7 +117,9 @@ const ResumeItemEditor = ({
     };
 
     const handleSyncToPortfolio = async () => {
-        if (!formData.sourceId) return;
+        // Prefer actual UUID `sourceId`, but fall back to human-readable `sourceSlug` when necessary
+        const targetId = formData.sourceId || formData.sourceSlug;
+        if (!targetId) return;
 
         setIsSyncing(true);
         setSyncError(null);
@@ -141,7 +143,7 @@ const ResumeItemEditor = ({
             // Transform data back to portfolio format
             const portfolioData = transformToPortfolioFormat(formData, itemType);
 
-            await apiClient.put(`/api/portfolio-content/${endpoint}/${formData.sourceId}`, portfolioData);
+            await apiClient.put(`/api/portfolio-content/${endpoint}/${targetId}`, portfolioData);
 
             if (onSyncToPortfolio) {
                 onSyncToPortfolio(formData);

@@ -495,8 +495,10 @@ model VolunteerWork {
 
 // Professional Reference Model
 model Reference {
-  id       String  @id @default(uuid())
-  name     String
+  id   String  @id @default(uuid())
+  slug String? @unique // Human-readable identifier (e.g., "ref-john-doe") - will be made required after migration
+  name String
+
   title    String? // e.g., "Senior Manager", "Professor"
   company  String? // Company/Organization
   email    String?

@@ -1,10 +1,10 @@
 import React,
-    {
+{
     useState,
     useEffect
 }
 
-from 'react';
+    from 'react';
 
 import {
     FiPlus,
@@ -19,7 +19,7 @@ import {
     FiExternalLink
 }
 
-from 'react-icons/fi';
+    from 'react-icons/fi';
 import api from '../../../api/client';
 import ResumeEditor from './ResumeEditor';
 
@@ -27,7 +27,7 @@ import {
     useToast
 }
 
-from '../../../components/Toast/Toast';
+    from '../../../components/Toast/Toast';
 import './ResumeManagerV2.scss';
 import './ResumeEditor.scss';
 
@@ -35,34 +35,40 @@ import './ResumeEditor.scss';
  * Advanced Resume Manager V2
  * Supports multiple countries, resume types, and templates
  * Full CRUD operations with publishing and sharing capabilities
+ * 
+ * Props:
+ * - initialResumeId: Optional resume ID to open in edit mode on mount
+ * - onResumeIdChange: Callback when editing resume changes (for URL sync)
  */
-const ResumeManagerV2=()=> {
-    const toast=useToast();
+const ResumeManagerV2 = ({ initialResumeId, onResumeIdChange }) => {
+    const toast = useToast();
 
     // State Management
     const [activeTab,
-    setActiveTab]=useState('resumes'); // resumes, templates, countries
+        setActiveTab] = useState('resumes'); // resumes, templates, countries
     const [resumes,
-    setResumes]=useState([]);
+        setResumes] = useState([]);
     const [templates,
-    setTemplates]=useState([]);
+        setTemplates] = useState([]);
     const [countries,
-    setCountries]=useState([]);
+        setCountries] = useState([]);
     const [resumeTypes,
-    setResumeTypes]=useState([]);
+        setResumeTypes] = useState([]);
 
     const [loading,
-    setLoading]=useState(true);
+        setLoading] = useState(true);
     const [editingResume,
-    setEditingResume]=useState(null); // Changed from editingId to full resume object
+        setEditingResume] = useState(null); // Changed from editingId to full resume object
     const [showForm,
-    setShowForm]=useState(false);
+        setShowForm] = useState(false);
     const [viewMode,
-    setViewMode]=useState('list'); // list, editor
+        setViewMode] = useState('list'); // list, editor
+    const [initialLoadComplete,
+        setInitialLoadComplete] = useState(false); // Track if initial data load is done
 
     // Form State
     const [formData,
-    setFormData]=useState( {
+        setFormData] = useState({
             title: '',
             description: '',
             templateId: '',
@@ -81,30 +87,30 @@ const ResumeManagerV2=()=> {
             allowShare: true
         }
 
-    );
+        );
 
     // Load initial data
-    useEffect(()=> {
-            loadAllData();
-        }
+    useEffect(() => {
+        loadAllData();
+    }
 
         , []);
 
-    const loadAllData=async ()=> {
+    const loadAllData = async () => {
         try {
             setLoading(true);
 
             const [resumesRes,
-            templatesRes,
-            countriesRes,
-            typesRes]=await Promise.all([api.resumesV2.getAll( {
-                        skip: 0, take: 50
-                    }
+                templatesRes,
+                countriesRes,
+                typesRes] = await Promise.all([api.resumesV2.getAll({
+                    skip: 0, take: 50
+                }
 
                 ),
-                api.resumesV2.templates.getAll( {
-                        activeOnly: true, take: 100
-                    }
+                api.resumesV2.templates.getAll({
+                    activeOnly: true, take: 100
+                }
 
                 ),
                 api.resumesV2.countries.getAll(true),
@@ -114,6 +120,7 @@ const ResumeManagerV2=()=> {
             setTemplates(templatesRes.data || []);
             setCountries(countriesRes.data || []);
             setResumeTypes(typesRes.data || []);
+            setInitialLoadComplete(true);
         }
 
         catch (error) {
@@ -127,10 +134,35 @@ const ResumeManagerV2=()=> {
         }
     }
 
-    ;
+        ;
+
+    // Handle initial resume ID from URL - load and open editor
+    useEffect(() => {
+        if (initialLoadComplete && initialResumeId && !editingResume) {
+            // Find the resume in loaded data or fetch it
+            const resumeFromList = resumes.find(r => r.id === initialResumeId);
+            if (resumeFromList) {
+                handleEditResume(resumeFromList);
+            } else {
+                // Try to fetch directly by ID
+                api.resumesV2.getById(initialResumeId)
+                    .then(response => {
+                        const fullResume = response.data || response;
+                        setEditingResume(fullResume);
+                        setViewMode('editor');
+                    })
+                    .catch(error => {
+                        console.error('Failed to load resume from URL:', error);
+                        toast.error('Resume not found');
+                        // Clear the URL
+                        if (onResumeIdChange) onResumeIdChange(null);
+                    });
+            }
+        }
+    }, [initialLoadComplete, initialResumeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Handle Form Change
-    const handleChange=(e)=> {
+    const handleChange = (e) => {
         const {
             name,
             value,
@@ -138,61 +170,61 @@ const ResumeManagerV2=()=> {
             checked
         }
 
-        =e.target;
+            = e.target;
 
-        setFormData( {
-                ...formData,
-                [name]: type==='checkbox'? checked : value
-            }
+        setFormData({
+            ...formData,
+            [name]: type === 'checkbox' ? checked : value
+        }
 
         );
     }
 
-    ;
+        ;
 
     // Create Resume
-    const handleCreateResume=async (e)=> {
+    const handleCreateResume = async (e) => {
         e.preventDefault();
 
         // Validation
-        if ( !formData.title || formData.title.trim()==='') {
+        if (!formData.title || formData.title.trim() === '') {
             toast.error('Resume title is required');
             return;
         }
 
-        if ( !formData.templateId) {
+        if (!formData.templateId) {
             toast.error('Please select a template');
             return;
         }
 
-        if ( !formData.countryId) {
+        if (!formData.countryId) {
             toast.error('Please select a country');
             return;
         }
 
-        if ( !formData.typeId) {
+        if (!formData.typeId) {
             toast.error('Please select a resume type');
             return;
         }
 
-        if ( !formData.fullName || formData.fullName.trim()==='') {
+        if (!formData.fullName || formData.fullName.trim() === '') {
             toast.error('Full name is required');
             return;
         }
 
         // Check if at least one contact method is provided
-        const hasContactMethod=formData.email || formData.phone || formData.linkedinUrl || formData.portfolioUrl || formData.githubUrl;
+        const hasContactMethod = formData.email || formData.phone || formData.linkedinUrl || formData.portfolioUrl || formData.githubUrl;
 
-        if ( !hasContactMethod) {
+        if (!hasContactMethod) {
             toast.error('At least one contact method (email, phone, or social link) is required');
             return;
         }
 
         // Email validation if provided
-        if (formData.email && formData.email.trim() !=='') {
-            const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (formData.email && formData.email.trim() !== '') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            if ( !emailRegex.test(formData.email)) {
+            if (!emailRegex.test(formData.email)) {
                 toast.error('Please enter a valid email address');
                 return;
             }
@@ -202,24 +234,24 @@ const ResumeManagerV2=()=> {
             await api.resumesV2.create(formData);
             toast.success('Resume created successfully!');
 
-            setFormData( {
-                    title: '',
-                    description: '',
-                    templateId: '',
-                    countryId: '',
-                    typeId: '',
-                    fullName: '',
-                    email: '',
-                    phone: '',
-                    location: '',
-                    summary: '',
-                    linkedinUrl: '',
-                    portfolioUrl: '',
-                    githubUrl: '',
-                    isPublic: false,
-                    allowDownload: true,
-                    allowShare: true
-                }
+            setFormData({
+                title: '',
+                description: '',
+                templateId: '',
+                countryId: '',
+                typeId: '',
+                fullName: '',
+                email: '',
+                phone: '',
+                location: '',
+                summary: '',
+                linkedinUrl: '',
+                portfolioUrl: '',
+                githubUrl: '',
+                isPublic: false,
+                allowDownload: true,
+                allowShare: true
+            }
 
             );
             setShowForm(false);
@@ -233,36 +265,36 @@ const ResumeManagerV2=()=> {
         }
     }
 
-    ;
+        ;
 
     // Update Resume
-    const handleUpdateResume=async (data)=> {
-        if ( !editingResume) return;
+    const handleUpdateResume = async (data) => {
+        if (!editingResume) return;
 
         // Validation
-        if ( !data.title || data.title.trim()==='') {
+        if (!data.title || data.title.trim() === '') {
             toast.error('Resume title is required');
             return;
         }
 
-        if ( !data.fullName || data.fullName.trim()==='') {
+        if (!data.fullName || data.fullName.trim() === '') {
             toast.error('Full name is required');
             return;
         }
 
         // Check if at least one contact method is provided
-        const hasContactMethod=data.email || data.phone || data.linkedinUrl || data.portfolioUrl || data.githubUrl || data.githubCompanyUrl;
+        const hasContactMethod = data.email || data.phone || data.linkedinUrl || data.portfolioUrl || data.githubUrl || data.githubCompanyUrl;
 
-        if ( !hasContactMethod) {
+        if (!hasContactMethod) {
             toast.error('At least one contact method (email, phone, or social link) is required');
             return;
         }
 
         // Email validation if provided
-        if (data.email && data.email.trim() !=='') {
-            const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (data.email && data.email.trim() !== '') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            if ( !emailRegex.test(data.email)) {
+            if (!emailRegex.test(data.email)) {
                 toast.error('Please enter a valid email address');
                 return;
             }
@@ -273,6 +305,8 @@ const ResumeManagerV2=()=> {
             toast.success('Resume saved successfully!');
             setEditingResume(null);
             setViewMode('list');
+            // Clear resume ID from URL
+            if (onResumeIdChange) onResumeIdChange(null);
             await loadAllData();
         }
 
@@ -283,7 +317,7 @@ const ResumeManagerV2=()=> {
         }
     }
 
-    ;
+        ;
 
     // Edit Resume - Fetch full data and open editor
     const handleEditResume = async (resume) => {
@@ -292,46 +326,52 @@ const ResumeManagerV2=()=> {
             const fullResume = await api.resumesV2.getById(resume.id);
             setEditingResume(fullResume.data || fullResume);
             setViewMode('editor');
+            // Update URL with resume ID
+            if (onResumeIdChange) onResumeIdChange(resume.id);
         } catch (error) {
             console.error('Failed to load resume for editing:', error);
             // Fallback to using the resume from list
             setEditingResume(resume);
             setViewMode('editor');
+            // Still update URL even on fallback
+            if (onResumeIdChange) onResumeIdChange(resume.id);
         }
     };
 
     // Cancel editing
-    const handleCancelEdit=()=> {
+    const handleCancelEdit = () => {
         setEditingResume(null);
         setViewMode('list');
+        // Clear resume ID from URL
+        if (onResumeIdChange) onResumeIdChange(null);
     }
 
-    ;
+        ;
 
     // Copy shareable link
     const handleCopyShareableLink = (resume) => {
-        const shareUrl = resume.shareableLink 
-            ? `${window.location.origin}/share/${resume.shareableLink}` 
+        const shareUrl = resume.shareableLink
+            ? `${window.location.origin}/share/${resume.shareableLink}`
             : `${window.location.origin}/resume/${resume.slug}`;
 
         navigator.clipboard.writeText(shareUrl).then(() => toast.success('Link copied to clipboard!')).catch(() => toast.error('Failed to copy link'));
     }
 
-    ;
+        ;
 
     // Open resume in new tab
     const handleViewResume = (resume) => {
         // Use the slug for public resumes, otherwise use the ID with view-pdf endpoint
         const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
-        const url = resume.slug && resume.isPublic 
-            ? `/resume/${resume.slug}` 
+        const url = resume.slug && resume.isPublic
+            ? `/resume/${resume.slug}`
             : `${backendUrl}/api/resumes-v2/${resume.id}/view-pdf`;
         window.open(url, '_blank');
     };
 
     // Delete Resume
-    const handleDeleteResume=async (id)=> {
+    const handleDeleteResume = async (id) => {
         if (window.confirm('Are you sure you want to delete this resume?')) {
             try {
                 await api.resumesV2.delete(id);
@@ -347,10 +387,10 @@ const ResumeManagerV2=()=> {
         }
     }
 
-    ;
+        ;
 
     // Publish Resume
-    const handlePublishResume=async (id)=> {
+    const handlePublishResume = async (id) => {
         try {
             await api.resumesV2.publish(id);
             toast.success('Resume published!');
@@ -364,10 +404,10 @@ const ResumeManagerV2=()=> {
         }
     }
 
-    ;
+        ;
 
     // Make Public
-    const handleMakePublic=async (id)=> {
+    const handleMakePublic = async (id) => {
         try {
             await api.resumesV2.makePublic(id);
             toast.success('Resume is now public!');
@@ -381,12 +421,12 @@ const ResumeManagerV2=()=> {
         }
     }
 
-    ;
+        ;
 
     // Clone Resume
-    const handleCloneResume=async (id)=> {
-        const newTitle=prompt('Enter a name for the cloned resume:');
-        if ( !newTitle) return;
+    const handleCloneResume = async (id) => {
+        const newTitle = prompt('Enter a name for the cloned resume:');
+        if (!newTitle) return;
 
         try {
             await api.resumesV2.clone(id, newTitle);
@@ -401,13 +441,13 @@ const ResumeManagerV2=()=> {
         }
     }
 
-    ;
+        ;
 
     // View Resume as PDF
-    const handleViewPdf=(resumeId)=> {
+    const handleViewPdf = (resumeId) => {
         try {
             // Use backend URL directly since window.open bypasses React proxy
-            const backendUrl=process.env.REACT_APP_API_URL || 'http://localhost:5001';
+            const backendUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
             window.open(`${backendUrl}/api/resumes-v2/${resumeId}/view-pdf`, '_blank');
         }
@@ -419,562 +459,562 @@ const ResumeManagerV2=()=> {
         }
     }
 
-    ;
+        ;
 
     if (loading) {
         return <div className="resume-manager-v2"><p>Loading...</p></div>;
     }
 
     // Show Resume Editor if editing
-    if (viewMode==='editor'&& editingResume) {
-        return (<div className="resume-manager-v2"> <ResumeEditor resume= {
-                editingResume
-            }
+    if (viewMode === 'editor' && editingResume) {
+        return (<div className="resume-manager-v2"> <ResumeEditor resume={
+            editingResume
+        }
 
-            onSave= {
+            onSave={
                 handleUpdateResume
             }
 
-            onCancel= {
+            onCancel={
                 handleCancelEdit
             }
 
-            /> </div>);
+        /> </div>);
     }
 
     return (<div className="resume-manager-v2"> {
-            /* Tab Navigation */
-        }
+        /* Tab Navigation */
+    }
 
-        <div className="tabs"> <button className={`tab-btn ${activeTab==='resumes'? 'active' : ''}`}
+        <div className="tabs"> <button className={`tab-btn ${activeTab === 'resumes' ? 'active' : ''}`}
 
-        onClick= {
-            ()=> setActiveTab('resumes')
-        }
+            onClick={
+                () => setActiveTab('resumes')
+            }
 
         > 📄 Resumes ( {
                 resumes.length
             }
 
-        ) </button> <button className={`tab-btn ${activeTab==='templates'? 'active' : ''}`}
+            ) </button> <button className={`tab-btn ${activeTab === 'templates' ? 'active' : ''}`}
 
-        onClick= {
-            ()=> setActiveTab('templates')
-        }
+                onClick={
+                    () => setActiveTab('templates')
+                }
 
-        > 🎨 Templates ( {
-                templates.length
-            }
+            > 🎨 Templates ( {
+                    templates.length
+                }
 
-        ) </button> <button className={`tab-btn ${activeTab==='countries'? 'active' : ''}`}
+                ) </button> <button className={`tab-btn ${activeTab === 'countries' ? 'active' : ''}`}
 
-        onClick= {
-            ()=> setActiveTab('countries')
-        }
+                    onClick={
+                        () => setActiveTab('countries')
+                    }
 
-        > 🌍 Countries ( {
-                countries.length
-            }
+                > 🌍 Countries ( {
+                    countries.length
+                }
 
-        ) </button> </div> {
+                ) </button> </div> {
             /* RESUMES TAB */
         }
 
-            {
-            activeTab==='resumes'&& (<div className="tab-content"> <div className="section-header"> <h2>My Resumes</h2> <button className="btn btn-primary"
+        {
+            activeTab === 'resumes' && (<div className="tab-content"> <div className="section-header"> <h2>My Resumes</h2> <button className="btn btn-primary"
 
-                onClick= {
-                    ()=> setShowForm( !showForm)
+                onClick={
+                    () => setShowForm(!showForm)
                 }
 
-                > <FiPlus /> Create New Resume </button> </div> {
+            > <FiPlus /> Create New Resume </button> </div> {
                     /* Create Form */
                 }
 
-                    {
-                    showForm && (<div className="form-section"> <h3>Create New Resume</h3> <form onSubmit= {
-                            handleCreateResume
-                        }
+                {
+                    showForm && (<div className="form-section"> <h3>Create New Resume</h3> <form onSubmit={
+                        handleCreateResume
+                    }
 
-                        > <div className="form-grid"> <div className="form-group"> <label>Title *</label> <input type="text"
+                    > <div className="form-grid"> <div className="form-group"> <label>Title *</label> <input type="text"
                         name="title"
 
-                        value= {
+                        value={
                             formData.title
                         }
 
-                        onChange= {
+                        onChange={
                             handleChange
                         }
 
                         placeholder="e.g., Senior Developer Resume"
                         required /> </div> <div className="form-group"> <label>Description</label> <input type="text"
-                        name="description"
+                            name="description"
 
-                        value= {
-                            formData.description
-                        }
+                            value={
+                                formData.description
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        placeholder="Brief description"
+                            placeholder="Brief description"
 
                         /> </div> <div className="form-group"> <label>Template *</label> <select name="templateId"
-                        value= {
-                            formData.templateId
-                        }
+                            value={
+                                formData.templateId
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        required > <option value="">Select Template</option> {
-                            templates.map(t=> (<option key= {
+                            required > <option value="">Select Template</option> {
+                                templates.map(t => (<option key={
+                                    t.id
+                                }
+
+                                    value={
                                         t.id
                                     }
 
-                                    value= {
-                                        t.id
-                                    }
-
-                                    > {
+                                > {
                                         t.name
                                     }
 
                                     ( {
-                                            t.country?.name
-                                        }
+                                        t.country?.name
+                                    }
 
                                     ) </option>))
-                        }
+                            }
 
                         </select> </div> <div className="form-group"> <label>Country *</label> <select name="countryId"
 
-                        value= {
-                            formData.countryId
-                        }
+                            value={
+                                formData.countryId
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        required > <option value="">Select Country</option> {
-                            countries.map(c=> (<option key= {
+                            required > <option value="">Select Country</option> {
+                                countries.map(c => (<option key={
+                                    c.id
+                                }
+
+                                    value={
                                         c.id
                                     }
 
-                                    value= {
-                                        c.id
-                                    }
-
-                                    > {
+                                > {
                                         c.name
                                     }
 
                                     ( {
-                                            c.code
-                                        }
+                                        c.code
+                                    }
 
                                     ) </option>))
-                        }
+                            }
 
                         </select> </div> <div className="form-group"> <label>Type *</label> <select name="typeId"
 
-                        value= {
-                            formData.typeId
-                        }
+                            value={
+                                formData.typeId
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        required > <option value="">Select Type</option> {
-                            resumeTypes.map(t=> (<option key= {
+                            required > <option value="">Select Type</option> {
+                                resumeTypes.map(t => (<option key={
+                                    t.id
+                                }
+
+                                    value={
                                         t.id
                                     }
 
-                                    value= {
-                                        t.id
-                                    }
-
-                                    > {
+                                > {
                                         t.name
                                     }
 
-                                    </option>))
-                        }
+                                </option>))
+                            }
 
                         </select> </div> <div className="form-group"> <label>Full Name</label> <input type="text"
-                        name="fullName"
+                            name="fullName"
 
-                        value= {
-                            formData.fullName
-                        }
+                            value={
+                                formData.fullName
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        placeholder="Your full name"
+                            placeholder="Your full name"
                         /> </div> <div className="form-group"> <label>Email</label> <input type="email"
-                        name="email"
+                            name="email"
 
-                        value= {
-                            formData.email
-                        }
+                            value={
+                                formData.email
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        placeholder="Email address"
+                            placeholder="Email address"
                         /> </div> <div className="form-group"> <label>Phone</label> <input type="tel"
-                        name="phone"
+                            name="phone"
 
-                        value= {
-                            formData.phone
-                        }
+                            value={
+                                formData.phone
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        placeholder="Phone number"
+                            placeholder="Phone number"
                         /> </div> <div className="form-group"> <label>Location</label> <input type="text"
-                        name="location"
+                            name="location"
 
-                        value= {
-                            formData.location
-                        }
+                            value={
+                                formData.location
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        placeholder="City, Country"
+                            placeholder="City, Country"
 
                         /> </div> <div className="form-group full-width"> <label>Summary</label> <textarea name="summary"
-                        value= {
-                            formData.summary
-                        }
+                            value={
+                                formData.summary
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        placeholder="Professional summary"
-                        rows="3"
+                            placeholder="Professional summary"
+                            rows="3"
                         /> </div> <div className="form-group"> <label>LinkedIn URL</label> <input type="url"
-                        name="linkedinUrl"
+                            name="linkedinUrl"
 
-                        value= {
-                            formData.linkedinUrl
-                        }
+                            value={
+                                formData.linkedinUrl
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        placeholder="https://linkedin.com/in/..."
+                            placeholder="https://linkedin.com/in/..."
                         /> </div> <div className="form-group"> <label>Portfolio URL</label> <input type="url"
-                        name="portfolioUrl"
+                            name="portfolioUrl"
 
-                        value= {
-                            formData.portfolioUrl
-                        }
+                            value={
+                                formData.portfolioUrl
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        placeholder="Your portfolio link"
+                            placeholder="Your portfolio link"
                         /> </div> <div className="form-group"> <label>GitHub URL</label> <input type="url"
-                        name="githubUrl"
+                            name="githubUrl"
 
-                        value= {
-                            formData.githubUrl
-                        }
+                            value={
+                                formData.githubUrl
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        placeholder="https://github.com/..."
+                            placeholder="https://github.com/..."
                         /> </div> <div className="form-group checkbox"> <label> <input type="checkbox"
-                        name="isPublic"
+                            name="isPublic"
 
-                        checked= {
-                            formData.isPublic
-                        }
+                            checked={
+                                formData.isPublic
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
                         /> Make Public </label> </div> <div className="form-group checkbox"> <label> <input type="checkbox"
-                        name="allowDownload"
+                            name="allowDownload"
 
-                        checked= {
-                            formData.allowDownload
-                        }
+                            checked={
+                                formData.allowDownload
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
                         /> Allow Download </label> </div> <div className="form-group checkbox"> <label> <input type="checkbox"
-                        name="allowShare"
+                            name="allowShare"
 
-                        checked= {
-                            formData.allowShare
-                        }
+                            checked={
+                                formData.allowShare
+                            }
 
-                        onChange= {
-                            handleChange
-                        }
+                            onChange={
+                                handleChange
+                            }
 
-                        /> Allow Share </label> </div> </div> <div className="form-actions"> <button type="submit"className="btn btn-primary"> Create Resume </button> <button type="button"
-                        className="btn btn-secondary"
+                        /> Allow Share </label> </div> </div> <div className="form-actions"> <button type="submit" className="btn btn-primary"> Create Resume </button> <button type="button"
+                            className="btn btn-secondary"
 
-                        onClick= {
-                            ()=> setShowForm(false)
-                        }
+                            onClick={
+                                () => setShowForm(false)
+                            }
 
                         > Cancel </button> </div> </form> </div>)
                 }
 
-                    {
+                {
                     /* Resumes List */
                 }
 
                 <div className="resumes-list"> {
-                    resumes.length===0 ? (<p className="empty-state">No resumes created yet. Create your first resume !</p>) : (<div className="grid"> {
-                            resumes.map(resume=> (<div key= {
-                                        resume.id
-                                    }
+                    resumes.length === 0 ? (<p className="empty-state">No resumes created yet. Create your first resume !</p>) : (<div className="grid"> {
+                        resumes.map(resume => (<div key={
+                            resume.id
+                        }
 
-                                    className="resume-card"> <div className="card-header"> <h3> {
-                                        resume.title
-                                    }
+                            className="resume-card"> <div className="card-header"> <h3> {
+                                resume.title
+                            }
 
-                                    </h3> <span className={`badge ${resume.isPublished ? 'published' : 'draft'}`}
+                            </h3> <span className={`badge ${resume.isPublished ? 'published' : 'draft'}`}
 
-                                    > {
+                            > {
                                         resume.isPublished ? 'Published' : 'Draft'
                                     }
 
-                                    </span> </div> <div className="card-body"> <p className="description"> {
-                                        resume.description
-                                    }
+                                </span> </div> <div className="card-body"> <p className="description"> {
+                                    resume.description
+                                }
 
-                                    </p> <div className="meta"> <span>📍 {
-                                        resume.country?.name
-                                    }
+                                </p> <div className="meta"> <span>📍 {
+                                    resume.country?.name
+                                }
 
-                                    </span> <span>📋 {
-                                        resume.type?.name
-                                    }
+                                </span> <span>📋 {
+                                    resume.type?.name
+                                }
 
                                     </span> <span>🎨 {
                                         resume.template?.name
                                     }
 
                                     </span> </div> {
-                                        resume.fullName && <p><strong> {
-                                            resume.fullName
-                                        }
-
-                                        </strong></p>
+                                    resume.fullName && <p><strong> {
+                                        resume.fullName
                                     }
 
-                                    <div className="stats"> <span><FiEye /> {
-                                        resume.views
-                                    }
+                                    </strong></p>
+                                }
+
+                                <div className="stats"> <span><FiEye /> {
+                                    resume.views
+                                }
 
                                     views</span> <span><FiDownload /> {
                                         resume.downloads
                                     }
 
-                                    downloads</span> <span><FiShare2 /> {
-                                        resume.shares
-                                    }
+                                        downloads</span> <span><FiShare2 /> {
+                                            resume.shares
+                                        }
 
-                                    shares</span> </div> </div> <div className="card-actions"> <button className="btn-action view"
-                                    title="View Resume"
+                                        shares</span> </div> </div> <div className="card-actions"> <button className="btn-action view"
+                                            title="View Resume"
 
-                                    onClick= {
-                                        ()=> handleViewResume(resume)
-                                    }
-
-                                    > <FiExternalLink /> </button> <button className="btn-action"title="View as PDF"
-
-                                    onClick= {
-                                        ()=> handleViewPdf(resume.id)
-                                    }
-
-                                    > 📄 </button> <button className="btn-action"title="Edit"
-
-                                    onClick= {
-                                        ()=> handleEditResume(resume)
-                                    }
-
-                                    > <FiEdit2 /> </button> {
-                                         !resume.isPublished && (<button className="btn-action publish"
-                                            title="Publish"
-
-                                            onClick= {
-                                                ()=> handlePublishResume(resume.id)
+                                            onClick={
+                                                () => handleViewResume(resume)
                                             }
 
-                                            > <FiCheck /> </button>)
-                                    }
+                                        > <FiExternalLink /> </button> <button className="btn-action" title="View as PDF"
 
-                                        {
-                                         !resume.isPublic && (<button className="btn-action public"
-                                            title="Make Public"
-
-                                            onClick= {
-                                                ()=> handleMakePublic(resume.id)
+                                            onClick={
+                                                () => handleViewPdf(resume.id)
                                             }
 
-                                            > <FiShare2 /> </button>)
-                                    }
+                                        > 📄 </button> <button className="btn-action" title="Edit"
 
-                                    <button className="btn-action copy"
+                                            onClick={
+                                                () => handleEditResume(resume)
+                                            }
+
+                                        > <FiEdit2 /> </button> {
+                                    !resume.isPublished && (<button className="btn-action publish"
+                                        title="Publish"
+
+                                        onClick={
+                                            () => handlePublishResume(resume.id)
+                                        }
+
+                                    > <FiCheck /> </button>)
+                                }
+
+                                {
+                                    !resume.isPublic && (<button className="btn-action public"
+                                        title="Make Public"
+
+                                        onClick={
+                                            () => handleMakePublic(resume.id)
+                                        }
+
+                                    > <FiShare2 /> </button>)
+                                }
+
+                                <button className="btn-action copy"
                                     title="Copy Link"
 
-                                    onClick= {
-                                        ()=> handleCopyShareableLink(resume)
+                                    onClick={
+                                        () => handleCopyShareableLink(resume)
                                     }
 
-                                    > <FiCopy /> </button> <button className="btn-action clone"
+                                > <FiCopy /> </button> <button className="btn-action clone"
                                     title="Clone"
 
-                                    onClick= {
-                                        ()=> handleCloneResume(resume.id)
+                                    onClick={
+                                        () => handleCloneResume(resume.id)
                                     }
 
-                                    > 📋 </button> <button className="btn-action delete"
+                                > 📋 </button> <button className="btn-action delete"
                                     title="Delete"
 
-                                    onClick= {
-                                        ()=> handleDeleteResume(resume.id)
+                                    onClick={
+                                        () => handleDeleteResume(resume.id)
                                     }
 
-                                    > <FiTrash2 /> </button> </div> </div>))
-                        }
+                                > <FiTrash2 /> </button> </div> </div>))
+                    }
 
-                        </div>)
+                    </div>)
                 }
 
                 </div> </div>)
         }
 
-            {
+        {
             /* TEMPLATES TAB */
         }
 
-            {
-            activeTab==='templates'&& (<div className="tab-content"> <div className="section-header"> <h2>Resume Templates</h2> </div> <div className="templates-list"> {
-                    templates.length===0 ? (<p className="empty-state">No templates available</p>) : (<div className="grid"> {
-                            templates.map(template=> (<div key= {
-                                        template.id
-                                    }
+        {
+            activeTab === 'templates' && (<div className="tab-content"> <div className="section-header"> <h2>Resume Templates</h2> </div> <div className="templates-list"> {
+                templates.length === 0 ? (<p className="empty-state">No templates available</p>) : (<div className="grid"> {
+                    templates.map(template => (<div key={
+                        template.id
+                    }
 
-                                    className="template-card"> {
-                                        template.thumbnail && (<img src= {
-                                                template.thumbnail
-                                            }
+                        className="template-card"> {
+                            template.thumbnail && (<img src={
+                                template.thumbnail
+                            }
 
-                                            alt= {
-                                                template.name
-                                            }
+                                alt={
+                                    template.name
+                                }
 
-                                            className="thumbnail"/>)
-                                    }
-
-                                    <h3> {
-                                        template.name
-                                    }
-
-                                    </h3> <p> {
-                                        template.description
-                                    }
-
-                                    </p> <div className="template-info"> <span>🌍 {
-                                        template.country?.name
-                                    }
-
-                                    </span> <span>📋 {
-                                        template.type?.name
-                                    }
-
-                                    </span> </div> </div>))
+                                className="thumbnail" />)
                         }
 
-                        </div>)
+                        <h3> {
+                            template.name
+                        }
+
+                        </h3> <p> {
+                            template.description
+                        }
+
+                        </p> <div className="template-info"> <span>🌍 {
+                            template.country?.name
+                        }
+
+                        </span> <span>📋 {
+                            template.type?.name
+                        }
+
+                            </span> </div> </div>))
                 }
 
-                </div> </div>)
+                </div>)
+            }
+
+            </div> </div>)
         }
 
-            {
+        {
             /* COUNTRIES TAB */
         }
 
-            {
-            activeTab==='countries'&& (<div className="tab-content"> <div className="section-header"> <h2>Resume Countries</h2> </div> <div className="countries-list"> {
-                    countries.length===0 ? (<p className="empty-state">No countries configured</p>) : (<div className="grid"> {
-                            countries.map(country=> (<div key= {
-                                        country.id
-                                    }
+        {
+            activeTab === 'countries' && (<div className="tab-content"> <div className="section-header"> <h2>Resume Countries</h2> </div> <div className="countries-list"> {
+                countries.length === 0 ? (<p className="empty-state">No countries configured</p>) : (<div className="grid"> {
+                    countries.map(country => (<div key={
+                        country.id
+                    }
 
-                                    className="country-card"> <h3> {
-                                        country.name
-                                    }
-
-                                    </h3> <p className="code"> {
-                                        country.code
-                                    }
-
-                                    </p> <p className="description"> {
-                                        country.description
-                                    }
-
-                                    </p> {
-                                        country.preferredLength && (<p className="meta">📄 Preferred: {
-                                                country.preferredLength
-                                            }
-
-                                            page(s)</p>)
-                                    }
-
-                                        {
-                                        country.dateFormat && (<p className="meta">📅 Date Format: {
-                                                country.dateFormat
-                                            }
-
-                                            </p>)
-                                    }
-
-                                    <p className="template-count"> {
-                                        country.templates.length
-                                    }
-
-                                    template(s) </p> </div>))
+                        className="country-card"> <h3> {
+                            country.name
                         }
 
-                        </div>)
+                        </h3> <p className="code"> {
+                            country.code
+                        }
+
+                        </p> <p className="description"> {
+                            country.description
+                        }
+
+                        </p> {
+                            country.preferredLength && (<p className="meta">📄 Preferred: {
+                                country.preferredLength
+                            }
+
+                                page(s)</p>)
+                        }
+
+                        {
+                            country.dateFormat && (<p className="meta">📅 Date Format: {
+                                country.dateFormat
+                            }
+
+                            </p>)
+                        }
+
+                        <p className="template-count"> {
+                            country.templates.length
+                        }
+
+                            template(s) </p> </div>))
                 }
 
-                </div> </div>)
+                </div>)
+            }
+
+            </div> </div>)
         }
 
-        </div>);
+    </div>);
 }
 
-;
+    ;
 
 export default ResumeManagerV2;

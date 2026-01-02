@@ -347,7 +347,8 @@ const PortfolioContentPicker = ({
 
             case 'references': return {
                 id: uniqueId,
-                sourceId: item.id,
+                sourceId: item.id || item.sourceId,
+                sourceSlug: item.sourceSlug || item.slug,
                 name: item.name || '',
                 title: item.title || '',
                 company: item.company || '',
