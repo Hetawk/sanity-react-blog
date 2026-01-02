@@ -169,12 +169,18 @@ const LiveResumePreview = ({
                 return hasContent(experience) && (
                     <section key="experience" className="resume-section">
                         <h2 className="section-title">Work Experience</h2>
-                        {experience.map((exp, index) => (
+                        {experience.filter(exp => {
+                            // Filter out entries with no meaningful content
+                            const hasPosition = exp.position || exp.role || exp.title;
+                            const hasCompany = exp.company || exp.organization;
+                            const hasDescription = exp.description;
+                            return hasPosition || hasCompany || hasDescription;
+                        }).map((exp, index) => (
                             <div key={exp.id || index} className="resume-entry">
                                 <div className="entry-header">
                                     <div className="entry-main">
-                                        <h3 className="entry-title">{exp.position || 'Position'}</h3>
-                                        <span className="entry-company">{exp.company || 'Company'}</span>
+                                        <h3 className="entry-title">{exp.position || exp.role || exp.title || ''}</h3>
+                                        <span className="entry-company">{exp.company || exp.organization || ''}</span>
                                     </div>
                                     <div className="entry-meta">
                                         <span className="entry-period">

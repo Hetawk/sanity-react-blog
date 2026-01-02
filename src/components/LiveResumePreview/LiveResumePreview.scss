@@ -74,7 +74,7 @@ $brand-light: #fff5f3;
     .resume-paper {
         width: 210mm; // A4 width
         min-height: 297mm; // A4 height
-        margin: 0 auto;
+        margin: 0 auto 32px; // Add bottom margin for page separation
         padding: 20mm 25mm; // Standard professional resume margins
         background: #fff;
         box-shadow:
@@ -88,7 +88,22 @@ $brand-light: #fff5f3;
         transition: transform 0.2s ease;
         // Allow content to flow naturally and break to new pages
         overflow: visible;
-        page-break-inside: auto;
+        
+        // Page break control classes
+        .page-break-before {
+            break-before: page;
+            page-break-before: always;
+        }
+        
+        .page-break-after {
+            break-after: page;
+            page-break-after: always;
+        }
+        
+        .avoid-break {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
 
         // Header
         .resume-header {
@@ -143,6 +158,14 @@ $brand-light: #fff5f3;
         // Sections
         .resume-section {
             margin-bottom: 16px;
+            // Avoid breaking section headers from their content
+            break-inside: avoid-column;
+            
+            // Keep section title with at least some content
+            .section-title {
+                break-after: avoid;
+                page-break-after: avoid;
+            }
 
             .section-title {
                 font-size: 11pt;
@@ -169,6 +192,9 @@ $brand-light: #fff5f3;
             padding-bottom: 12px;
             border-bottom: 1px dashed #e2e8f0;
             position: relative;
+            // Avoid breaking inside entries when possible
+            break-inside: avoid;
+            page-break-inside: avoid;
 
             &:last-child {
                 margin-bottom: 0;
@@ -446,5 +472,127 @@ $brand-light: #fff5f3;
 @media (max-width: 1200px) {
     .live-resume-preview-container {
         display: none; // Hide preview on smaller screens
+    }
+}
+
+// ============================================
+// PRINT STYLES - For PDF Export & Printing
+// ============================================
+@media print {
+    @page {
+        size: A4;
+        margin: 15mm 20mm;
+    }
+    
+    // Hide non-printable elements
+    .live-resume-preview-container {
+        .preview-header,
+        .preview-controls {
+            display: none !important;
+        }
+        
+        .preview-scroll-area {
+            overflow: visible !important;
+            padding: 0 !important;
+            background: white !important;
+        }
+    }
+    
+    .resume-paper {
+        width: 100% !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        transform: none !important;
+        
+        // Page break control
+        .resume-header {
+            break-after: avoid;
+            page-break-after: avoid;
+        }
+        
+        .resume-section {
+            break-inside: avoid-column;
+            page-break-inside: auto;
+            
+            // Keep section title with its content
+            .section-title {
+                break-after: avoid;
+                page-break-after: avoid;
+                orphans: 3;
+                widows: 3;
+            }
+        }
+        
+        .resume-entry {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            
+            // Keep header with at least some content
+            .entry-header {
+                break-after: avoid;
+                page-break-after: avoid;
+            }
+        }
+        
+        // Skills can wrap to next page
+        .skills-grid {
+            break-inside: auto;
+            page-break-inside: auto;
+            
+            .skill-tag {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+        
+        // References - each entry stays together
+        .references-list .resume-entry {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        
+        // Hide portfolio indicators in print
+        .portfolio-indicator {
+            display: none !important;
+        }
+        
+        // Ensure footer doesn't orphan
+        .resume-footer {
+            break-before: avoid;
+            page-break-before: avoid;
+        }
+    }
+}
+
+// ============================================
+// VISUAL PAGE BREAK INDICATOR (for preview)
+// ============================================
+.page-break-indicator {
+    position: relative;
+    width: 100%;
+    height: 32px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 10px,
+        rgba($brand-primary, 0.1) 10px,
+        rgba($brand-primary, 0.1) 20px
+    );
+    
+    &::before {
+        content: '— Page Break —';
+        background: $brand-dark;
+        color: rgba(255, 255, 255, 0.6);
+        padding: 4px 16px;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 12px;
     }
 }

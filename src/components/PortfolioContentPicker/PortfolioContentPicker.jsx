@@ -27,61 +27,43 @@ import {
 import './PortfolioContentPicker.scss';
 
 // Available content types for portfolio
-const CONTENT_TYPES = [{
-    key: 'experiences', label: 'Work Experience', icon: '💼'
-}
-
-    ,
-{
-    key: 'education', label: 'Education', icon: '🎓'
-}
-
-    ,
-{
-    key: 'skills', label: 'Skills', icon: '⚡'
-}
-
-    ,
-{
-    key: 'certifications', label: 'Certifications', icon: '📜'
-}
-
-    ,
-{
-    key: 'awards', label: 'Awards', icon: '🏆'
-}
-
-    ,
-{
-    key: 'projects', label: 'Projects', icon: '🚀'
-}
-
-    ,
-{
-    key: 'publications', label: 'Publications', icon: '📚'
-}
-
-    ,
-{
-    key: 'leadership', label: 'Leadership', icon: '👥'
-}
-
-    ,
-{
-    key: 'volunteer', label: 'Volunteer Work', icon: '🤝'
-}
-
-    ,
-{
-    key: 'references', label: 'References', icon: '📋'
-}
-
-    ,
-{
-    key: 'languages', label: 'Languages', icon: '🌍'
-}
-
-    ,
+const CONTENT_TYPES = [
+    {
+        key: 'all', label: 'All Content', icon: '📁'
+    },
+    {
+        key: 'experiences', label: 'Work Experience', icon: '💼'
+    },
+    {
+        key: 'education', label: 'Education', icon: '🎓'
+    },
+    {
+        key: 'skills', label: 'Skills', icon: '⚡'
+    },
+    {
+        key: 'certifications', label: 'Certifications', icon: '📜'
+    },
+    {
+        key: 'awards', label: 'Awards', icon: '🏆'
+    },
+    {
+        key: 'projects', label: 'Projects', icon: '🚀'
+    },
+    {
+        key: 'publications', label: 'Publications & Reviews', icon: '📚'
+    },
+    {
+        key: 'leadership', label: 'Leadership', icon: '👥'
+    },
+    {
+        key: 'volunteer', label: 'Volunteer Work', icon: '🤝'
+    },
+    {
+        key: 'references', label: 'References', icon: '📋'
+    },
+    {
+        key: 'languages', label: 'Languages', icon: '🌍'
+    },
 ];
 
 /**
@@ -152,15 +134,27 @@ const PortfolioContentPicker = ({
         setError(null);
 
         try {
-            let response;
-
             const searchParam = debouncedQuery.trim() ? `?search=${encodeURIComponent(debouncedQuery)}` : '';
 
-            // Use apiClient.get directly
-            response = await apiClient.get(`/api/portfolio-content/${contentType}${searchParam}`);
-
-            // Handle the response format - it returns {success: true, items: [...], total: N}
-            setResults(response.items || response.data || []);
+            if (contentType === 'all') {
+                // Fetch all content types and combine them
+                const types = ['experiences', 'education', 'skills', 'certifications', 'awards', 'projects', 'publications', 'leadership', 'volunteer', 'references', 'languages'];
+                const responses = await Promise.all(
+                    types.map(type =>
+                        apiClient.get(`/api/portfolio-content/${type}${searchParam}`)
+                            .then(res => (res.items || res.data || []).map(item => ({ ...item, _contentType: type })))
+                            .catch(() => [])
+                    )
+                );
+                // Flatten and sort by most recent
+                const allItems = responses.flat();
+                setResults(allItems);
+            } else {
+                // Use apiClient.get directly
+                const response = await apiClient.get(`/api/portfolio-content/${contentType}${searchParam}`);
+                // Handle the response format - it returns {success: true, items: [...], total: N}
+                setResults(response.items || response.data || []);
+            }
         }
 
         catch (err) {
@@ -207,12 +201,14 @@ const PortfolioContentPicker = ({
     const handleConfirm = () => {
 
         // Transform all items with unique IDs and pass them all at once
-        const transformedItems = pendingSelections.map((item, index) => ({
-            item: transformItemForResume(item, contentType, index),
-            contentType: contentType
-        }
-
-        ));
+        const transformedItems = pendingSelections.map((item, index) => {
+            // Use item's _contentType if available (from 'all' search), otherwise use current contentType
+            const itemType = item._contentType || contentType;
+            return {
+                item: transformItemForResume(item, itemType, index),
+                contentType: itemType
+            };
+        });
 
         // Pass all items at once to the parent handler
         onSelect(transformedItems, contentType, true); // true = batch mode
@@ -230,105 +226,136 @@ const PortfolioContentPicker = ({
             case 'experiences': return {
                 id: uniqueId,
                 sourceId: item.id,
-                position: item.position || item.name || '',
-                company: item.company || item.employer || '',
+                sourceType: 'Experience',
+                // Primary fields
+                position: item.position || item.role || item.title || item.name || '',
+                company: item.company || item.employer || item.organization || '',
                 location: item.location || '',
                 period: formatPeriod(item.startDate, item.endDate, item.isCurrent),
                 startDate: item.startDate,
                 endDate: item.endDate,
                 isCurrent: item.isCurrent || false,
+                // Cross-compatible fields
+                role: item.role || item.position || '',
+                organization: item.organization || item.company || item.employer || '',
+                title: item.title || item.position || item.name || '',
                 description: item.resumeSummary || item.desc || item.description || '',
                 responsibilities: parseResponsibilities(item.responsibilities)
-            }
-
-                ;
+            };
 
             case 'education': return {
                 id: uniqueId,
                 sourceId: item.id,
-                degree: item.degree || '',
-                field: item.field || '',
-                institution: item.institution || '',
+                sourceType: 'Education',
+                degree: item.degree || item.title || '',
+                field: item.field || item.major || item.specialization || '',
+                institution: item.institution || item.school || item.university || item.organization || '',
                 location: item.location || '',
                 period: formatPeriod(item.startDate, item.endDate, item.isCurrent),
                 startDate: item.startDate,
                 endDate: item.endDate,
+                graduationYear: item.graduationYear || (item.endDate ? new Date(item.endDate).getFullYear() : ''),
                 gpa: item.gpa || '',
-                description: item.resumeSummary || item.description || ''
-            }
-
-                ;
+                description: item.resumeSummary || item.description || '',
+                // Cross-compatible
+                title: item.degree || item.title || '',
+                organization: item.institution || item.school || ''
+            };
 
             case 'certifications': return {
                 id: uniqueId,
                 sourceId: item.id,
-                name: item.name || '',
-                issuer: item.issuer || '',
-                issueDate: item.issueDate,
+                sourceType: 'Certification',
+                name: item.name || item.title || '',
+                title: item.title || item.name || '',
+                issuer: item.issuer || item.organization || item.issuingOrganization || '',
+                organization: item.issuer || item.organization || '',
+                issueDate: item.issueDate || item.date,
+                date: item.issueDate || item.date || '',
                 expirationDate: item.expirationDate,
                 credentialId: item.credentialId || '',
-                credentialUrl: item.credentialUrl || '',
+                credentialUrl: item.credentialUrl || item.url || '',
                 description: item.resumeSummary || item.description || ''
-            }
-
-                ;
+            };
 
             case 'awards': return {
                 id: uniqueId,
                 sourceId: item.id,
-                title: item.title || '',
-                issuer: item.issuer || '',
-                year: item.year || (item.awardDate ? new Date(item.awardDate).getFullYear() : ''),
+                sourceType: 'Award',
+                title: item.title || item.name || '',
+                name: item.name || item.title || '',
+                issuer: item.issuer || item.awarder || item.organization || '',
+                awarder: item.awarder || item.issuer || item.organization || '',
+                organization: item.organization || item.issuer || item.awarder || '',
+                year: item.year || (item.awardDate ? new Date(item.awardDate).getFullYear() : (item.date ? new Date(item.date).getFullYear() : '')),
+                date: item.awardDate || item.date || '',
                 description: item.resumeSummary || item.description || ''
-            }
-
-                ;
+            };
 
             case 'projects': return {
                 id: uniqueId,
                 sourceId: item.id,
-                title: item.title || '',
+                sourceType: 'Project',
+                title: item.title || item.name || '',
+                name: item.name || item.title || '',
                 role: item.role || '',
+                position: item.role || '',
                 period: formatPeriod(item.startDate, item.endDate, item.isCurrent),
-                techStack: item.techStack || item.tags || '',
+                startDate: item.startDate,
+                endDate: item.endDate,
+                techStack: item.techStack || item.tags || item.technologies || '',
                 description: item.resumeSummary || item.description || '',
-                url: item.projectLink || item.liveUrl || ''
-            }
-
-                ;
+                url: item.projectLink || item.liveUrl || item.url || '',
+                organization: item.organization || item.company || ''
+            };
 
             case 'skills': return {
                 id: uniqueId,
                 sourceId: item.id,
-                name: item.name || '',
-                category: item.category || '',
-                proficiencyLevel: item.proficiencyLevel || 0,
-                yearsExperience: item.yearsExperience || 0,
+                sourceType: 'Skill',
+                name: item.name || item.skill || item.title || '',
+                title: item.title || item.name || '',
+                category: item.category || item.type || '',
+                proficiencyLevel: item.proficiencyLevel || item.level || 0,
+                level: item.level || item.proficiencyLevel || '',
+                yearsExperience: item.yearsExperience || item.years || 0,
                 description: item.resumeSummary || item.description || ''
-            }
-
-                ;
+            };
 
             case 'publications': return {
                 id: uniqueId,
                 sourceId: item.id,
+                sourceType: item.sourceType || 'Publication', // 'Publication' or 'PeerReview'
+                itemType: item.itemType || 'publication', // 'publication' or 'peerReview'
                 title: item.title || '',
                 venue: item.venue || '',
                 year: item.year || '',
                 authors: item.authors || '',
                 url: item.url || '',
-                description: item.resumeSummary || item.abstract || ''
-            }
-
-                ;
+                notes: item.notes || '', // For 'Under Review' status etc.
+                status: item.status || 'Published',
+                description: item.resumeSummary || item.abstract || item.description || '',
+                // PeerReview specific fields
+                publisher: item.publisher || '',
+                verified: item.verified || false,
+                verifiedBy: item.verifiedBy || ''
+            };
 
             case 'leadership': return {
                 id: uniqueId,
                 sourceId: item.id,
+                sourceType: 'Leadership',
+                // Map leadership fields to experience-compatible fields
+                position: item.role || item.title || '',
+                company: item.organization || '',
+                // Keep original fields for reference
                 title: item.title || '',
                 organization: item.organization || '',
                 role: item.role || '',
                 period: formatPeriod(item.startDate, item.endDate, item.isCurrent),
+                startDate: item.startDate,
+                endDate: item.endDate,
+                isCurrent: item.isCurrent || false,
                 description: item.resumeSummary || item.description || ''
             }
 
@@ -337,39 +364,48 @@ const PortfolioContentPicker = ({
             case 'volunteer': return {
                 id: uniqueId,
                 sourceId: item.id,
-                role: item.role || '',
-                organization: item.organization || '',
+                sourceType: 'VolunteerWork',
+                // Primary fields
+                role: item.role || item.position || item.title || '',
+                organization: item.organization || item.company || '',
                 period: formatPeriod(item.startDate, item.endDate, item.isCurrent),
+                startDate: item.startDate,
+                endDate: item.endDate,
+                isCurrent: item.isCurrent || false,
+                // Cross-compatible fields (for mapping to experience)
+                position: item.role || item.position || item.title || '',
+                company: item.organization || item.company || '',
+                title: item.title || item.role || '',
                 description: item.resumeSummary || item.description || ''
-            }
-
-                ;
+            };
 
             case 'references': return {
                 id: uniqueId,
                 sourceId: item.id || item.sourceId,
                 sourceSlug: item.sourceSlug || item.slug,
+                sourceType: 'Reference',
                 name: item.name || '',
-                title: item.title || '',
-                company: item.company || '',
+                title: item.title || item.position || item.role || '',
+                position: item.position || item.title || '',
+                company: item.company || item.organization || '',
+                organization: item.organization || item.company || '',
                 relationship: item.relationship || '',
                 email: item.email || '',
                 phone: item.phone || '',
                 hasConsent: item.hasConsent || false
-            }
-
-                ;
+            };
 
             case 'languages': return {
                 id: uniqueId,
                 sourceId: item.id,
-                language: item.language || '',
-                proficiency: item.proficiency || '',
+                sourceType: 'Language',
+                language: item.language || item.name || '',
+                name: item.name || item.language || '',
+                proficiency: item.proficiency || item.level || '',
+                level: item.level || item.proficiency || '',
                 isNative: item.isNative || false,
                 certifications: item.certifications || ''
-            }
-
-                ;
+            };
 
             default: return item;
         }
@@ -421,10 +457,17 @@ const PortfolioContentPicker = ({
 
         ;
 
+    // Get content type label and icon
+    const getContentTypeInfo = (key) => {
+        return CONTENT_TYPES.find(t => t.key === key) || { label: key, icon: '📄' };
+    };
+
     // Render item based on content type
     const renderItem = (item) => {
         const isAlreadyAdded = selectedIds.includes(item.id);
         const isPending = pendingSelections.some(s => s.id === item.id);
+        const itemType = item._contentType || contentType;
+        const typeInfo = getContentTypeInfo(itemType);
 
         return (<div key={
             item.id
@@ -440,18 +483,21 @@ const PortfolioContentPicker = ({
             isAlreadyAdded ? (<FiCheck className="already-added" />) : isPending ? (<FiCheck className="checked" />) : (<div className="unchecked" />)
         }
 
-            </div> <div className="item-content"> {
-                renderItemContent(item)
-            }
-
+            </div> <div className="item-content">
+                {contentType === 'all' && (
+                    <div className="item-type-badge" style={{ fontSize: '0.75em', color: '#666', marginBottom: '4px' }}>
+                        {typeInfo.icon} {typeInfo.label}
+                    </div>
+                )}
+                {renderItemContent(item, itemType)}
             </div> </div>);
     }
 
         ;
 
     // Render item content based on type
-    const renderItemContent = (item) => {
-        switch (contentType) {
+    const renderItemContent = (item, type = contentType) => {
+        switch (type) {
             case 'experiences': return (<> <div className="item-title"> {
                 item.position || item.name
             }
@@ -569,17 +615,16 @@ const PortfolioContentPicker = ({
             case 'publications': return (<> <div className="item-title"> {
                 item.title
             }
-
+                {item.itemType === 'peerReview' && <span className="badge badge-info" style={{ marginLeft: '8px', fontSize: '0.7em', padding: '2px 6px', borderRadius: '4px', background: '#17a2b8', color: 'white' }}>Peer Review</span>}
+                {item.status === 'Under Review' && <span className="badge badge-warning" style={{ marginLeft: '8px', fontSize: '0.7em', padding: '2px 6px', borderRadius: '4px', background: '#ffc107', color: '#333' }}>Under Review</span>}
             </div> <div className="item-subtitle"> {
                 item.venue
             }
-
+                    {item.verifiedBy && <span style={{ marginLeft: '8px', fontSize: '0.85em', color: '#28a745' }}>✓ {item.verifiedBy}</span>}
                 </div> <div className="item-meta"> {
                     item.year
                 }
-
                     {item.authors && ` • ${item.authors}`}
-
                 </div> </>);
 
             case 'leadership': return (<> <div className="item-title"> {

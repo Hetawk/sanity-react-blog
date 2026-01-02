@@ -269,37 +269,69 @@ const searchSkills = async (options = {}) => {
 };
 
 // ============================================
-// PUBLICATIONS SEARCH
+// PUBLICATIONS SEARCH (includes Peer Reviews)
 // ============================================
 
 /**
- * Search publications for resume
+ * Search publications and peer reviews for resume
+ * Both are research-related content types, so we combine them
  * @param {object} options - Search options
  * @returns {Promise<object>} Search results
  */
 const searchPublications = async (options = {}) => {
     const { search = '' } = options;
 
-    const where = {
+    // Publications query
+    const pubWhere = {
         ...buildPublishedWhere(options),
         OR: search ? buildSearchConditions(search, ['title', 'abstract', 'venue', 'authors']) : undefined,
     };
+    if (!pubWhere.OR?.length) delete pubWhere.OR;
 
-    if (!where.OR?.length) delete where.OR;
+    // Peer Reviews query
+    const reviewWhere = {
+        ...buildPublishedWhere(options),
+        OR: search ? buildSearchConditions(search, ['title', 'journalName', 'organization', 'publisher']) : undefined,
+    };
+    if (!reviewWhere.OR?.length) delete reviewWhere.OR;
 
-    const items = await prisma.publication.findMany({
-        where,
-        orderBy: [
-            { isFeatured: 'desc' },
-            { year: 'desc' },
-            { displayOrder: 'asc' },
-        ],
-        ...buildPagination(options),
-    });
+    // Fetch both publications and peer reviews
+    const [publications, peerReviews] = await Promise.all([
+        prisma.publication.findMany({
+            where: pubWhere,
+            orderBy: [
+                { isFeatured: 'desc' },
+                { year: 'desc' },
+                { displayOrder: 'asc' },
+            ],
+            ...buildPagination(options),
+        }),
+        prisma.peerReview.findMany({
+            where: reviewWhere,
+            orderBy: [
+                { isFeatured: 'desc' },
+                { year: 'desc' },
+                { displayOrder: 'asc' },
+            ],
+            ...buildPagination(options),
+        }),
+    ]);
+
+    // Count totals
+    const [pubTotal, reviewTotal] = await Promise.all([
+        prisma.publication.count({ where: pubWhere }),
+        prisma.peerReview.count({ where: reviewWhere }),
+    ]);
+
+    // Combine and sort by year (descending)
+    const allItems = [
+        ...publications.map(item => resumeUtils.mapPublicationToResume(item)),
+        ...peerReviews.map(item => resumeUtils.mapPeerReviewToResume(item)),
+    ].sort((a, b) => (b.year || 0) - (a.year || 0));
 
     return {
-        items: items.map(item => resumeUtils.mapPublicationToResume(item)),
-        total: await prisma.publication.count({ where }),
+        items: allItems,
+        total: pubTotal + reviewTotal,
     };
 };
 

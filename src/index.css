@@ -18,3 +18,80 @@
   margin: 0;
   scroll-behavior: smooth;
 }
+
+/* ============================================
+   GLOBAL PRINT STYLES
+   For PDF Export & Browser Printing
+   ============================================ */
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm 20mm;
+  }
+  
+  /* Hide navigation and non-printable elements */
+  nav,
+  .sidebar,
+  .preview-header,
+  .preview-controls,
+  .resume-actions,
+  .btn,
+  button:not(.print-include),
+  .toast-container,
+  .modal-overlay {
+    display: none !important;
+  }
+  
+  /* Reset backgrounds for printing */
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Page break utilities */
+  .page-break-before {
+    break-before: page;
+    page-break-before: always;
+  }
+  
+  .page-break-after {
+    break-after: page;
+    page-break-after: always;
+  }
+  
+  .avoid-break,
+  .resume-entry {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  /* Keep headers with content */
+  h1, h2, h3, h4, h5, h6 {
+    break-after: avoid;
+    page-break-after: avoid;
+    orphans: 3;
+    widows: 3;
+  }
+  
+  /* Resume specific print styles */
+  .resume-paper {
+    width: 100% !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  
+  .resume-section {
+    break-inside: avoid-column;
+    page-break-inside: auto;
+  }
+  
+  .section-title {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+}

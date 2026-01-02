@@ -40,18 +40,24 @@ const ExperiencesPage = () => {
     [experiences]
   );
 
-  // Fetch experiences ONLY ONCE on mount (not on id change)
+  // Fetch experiences AND leadership roles ONLY ONCE on mount
   useEffect(() => {
-    const fetchExperiences = async () => {
+    const fetchAllContent = async () => {
       try {
         setLoading(true);
-        // Fetch ALL experiences (not just featured) for the full page
-        const response = await api.experiences.getAll();
-        const data = response.data || [];
+
+        // Fetch BOTH experiences and leadership roles in parallel
+        const [experiencesResponse, leadershipResponse] = await Promise.all([
+          api.experiences.getAll(),
+          api.leadership.getAll()
+        ]);
+
+        const experiencesData = experiencesResponse.data || [];
+        const leadershipData = leadershipResponse.data || leadershipResponse || [];
 
         // Flatten the experiences - each experience has a year and multiple works
         const flattenedExperiences = [];
-        data.forEach(exp => {
+        experiencesData.forEach(exp => {
           if (exp.works && Array.isArray(exp.works)) {
             exp.works.forEach((work, idx) => {
               flattenedExperiences.push({
@@ -72,6 +78,38 @@ const ExperiencesPage = () => {
           }
         });
 
+        // Add leadership roles with proper field mapping
+        leadershipData.forEach(lead => {
+          // Format date range for leadership
+          const formatLeadershipYear = (lead) => {
+            if (lead.startDate) {
+              const start = new Date(lead.startDate).getFullYear();
+              const end = lead.isCurrent ? 'Present' : (lead.endDate ? new Date(lead.endDate).getFullYear() : '');
+              return end ? `${start} - ${end}` : `${start}`;
+            }
+            return '';
+          };
+
+          flattenedExperiences.push({
+            id: lead.id,
+            title: lead.role || lead.title,
+            company: lead.organization,
+            position: lead.role || lead.title,
+            role: lead.role || lead.title,
+            organization: lead.organization,
+            year: formatLeadershipYear(lead),
+            yearSort: lead.startDate ? new Date(lead.startDate).getFullYear() : 0,
+            description: lead.description || lead.resumeSummary,
+            summary: lead.resumeSummary || lead.description,
+            icon: lead.icon,
+            type: 'Leadership',
+            imgUrl: lead.icon,
+            startDate: lead.startDate,
+            endDate: lead.endDate,
+            isCurrent: lead.isCurrent
+          });
+        });
+
         // Sort by year (newest first)
         flattenedExperiences.sort((a, b) => b.yearSort - a.yearSort);
 
@@ -83,7 +121,7 @@ const ExperiencesPage = () => {
       }
     };
 
-    fetchExperiences();
+    fetchAllContent();
   }, []); // Empty dependency - fetch only once on mount
 
   // Handle URL id changes SEPARATELY (open modal if id is present)

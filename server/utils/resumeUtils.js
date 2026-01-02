@@ -329,13 +329,43 @@ const mapPublicationToResume = (pub) => {
         id: pub.id,
         sourceId: pub.id,
         sourceType: 'Publication',
+        itemType: 'publication', // To distinguish from peer reviews
         title: pub.title,
         venue: pub.venue,
         year: pub.year,
         authors: pub.authors,
         description: pub.resumeSummary || truncateText(pub.abstract, 200),
+        notes: pub.notes, // Include notes for "Under Review" status etc.
+        status: pub.notes?.toLowerCase().includes('under review') ? 'Under Review' : 'Published',
         doi: pub.doi,
         url: pub.pdfUrl || pub.arxivUrl,
+    };
+};
+
+/**
+ * Map PeerReview to resume publication format
+ * @param {object} review - PeerReview record
+ * @returns {object} Resume-formatted peer review (as publication type)
+ */
+const mapPeerReviewToResume = (review) => {
+    if (!review) return null;
+
+    return {
+        id: review.id,
+        sourceId: review.id,
+        sourceType: 'PeerReview',
+        itemType: 'peerReview', // To distinguish from publications
+        title: `Peer Reviewer: ${review.journalName}`,
+        venue: review.journalName,
+        year: review.year,
+        authors: '', // Peer reviews don't have authors
+        description: review.resumeSummary || `Peer reviewer for ${review.journalName}${review.verifiedBy ? ` (${review.verifiedBy})` : ''}`,
+        notes: review.verifiedBy ? `Verified by: ${review.verifiedBy}` : '',
+        status: 'Active',
+        publisher: review.publisher,
+        organization: review.organization,
+        verified: review.verified,
+        verifiedBy: review.verifiedBy,
     };
 };
 
@@ -609,6 +639,7 @@ module.exports = {
     mapProjectToResume,
     mapSkillToResume,
     mapPublicationToResume,
+    mapPeerReviewToResume,
     mapLeadershipToResume,
     mapVolunteerToResume,
     mapReferenceToResume,
