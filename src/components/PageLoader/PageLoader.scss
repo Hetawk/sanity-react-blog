@@ -1,0 +1,122 @@
+// Brand Colors
+$brand-primary: #FF4C29;
+$brand-dark: #8E0E00;
+
+.page-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, $brand-dark 0%, #1F1C18 100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
+
+.page-loader__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.page-loader__logo {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .logo-circle {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: $brand-primary;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+  }
+
+  .logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+    z-index: 1;
+  }
+}
+
+.page-loader__dots {
+  display: flex;
+  gap: 0.5rem;
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: $brand-primary;
+  }
+}
+
+.page-loader__message {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.page-loader__progress {
+  width: 200px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, $brand-primary, $brand-dark, $brand-primary);
+    background-size: 300% 100%;
+    animation: shimmer 2s infinite;
+    border-radius: 2px;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .page-loader__logo {
+    width: 60px;
+    height: 60px;
+
+    .logo-text {
+      font-size: 1.2rem;
+    }
+  }
+
+  .page-loader__dots .dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .page-loader__message {
+    font-size: 0.85rem;
+  }
+
+  .page-loader__progress {
+    width: 150px;
+  }
+}

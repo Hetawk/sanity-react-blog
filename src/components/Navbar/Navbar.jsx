@@ -17,6 +17,7 @@ const Navbar = () => {
   const navItems = [
     { id: 'home', label: 'Home', icon: '🏠' },
     { id: 'about', label: 'About', icon: '👤' },
+    { id: 'links', label: 'Links', icon: '🔗' },
     { id: 'work', label: 'Work', icon: '💼' },
     { id: 'expertise', label: 'Expertise', icon: '⭐' },
     { id: 'publications', label: 'Publications', icon: '📚' },
@@ -27,7 +28,7 @@ const Navbar = () => {
 
   // Handle scroll effect
   useEffect(() => {
-    const sections = ['home', 'about', 'work', 'expertise', 'publications', 'award', 'contact'];
+    const sections = ['home', 'about', 'links', 'work', 'expertise', 'publications', 'award', 'contact'];
 
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);

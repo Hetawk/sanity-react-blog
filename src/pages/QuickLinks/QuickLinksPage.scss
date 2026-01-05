@@ -1,0 +1,481 @@
+// Brand Colors
+$brand-primary: #FF4C29;
+$brand-dark: #8E0E00;
+$brand-gradient: linear-gradient(135deg, $brand-dark 0%, #1F1C18 100%);
+
+.quicklinks-page {
+    min-height: 100vh;
+    background: var(--primary-color);
+    padding-top: 80px;
+}
+
+// Header Section
+.page-header {
+    background: $brand-gradient;
+    padding: 3rem 0 4rem;
+
+    .header-content {
+        width: 100%;
+        padding: 0 3rem;
+
+        @media (max-width: 600px) {
+            padding: 0 1.5rem;
+        }
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        padding: 0.6rem 1.25rem;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+
+        &:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-4px);
+        }
+
+        svg {
+            font-size: 1.1rem;
+        }
+    }
+
+    .header-text {
+        h1 {
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 1.25rem;
+            line-height: 1.2;
+        }
+
+        .lead {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.85);
+        }
+    }
+}
+
+// Notice Banner
+.notice-banner {
+    margin: -2rem 3rem 2rem;
+    padding: 1rem 1.5rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    border-left: 4px solid $brand-primary;
+
+    @media (max-width: 600px) {
+        margin: -1.5rem 1.5rem 1.5rem;
+    }
+
+    .notice-icon {
+        font-size: 1.5rem;
+        color: $brand-primary;
+        flex-shrink: 0;
+        margin-top: 0.1rem;
+    }
+
+    p {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: var(--gray-color);
+        margin: 0;
+
+        strong {
+            color: var(--black-color);
+        }
+
+        a {
+            color: $brand-primary;
+            text-decoration: none;
+            font-weight: 500;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+// Main Content
+.page-content {
+    width: 100%;
+    padding: 2rem 3rem;
+
+    @media (max-width: 600px) {
+        padding: 1.5rem;
+    }
+}
+
+// Content Section (Blog-style Article)
+.content-section {
+    background: #fff;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        background: linear-gradient(to right, rgba($brand-primary, 0.03), transparent);
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: $brand-gradient;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--black-color);
+            margin: 0;
+        }
+    }
+
+    .section-body {
+        padding: 1.5rem 2rem 2rem;
+    }
+
+    .section-content {
+        font-size: 1rem;
+        line-height: 1.8;
+        color: var(--gray-color);
+        margin-bottom: 1.5rem;
+        white-space: pre-line;
+    }
+}
+
+// Links List (Blog-style)
+.links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.link-item {
+    .link-anchor {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        background: rgba(0, 0, 0, 0.02);
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        border: 1px solid transparent;
+
+        &:hover {
+            background: rgba($brand-primary, 0.04);
+            border-color: rgba($brand-primary, 0.15);
+            transform: translateX(4px);
+
+            .link-icon {
+                background: $brand-primary;
+                color: #fff;
+            }
+
+            .link-name {
+                color: $brand-primary;
+            }
+
+            .link-arrow {
+                color: $brand-primary;
+                transform: translateX(3px);
+            }
+        }
+    }
+
+    .link-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $brand-dark;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        transition: all 0.25s ease;
+    }
+
+    .link-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .link-name {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--black-color);
+        margin-bottom: 0.25rem;
+        transition: color 0.25s ease;
+    }
+
+    .link-description {
+        font-size: 0.875rem;
+        color: var(--gray-color);
+        line-height: 1.5;
+        display: block;
+    }
+
+    .link-arrow {
+        color: var(--gray-color);
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        transition: all 0.25s ease;
+    }
+}
+
+// Private Badge
+.private-badge {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    color: var(--gray-color);
+    font-size: 0.85rem;
+
+    svg {
+        font-size: 0.9rem;
+    }
+
+    .private-tooltip {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--black-color);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 400;
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+        margin-bottom: 0.5rem;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--black-color);
+        }
+    }
+
+    &:hover .private-tooltip {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+// Footer
+.page-footer {
+    background: $brand-gradient;
+    padding: 4rem 3rem;
+    margin-top: 3rem;
+
+    .footer-content {
+        text-align: center;
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 2rem;
+        }
+    }
+
+    .footer-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.875rem 1.75rem;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+
+        &-primary {
+            background: #fff;
+            color: $brand-dark;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        &-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.15);
+                transform: translateY(-2px);
+            }
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 600px) {
+    .page-header {
+        padding: 2rem 0 3rem;
+
+        .header-content {
+            padding: 0 1.5rem;
+        }
+
+        .header-text {
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .lead {
+                font-size: 1rem;
+            }
+        }
+    }
+
+    .notice-banner {
+        margin: -1.5rem 1rem 1.5rem;
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.75rem;
+
+        .notice-icon {
+            font-size: 1.25rem;
+        }
+
+        p {
+            font-size: 0.85rem;
+        }
+    }
+
+    .page-content {
+        padding: 1rem;
+    }
+
+    .content-section {
+        .section-header {
+            padding: 1.25rem 1.5rem;
+
+            .section-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 1.2rem;
+            }
+
+            h2 {
+                font-size: 1.15rem;
+            }
+        }
+
+        .section-body {
+            padding: 1.25rem 1.5rem 1.5rem;
+        }
+
+        .section-content {
+            font-size: 0.95rem;
+        }
+    }
+
+    .link-item {
+        .link-anchor {
+            padding: 0.875rem 1rem;
+            gap: 0.75rem;
+        }
+
+        .link-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 1rem;
+        }
+
+        .link-name {
+            font-size: 0.95rem;
+        }
+
+        .link-description {
+            font-size: 0.8rem;
+        }
+    }
+
+    .page-footer {
+        padding: 3rem 1.5rem;
+
+        .footer-content {
+            h3 {
+                font-size: 1.25rem;
+            }
+
+            p {
+                font-size: 0.95rem;
+            }
+        }
+
+        .footer-actions {
+            flex-direction: column;
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    }
+}

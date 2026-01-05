@@ -1,0 +1,296 @@
+.app__quicklinks {
+  flex: 1;
+  width: 100%;
+  flex-direction: column;
+  padding: 2rem 0;
+}
+
+.quicklinks__header {
+  text-align: center;
+  margin-bottom: 3rem;
+
+  .head-text {
+    margin-bottom: 1rem;
+  }
+}
+
+.quicklinks__subtitle {
+  max-width: 600px;
+  margin: 0 auto;
+  color: #6b7688;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.quicklinks__categories {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  @media screen and (max-width: 900px) {
+    grid-template-columns: 1fr;
+    padding: 0 1rem;
+  }
+}
+
+.quicklinks__category {
+  background: var(--white-color);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    border-color: var(--category-color, var(--secondary-color));
+  }
+}
+
+.category__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.category__icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: var(--category-color, var(--secondary-color));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.category__title-group {
+  flex: 1;
+}
+
+.category__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #313bac;
+  margin: 0 0 0.25rem 0;
+}
+
+.category__subtitle {
+  font-size: 0.85rem;
+  color: #6b7688;
+  margin: 0;
+}
+
+.category__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.link__item {
+  text-decoration: none;
+  
+  .link__item-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid transparent;
+    width: 100%;
+    
+    &:hover {
+      border-color: var(--secondary-color);
+      
+      .link__external {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .link__name {
+        color: var(--secondary-color);
+      }
+
+      .link__icon {
+        background: currentColor;
+        
+        svg {
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+.link__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.link__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.link__name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #313bac;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.link__private {
+  display: inline-flex;
+  align-items: center;
+  color: #8E0E00;
+  font-size: 0.75rem;
+  
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.link__description {
+  font-size: 0.8rem;
+  color: #6b7688;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link__external {
+  color: #6b7688;
+  font-size: 1rem;
+  opacity: 0;
+  transform: translateX(-5px);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.quicklinks__footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+  .quicklinks__view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.75rem;
+    background: linear-gradient(135deg, #8E0E00 0%, #FF4C29 100%);
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+
+      svg {
+        transform: translateX(4px);
+      }
+    }
+
+    svg {
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  .p-text {
+    color: #6b7688;
+    
+    a {
+      color: #FF4C29;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #8E0E00;
+      }
+    }
+  }
+}
+
+// Remove dark mode override - rely on app's theming
+// @media (prefers-color-scheme: dark) was causing text visibility issues
+
+// Mobile adjustments
+@media screen and (max-width: 600px) {
+  .quicklinks__header {
+    margin-bottom: 2rem;
+  }
+
+  .quicklinks__subtitle {
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+
+  .quicklinks__category {
+    padding: 1.25rem;
+  }
+
+  .category__icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.25rem;
+  }
+
+  .category__title {
+    font-size: 1.1rem;
+  }
+
+  .link__item {
+    padding: 0.6rem 0.75rem;
+  }
+
+  .link__icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .link__name {
+    font-size: 0.9rem;
+  }
+
+  .link__description {
+    font-size: 0.75rem;
+  }
+}

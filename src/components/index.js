@@ -26,6 +26,9 @@ import SectionPage from './SectionPage/SectionPage';
 // Resume components
 import LiveResumePreview from './LiveResumePreview/LiveResumePreview';
 
+// Page utilities
+import PageLoader from './PageLoader/PageLoader';
+
 export {
   // Existing
   NavigationDots,
@@ -54,6 +57,7 @@ export {
 
   // Resume components
   LiveResumePreview,
-}
 
-  ;
+  // Page utilities
+  PageLoader,
+};

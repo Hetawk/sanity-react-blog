@@ -5,6 +5,7 @@ import Skills from './Skills/Skills';
 import Awards from './Awards/Awards';
 import Work from './Work/Work';
 import OrcidWorks from './OrcidWorks/OrcidWorks';
+import QuickLinks from './QuickLinks/QuickLinks';
 
 export {
   About,
@@ -14,4 +15,5 @@ export {
   Awards,
   Work,
   OrcidWorks,
+  QuickLinks,
 };

@@ -63,3 +63,4 @@ docs/sanity-data-export*.ndjson
 
 # legacy backend (no longer used)
 /backend_sanity
+zdir/
